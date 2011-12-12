@@ -68,7 +68,7 @@ class plugin
                 break;
         }
 
-        $this->_url_2_plugin = system::getHost().REAL_ROOT_URL.$this->plugin_dir.$this->plugin_name;
+        $this->_url_2_plugin = system::getHost().REAL_ROOT_URL.$this->plugin_dir.$this->plugin_name.'/';
         $this->_conf = array();
     }
 
@@ -95,7 +95,7 @@ class plugin
                 $ret->author = $xml->getData('/plugin/author');
                 $ret->version = $xml->getData('/plugin/version');
                 $ret->minversion = $xml->getData('/plugin/minversion');
-                
+
                 $priority = $xml->getData('/plugin/priority');
                 $ret->priority = $priority ? $priority : null;
 

@@ -78,7 +78,7 @@ if (defined('PREFIX_TABLE')) {
 
 
 if (!defined('HYLA_VERSION')) {
-    define('HYLA_VERSION', '0.8.1');
+    define('HYLA_VERSION', '0.8.2');
 }
 
 /*  Renvoie le contenu du fichier de configuration à générer
@@ -164,10 +164,10 @@ define('SQL_PASS',  '$sql_pass');
 <title>Hyla installeur</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link rel="stylesheet" type="text/css" media="screen,projection" title="Défault" href="tpl/default/default.css" />
+<link rel="stylesheet" type="text/css" media="screen,projection" title="Défault" href="tpl/default/css/default.css" />
 
-<script language="javascript" type="text/javascript" src="tpl/default/jquery.js"></script>
-<script language="javascript" type="text/javascript" src="tpl/default/lib.js"></script>
+<script language="javascript" type="text/javascript" src="tpl/default/js/jquery.js"></script>
+<script language="javascript" type="text/javascript" src="tpl/default/js/lib.js"></script>
 
 <script type="text/javascript">
 

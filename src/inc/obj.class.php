@@ -552,7 +552,7 @@ class obj extends acl {
                 // Get icon !
                 if (is_dir(FOLDER_ROOT.$tab[$i]->object)) {
                     if ($tab[$i]->object == '/') {
-                        $tab[$i]->icon = REAL_ROOT_URL.DIR_IMAGE.'/home.png';
+                        $tab[$i]->icon = DIR_IMAGE.'/home.png';
                     } else {
                         if ($res['obj_icon']) {
                             $tab[$i]->icon = REAL_ROOT_URL.$tab[$i]->icon;
@@ -705,6 +705,7 @@ class obj extends acl {
             $sql = "UPDATE {$this->_object_table} SET obj_icon = '$icon', obj_date_last_update = '".system::time()."' WHERE obj_id = '{$id}'";
             if (!$var = $this->_bdd->execQuery($sql))
                 trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
+
             if (!$icon) {
                 $icon = DIR_PLUGINS_OBJ.(($this->_current_obj->info->plugin) ? $this->_current_obj->info->plugin.'/' : '').DIR_ICON;
                 $icon = (file_exists($icon)) ? $icon : DIR_PLUGINS_OBJ.strtolower($conf['plugin_default_dir']).'/'.DIR_ICON;

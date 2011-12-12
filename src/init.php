@@ -142,7 +142,7 @@ if (file_exists($xfile)) {
         if ($res) {
             foreach ($res as $occ) {
                 $css_href = $xml->getData($occ.'/href');
-                
+
                 // If stylesheet is in another dir, no include root dir
                 if ($css_href{0} != '/' && substr($css_href, 0, 7) != 'http://') {
                     $css_href = REAL_ROOT_URL.DIR_TEMPLATE.'/'.$css_href;

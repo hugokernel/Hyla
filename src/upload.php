@@ -171,7 +171,9 @@ if (isset($_POST['Submit'])) {
                     $destinationname = $destination_root.'/'.$up_name;
 
                     // Si le fichier existe déjà...
-                    if (file_exists($destination_root.'/'.$up_name)) {
+                    if (!preg_match('#^(http|ftp)+(s)?:(//)#i', $_POST['ul_file_fromurl'][$i])) {
+                        $msg_error = __('An unknown error occured during upload !');
+                    } else if (file_exists($destination_root.'/'.$up_name)) {
                         $msg_error = __('The file already exists !');
                     } else if ($var = file::getContent($_POST['ul_file_fromurl'][$i])) {
 
