@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+
+<head>
+	<title>Questions couramment posées...</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<link rel="shortcut icon" type="image/x-icon" href="img/icon.png" />
+	<link rel="icon" type="image/png" href="img/icon.png"/>
+
+	<link rel="stylesheet" type="text/css" media="screen,projection" title="Standard" href="default.css" />
+
+</head>
+
+<body>
+
+	<h1>Questions couramment posées...</h1>
+
+	<p>
+		<a href="index.htm">Retourner à l'index</a>
+	</p>
+
+	<hr />
+
+	<p>
+		Voici une liste de questions / réponses souvent posées.
+	</p>
+
+	<h3>Comment modifier le répertoire de partage ?</h3>
+	<p>
+		Simplement en éditant le fichier conf/config.inc.php et en modifiant la constante &laquo; FOLDER_ROOT &raquo;
+		<br />
+		Ainsi, pour partager le répertoire <span class="path">c:/program file/apps/easysphp1-8/www/docs</span>, éditez ainsi :
+	</p>
+
+	<pre>
+
+			define('FOLDER_ROOT', 'c:/program file/apps/easysphp1-8/www/docs');
+	</pre>
+	<p>
+		Sous Gnu/Linux / MacOs, procédez de la même manière, pour partager le dossier <span class="path">/var/www/share</span>, faites ainsi :
+	</p>
+	<pre>
+
+			define('FOLDER_ROOT', '/var/www/share');
+	</pre>
+	<p>
+
+		Attention, tout de même, ne mettez jamais de slash (/) ou d'antislash (\) de fin.
+	</p>
+
+
+	<h3>Je n'arrive pas à supprimer de répertoires par le biais de Hyla sur mon compte free, à quoi est-ce dû ?</h3>
+	<p>
+		Free a désactivé la fonction qui permet de supprimer les dossiers pour des raisons de sécurité, Hyla ne peut donc pas supprimer les répertoires,
+		vous devez les supprimer par vos propres moyens, ftp...
+		<br />
+		Les futures versions de Hyla proposeront une corbeille qui permettra de contourner ce souci.
+	</p>
+
+
+	<hr />
+
+	<a href="#">Remonter</a>
+
+</body>
+
+</html>

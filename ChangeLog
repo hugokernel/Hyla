@@ -1,5 +1,87 @@
 Hyla ChangeLog
 
+[Version 0.8.0]
+	- hugo
+		12&26 mars 2007
+			* La constante TYPE_ARCHIVE devient TYPE_ARCHIVED
+			* La description de l'objet courant est affichée uniquement si il y en a une
+		10-26 février 2007
+			* La classe graphic s'appelle dorénavant image
+			* Modifications dans les modèles afin de valider aux bonnes pratiques Opquest (http://www.opquast.com)
+		8&9 février 2007
+			* Dans le choix du dossier de destination dans le copie ou le déplacement, les dossiers sont dorénavant triés
+			* Stabilisation de la migration dans l'installeur
+			* On affiche la barre des commentaires uniquement si il y a au moins un commentaire dans l'objet courant ou si on a les droits d'en ajouter...
+		5&6 février 2007
+			* Développement du système de migration de Hyla 0.7.2 vers 0.8.0
+		29 janvier 2007
+			* Changements dans le code du plugin image afin qu'il n'affiche plus de notice lorsque les images ne comportent pas de données EXIF
+			* Le plugin Image sauvegarde maintenant la taille de l'image qu'on lui demande (1/4, 1/3...) et cela, pour toute les images ayant la même taille
+		23-25 janvier 2007
+			* Dans l'administration, possibilité de supprimer plusieurs commentaires d'un coup
+			* Introduction d'un système de filtrage des objets qui va permettre beaucoup de nouveautés...
+			* Grâce au filtrage, le plugin slideshow peut afficher que les fichiers ou uniquement les images
+			* Possiblité de configurer grâce au fichier de configuration des plugins le temps de redirection dans le diaporama
+		20 janvier 2007
+			* Modification dans la logique de création / édition des droits
+			* Réorganisation dans le code pour ROOT_URL
+			* Un nouveau plugin voit le jour, il permet de lire des fichiers au format CSV (Comma-Separated Value) ou TSV (Tab-Separated Value) en les affichant sous forme de tableau
+			* Affichage d'un message lorsqu'il n'y a pas de commentaire dans la visualisation de l'objet courant
+		12&17 janvier 2007
+			* Ajout d'une option dans hyla.ini (url_encode) permettant de s'affranchir des problèmes de noms de fichiers contenant des caractères spéciaux
+			* Création d'un système de cache pour la gestion des droits
+		8-9 janvier 2007
+			* Tout le code HTML généré autrement que par template se trouve dans le dossier de template dans le fichier function.php
+			* Possibilité de bloquer le téléchargement de dossier
+			* Nettoyage dans le html et les css
+			* BUG: Dans le diaporama, si la description comportait des balises html, elles étaient visibles
+			* Possibilité de rajouter des commentaires dans les dossiers
+		5 janvier 2007
+			* Passage en UTF-8
+		27 décembre 2006
+			* Il est dorénavant possible de modifier le temps de redirection entre les pages
+		20&22 décembre
+			* delGroup est supprimé, remplacé par delUser
+			* Réécriture de la fonction addDownload
+			* Poursuite de l'écriture de la documentation
+			* Un minimum de 4 caractères est imposé pour les mot de passe
+			* Affichage d'un erreur si un essaie de déplacer un dossier qui ne pourra être supprimé par la suite
+			* Les noms de fichier comportant des quote (') sont maintenant possible
+		14-16 décembre 2006
+			* Test dans la gestion des droits
+			* Uniformisation : Les répertoires s'appellent maintenant des dossiers
+			* Nouveau choix pour l'affichage de l'arborescence : Jamais, Uniquement pour les dossiers, Toujours
+		12-13 décembre 2006
+			* Début de l'écriture de la documentation
+			* L'arborescence est maintenant trié dans l'odre alphabétique
+			* Légère optimisation du code dans le tri des objets
+			* Un système de suggestion est implémenté
+			* La synchronisation à été adaptée avec la nouvelle structure de la base de données
+			* Dans l'upload de fichier, on compte de manière "humaine" et non informaticienne en commençant à 1
+		9&11 décembre 2006
+			* Une page info est disponible pour tous les objet permettant d'obtenir des infos précisent sur ces derniers (taille, mime, md5...)
+			* Utilisation de JQuery pour le javascript
+		6&8 décembre 2006
+			* Écriture du système de génération de fils rss
+			* Le fichier src/conf.php est renommé en init.php pour refleter son contenu
+			* La copie de fichier est possible (uniquement les fichiers ou dossiers, pas les infos en base de données)
+			* Possibilité de copier un fichier contenu dans une archive
+		4 décembre 2006
+			* Modification dans le choix des templates, dorénavant, dans l'administration, le choix du template se fait en spécifiant une feuille de style
+		27 octobre 2006
+			* Possibilité de changer l'icone des dossiers depuis l'édition
+		25 octobre 2006
+			* Lors de la création d'un dossier, il est possible de choisir d'être redirigé directement vers l'édition de ce dernier
+			* Lors de la suppression d'un fichier, on est redirigé vers le fichier précédent ou suivant si l'un ou l'autre existe ou le dossier contenant le fichier sinon
+			* Dans l'administration, si on modifie le modèle (template), on redirige afin que le changement prenne effet visiblement
+		19&20 octobre 2006
+			* Système permettant de pouvoir changer de feuille de style au sein d'un même thème
+			* Il est dorénavant possible de configurer certain plugins par le biais du fichier plugins.ini du dossier conf/
+			* La pagination des dossiers affiche maintenant les numéros de pages permettant ainsi d'aller directement à une page
+		6-9 octobre 2006
+			* Modifications dans la gestion des sessions
+			* Travail sur le système de droits
+
 [Version 0.7.2]
 	- hugo
 		13 octobre 2006
@@ -16,6 +98,7 @@ Hyla ChangeLog
 			* Correction de fautes d'orthographes
 			* BUG: Un problème de droits est corrigé lié au renommage ou déplacement des objets
 			* BUG: L'arborescence était erronée lorsqu'aucun dossier était présent dans le répertoire de partage
+			* ADD: Ajout dans les plugins Dir et Gallery de l'affichage du nombre de commentaires dans l'attributs title du lien vers les commentaires
 		29 septembre 2006
 			* ADD: Ajout de liens dans l'administration vers le site, la doc...
 			* BUG: Correction d'un problème d'affichage dans l'administration qui inversait les droits d'édition et d'ajout
@@ -24,7 +107,7 @@ Hyla ChangeLog
 [Version 0.7.0]
 	- hugo
 		26 septembre 2006
-			* Correction d'un problème qui affchait une erreur lors du déplacement d'un répertoire vide
+			* Correction d'un problème qui affichait une erreur lors du déplacement d'un répertoire vide
 			* Dans le choix du répertoire de destination dans l'action "Déplacer", on n'affiche plus les répertoire interdits
 		24&25 septembre 2006
 			* Correction d'un problème empêchant l'utilisation d'arborescence comportant des répertoires nommés "0"

@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -22,14 +22,14 @@
 if (!defined('PAGE_HOME'))
 	header('location: ../index.php');
 
+acl_test(AC_ADD_FILE);
+
 $anonymous_mode = false;
-if (!($cuser->perm & ADD_FILE) && ($conf['anonymous_add_file'] && is_writable(DIR_ROOT.DIR_ANON))) {
-	$destination_root = DIR_ROOT.DIR_ANON;
+if ($cuser->id == ANONYMOUS_ID) {
 	$anonymous_mode = true;
-} else {
-	test_perm(ADD_FILE);
+	$destination_root = DIR_ROOT.DIR_ANON;
+} else
 	$destination_root = FOLDER_ROOT.$cobj->path;
-}
 
 
 $tpl->set_file('upload', 'upload.tpl');
@@ -39,10 +39,13 @@ $tpl->set_block('upload', array(
 		'form_upload'		=>	'Hdlform_upload',
 		));
 
+$tpl->l10n->setFile('upload.php');
+
+
 if (ini_get('allow_url_fopen'))
 	$tpl->parse('Hdlfrom_url', 'from_url', true);
 
-// Un envoi à été fait...
+// Un envoie Ã  Ã©tÃ© fait...
 if (isset($_POST['Submit'])) {
 
 	$ierror = 0;
@@ -61,44 +64,48 @@ if (isset($_POST['Submit'])) {
 				case UPLOAD_ERR_NO_FILE:		$msg_error = __('No specified file  !');		break;
 				case UPLOAD_ERR_OK:
 
-					// Il ne doit pas y avoir de caractère interdit !
+					// Il ne doit pas y avoir de caractÃ¨re interdit !
+					$up_name = stripslashes($up_name);
 					if (string::test($up_name, UNAUTHORIZED_CHAR)) {
 						$msg_error = __('There are an invalid char in the file name, unauthorized char are : %s', UNAUTHORIZED_CHAR);
 						break;
 					}
 
-					// En mode anonyme, on ne doit pas dire que le fichier existe déjà, on change le nom
+					// En mode anonyme, on ne doit pas dire que le fichier existe dÃ©jÃ , on change le nom
 					$up_name = ($anonymous_mode) ? file::getUniqueName($up_name, $destination_root.'/') : $up_name;
 
 					$destinationname = $destination_root.'/'.$up_name;
 
-					// Si le fichier existe déjà...
+					// Si le fichier existe dÃ©jÃ ...
 					if (file_exists($destinationname)) {
 						$msg_error = __('The file already exists !');
 						break;
 					}
 
-					// On déplace le fichier ou il faut, on met la description si elle existe et on quitte !
+					// On dÃ©place le fichier ou il faut, on met la description si elle existe et on quitte !
 					if (is_writable($destination_root)) {
 	
 						if (move_uploaded_file($_FILES['ul_file_local']['tmp_name'][$i], $destinationname)) {
 
-							// Mouais, pas convaincu !
-							if (system::getOS() == 'Linux') {
-								chmod($destinationname, $conf['file_chmod']);
-							}
+							@chmod($destinationname, $conf['file_chmod']);
 					
-							if (!empty($_POST['ul_description'][$i])) {
-								$object = $anonymous_mode ? PREFIX_ANON.'/' : $cobj->path;
-								$object .= $up_name;
-								$obj->setDescription($object, string::format($_POST['ul_description'][$i]));
+							$object = $cobj->path.$up_name;
+
+							// Mode anonyme ?
+							if ($anonymous_mode) {
+								$obj->addAnonFile($object, string::format($_POST['ul_description'][$i]));
+
+								// Envoi de courriel ?
+								if ($conf['send_mail'] && $conf['webmaster_mail']) {
+									system::mail($conf['webmaster_mail'], __('Hyla - An anonymous file was sent !'), __('mail_content', $up_name), $conf['webmaster_mail']);
+								}
+							} else {
+								if (!empty($_POST['ul_description'][$i])) {
+									$obj->setDescription(string::format($_POST['ul_description'][$i]), $object);
+								}
 							}
 
-							if ($anonymous_mode && $conf['send_mail'] && $conf['webmaster_mail']) {
-								system::mail($conf['webmaster_mail'], __('Hyla - An anonymous file was sent !'), __('mail_content', $up_name), $conf['webmaster_mail']);
-							}
-
-							// On fait ça pour ne pas donner le nom du fichier copié anonymement
+							// On fait Ã§a pour ne pas donner le nom du fichier copiÃ© anonymement
 							$tab_ok[$i]['name'] = ($anonymous_mode) ? $_POST['ul_new_name'][$i] ? $_POST['ul_new_name'][$i] : $_FILES['ul_file_local']['name'][$i] : $up_name;
 						}
 
@@ -107,7 +114,7 @@ if (isset($_POST['Submit'])) {
 						break;
 					}
 
-					// On teste enfin si le fichier à bien été créé
+					// On teste enfin si le fichier Ã  bien Ã©tÃ© crÃ©Ã©
 					if (!file_exists($destinationname)) {
 						$msg_error = __('An unknown error occured during upload !');
 					}
@@ -121,40 +128,54 @@ if (isset($_POST['Submit'])) {
 			} else {
 
 				$up_name = $_POST['ul_new_name'][$i] ? $_POST['ul_new_name'][$i] : basename($_POST['ul_file_fromurl'][$i]);
+
+				// On supprime les paramÃ¨tres contenus dans l'url si il y en a...
+				$pos = strpos($up_name, '&');
+				if ($pos) {
+					$tmp_name = substr($up_name, 0, $pos);
+					if ($tmp_name) {
+						$up_name = $tmp_name;
+					}
+				}
+
 				$up_name = strip_tags($up_name);
 
-				// Il ne doit pas y avoir de caractère interdit !
+				// Il ne doit pas y avoir de caractÃ¨re interdit !
+				$up_name = stripslashes($up_name);
 				if (string::test($up_name, UNAUTHORIZED_CHAR)) {
 					$msg_error = __('There are an invalid char in the file name, unauthorized char are : %s', UNAUTHORIZED_CHAR);
 				} else if (empty($up_name)) {
 					$msg_error = __('Empty filename !');
 				} else {
 
-					// En mode anonyme, on ne doit pas dire que le fichier existe déjà, on change le nom
+					// En mode anonyme, on ne doit pas dire que le fichier existe dÃ©jÃ , on change le nom
 					$up_name = ($anonymous_mode) ? file::getUniqueName($up_name, $destination_root.'/') : $up_name;
 
 					$destinationname = $destination_root.'/'.$up_name;
 
-					// Si le fichier existe déjà...
+					// Si le fichier existe dÃ©jÃ ...
 					if (file_exists($destination_root.'/'.$up_name)) {
 						$msg_error = __('The file already exists !');
 					} else if ($var = file::getContent($_POST['ul_file_fromurl'][$i])) {
 
 						file::putContent($destinationname, $var);
 
-						// Mouais, pas convaincu !
-						if (system::getOS() == 'Linux') {
-							chmod($destinationname, $conf['file_chmod']);
-						}
+						@chmod($destinationname, $conf['file_chmod']);
 
-						if (!empty($_POST['ul_description'][$i])) {
-							$object = $anonymous_mode ? PREFIX_ANON.'/' : $cobj->path;
-							$object .= $up_name;
-							$obj->setDescription($object, string::format($_POST['ul_description'][$i]));
-						}
+						$object = $cobj->path.$up_name;
 
-						if ($anonymous_mode && $conf['send_mail'] && $conf['webmaster_mail']) {
-							system::mail($conf['webmaster_mail'], __('Hyla - An anonymous file was sent !'), __('mail_content', $up_name), $conf['webmaster_mail']);
+						// Mode anonyme ?
+						if ($anonymous_mode) {
+							$obj->addAnonFile($object, string::format($_POST['ul_description'][$i]));
+
+							// Envoi de courriel ?
+							if ($anonymous_mode && $conf['send_mail'] && $conf['webmaster_mail']) {
+								system::mail($conf['webmaster_mail'], __('Hyla - An anonymous file was sent !'), __('mail_content', $up_name), $conf['webmaster_mail']);
+							}
+						} else {
+							if (!empty($_POST['ul_description'][$i])) {
+								$obj->setDescription(string::format($_POST['ul_description'][$i]), $object);
+							}
 						}
 
 						$tab_ok[$i]['name'] = ($anonymous_mode) ? $_POST['ul_new_name'][$i] ? $_POST['ul_new_name'][$i] : basename($_POST['ul_file_fromurl'][$i]) : $up_name;
@@ -190,7 +211,7 @@ if (isset($_POST['Submit'])) {
 }
 
 $nbr_form = (!isset($_GET['file'])) ? ((isset($_POST['Submit']) && isset($tab_error)) ? sizeof($tab_error) : 1) : $_GET['file'];
-if (!$nbr_form)
+if (!$nbr_form || $nbr_form < 0)
 	$nbr_form = 1;
 
 for ($i = 0; $i < $nbr_form; $i++) {
@@ -198,11 +219,12 @@ for ($i = 0; $i < $nbr_form; $i++) {
 			'STATUS'			=>	isset($rapport) ? view_status(__('File correctly uploaded : %s', $rapport)) : null,
 			'ERROR'				=>	isset($tab_error) ? view_error(($tab_error[$i]['name'] ? $tab_error[$i]['name'].' : ' : null).$tab_error[$i]['error']) : null,
 			'NUM'				=>	$i,
+			'NUM_HUMAN'			=>	$i + 1,
 			'FILE_DESCRIPTION'	=>	isset($tab_error[$i]['error']) ? stripslashes(htmlentities($tab_error[$i]['description'], ENT_QUOTES)) : null,
 			'NEW_NAME'			=>	isset($tab_error[$i]['error']) ? stripslashes(htmlentities($tab_error[$i]['new_name'])) : null,
 			'FROM_URL'			=>	isset($tab_error[$i]['error']) ? $tab_error[$i]['from_url'] : null,
-			'FROM_URL_CHECKED'	=>	isset($tab_error[$i]['from_url']) ? '" checked="checked"' : null,
-			'LOCAL_CHECKED'		=>	!isset($tab_error[$i]['from_url']) ? '" checked="checked"' : null,
+			'FROM_URL_CHECKED'	=>	isset($tab_error[$i]['from_url']) ? ' checked="checked"' : null,
+			'LOCAL_CHECKED'		=>	!isset($tab_error[$i]['from_url']) ? ' checked="checked"' : null,
 			));
 
 	$tpl->parse('Hdlform_upload', 'form_upload', true);

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
-
-<plugin target="file" ext="zip,tar,tgz,tar.gz">
-	<name>Archive</name>
-	<description>Visualisation du contenu d'archives</description>
-	<author>hugo</author>
-	<version>1</version>
-</plugin>

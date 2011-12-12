@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
-
-<plugin target="dir">
-	<name>Gallery</name>
-	<description>Affichage d'une galerie d'images</description>
-	<author>hugo</author>
-	<version>1</version>
-</plugin>
-

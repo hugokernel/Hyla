@@ -1,0 +1,18 @@
+
+#exif {
+	width: 100%;
+	border-collapse: collapse;
+	background: transparent;
+	border: 1px solid #CCC;
+}
+
+#exif tr:hover {
+	background: #DDD;
+}
+
+
+#exif td, #exif th {
+	padding: 5px;
+	border: 1px solid #BBB;
+}
+

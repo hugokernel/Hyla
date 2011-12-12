@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+
+<head>
+	<title>Administration</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<link rel="shortcut icon" type="image/x-icon" href="img/icon.png" />
+	<link rel="icon" type="image/png" href="img/icon.png"/>
+
+	<link rel="stylesheet" type="text/css" media="screen,projection" title="Standard" href="default.css" />
+
+<body>
+
+	<h1>Installation</h1>
+
+	<p>
+		<a href="index.htm">Retourner à l'index</a>
+	</p>
+
+	<ul>
+		<li>
+			Les différentes manières d'installer Hyla :
+			<ul>
+				<li><a href="#standard">Installation standard ou migration depuis une version 0.7.2</a></li>
+				<li><a href="#manuel">Installation manuelle</a></li>
+			</ul>
+		</li>
+	</ul>
+
+	<hr />
+
+	<h2 id="standard">Standard</h2>
+
+	<p>
+		Cette installation consiste simplement à lancer le script install.php se trouvant à la racine
+		du dossier d'Hyla et de suivre les différentes étapes.
+	</p>
+
+	<p>
+		Voici les différentes étapes de l'installeur automatique de Hyla
+	</p>
+
+	<ul style="list-style-type: none;">
+		<li>1. Bienvenue dans l'installeur d'Hyla !</li>
+		<li>2. Vérification de la configuration du serveur</li>
+		<li>3. Type d'installation</li>
+	</ul>
+	
+	<p>
+		Si vous choisissez l'installation normale :
+	</p>
+
+	<ul style="list-style-type: none;">
+		<li>4a. Saisi des informations</li>
+		<li>5a. Création du fichier de configuration</li>
+		<li>6a. Création des tables et insertions des données</li>
+		<li>7a. Création de l'utilisateur principal (Saisi)</li>
+		<li>8a. Création de l'utilisateur principal</li>
+	</ul>
+
+	<p>
+		Si vous possédiez une version 0.7.2, il vous est possible de migrer totalement
+		vos données vers la nouvelle version, pour cela, il vous suffit juste de garder les
+		fichiers et dossiers de l'ancienne installation, l'outil de migration ira automatiquement
+		lire les informations dont il a besoin (connection à la base de données...etc...) et
+		s'occupera de tout.
+	</p>
+
+	<p>
+		Ainsi, à l'étape 3, dans le choix du type d'installation,
+		choisissez migration :
+	</p>
+
+	<ul style="list-style-type: none;">
+		<li>4b. On spécifie le chemin de partage</li>
+		<li>5b. Récapitulatif avant migration</li>
+		<li>6b. Migration</li>
+	</ul>
+
+	<h2 id="manuel">Installation manuelle</h2>
+
+	<p>
+		Bien que ce ne soit pas recommandé (n'oubliez pas de changer le mot de passe admin par la suite),
+		vous pouvez aussi installer Hyla de façon entièrement manuelle, voici la marche à suivre :
+	</p>
+
+	<ol>
+		<li>
+			Copiez le fichier <span class="path">/conf/config.inc.default.php</span> en <span class="path">/conf/config.inc.php</span>
+		    et éditez le correctement (tout est expliqué dans le fichier)
+		</li>
+		<li>
+			Exécutez (par exemple, avec <a href="http://www.phpmyadmin.net/">phpMyAdmin</a>) le script SQL d'installation
+			dans <span class="path">/src/db/mysql.sql</span>
+		</li>
+		<li>Vous pouvez éventuellement éditer le fichier <span class="path">/conf/hyla.ini</span></li>
+		<li>Supprimez le fichier <span class="path">/install.php</span></li>
+	</ol>
+
+	<p class="remarque">
+		<strong>
+			L'utilisateur  créé  par  défaut  par  cette  voie  est  'admin'  avec  le
+			mot  de  passe  'hyla',  une  fois  loggué  dans  l'administration,  changez
+			le mot de passe immédiatement !
+		</strong>
+	</p>
+
+	<hr />
+
+	<a href="#">Remonter</a>
+
+</body>
+
+</html>

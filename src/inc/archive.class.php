@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -30,7 +30,7 @@ class archive {
 		@param	string	$file	Le nom de l'archive	
 	 */
 	function getType($file) {
-		$size = strlen($file);		// ToDo: Remplacer par unpack pour lire l'entête des fichiers
+		$size = strlen($file);		// ToDo: Remplacer par unpack pour lire l'entÃªte des fichiers
 		$type = (substr($file, $size - 6, $size) == 'tar.gz') ? 'tar.gz' : file::getExtension($file);
 		return $type;
 	}
@@ -60,7 +60,7 @@ class archive {
 
 	/*	Extrait les fichiers
 		@param	string	$file	L'archive
-		@param	string	$dest	Le répertoire de destination
+		@param	string	$dest	Le rÃ©pertoire de destination
 	 */
 	function extract($file, $dest) {
 		$ret = false;
@@ -83,9 +83,9 @@ class archive {
 	}
 
 
-	/*	Créé une archive contenant tous les fichiers d'un répertoire
+	/*	CrÃ©Ã© une archive contenant tous les fichiers d'un rÃ©pertoire
 		@param	string	$archive	L'archive de destination
-		@param	string	$path		Le répertoire en question
+		@param	string	$path		Le rÃ©pertoire en question
 	 */
 	function createFromDir($archive, $path) {
 
@@ -96,26 +96,22 @@ class archive {
 			$str = null;
 			while (false !== ($occ = $hdl->read())) {
 
-				// Si on a un fichier caché...
+				// Si on a un fichier cachÃ©...
 				if ($occ{0} == '.')
 					continue;
 
 				if (is_file($path.$occ)) {
 					$str[] = $path.$occ;
-//					$str .= $path.$occ.',';
 				}
 			}
-/*
-			$zip = new PclZip($archive);
-			$out = $zip->create($str, PCLZIP_OPT_REMOVE_PATH, $path);
-*/
+
 			$out = PclTarCreate($archive, $str, 'tar', null, $path);
 		}
 
 		return $out;
 	}
 
-	/*	Renvoie un tableau contenant les nom des fichiers précédent et suivant en tenant compte du tri
+	/*	Renvoie un tableau contenant les nom des fichiers prÃ©cÃ©dent et suivant en tenant compte du tri
 		@param	string	$archive	L'archive
 	 */
 	function getPrevNext($archive, $target) {

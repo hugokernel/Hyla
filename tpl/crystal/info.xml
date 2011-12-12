@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<template>
+	<name>Crystal</name>
+	<description>Thème en xhtml</description>
+	<author>hugo</author>
+	<version>1</version>
+	<header>Content-Type: text/html; charset=UTF-8</header>
+	<img-src>/tpl/%s/img</img-src>
+	<php-function></php-function>
+	<stylesheets>
+		<stylesheet>
+			<type>text/css</type>
+			<media>screen,projection</media>
+			<title>Standard</title>
+			<href>default.css</href>
+		</stylesheet>
+		<stylesheet>
+			<type>text/css</type>
+			<media>screen,projection</media>
+			<title>Cacher l'arborescence</title>
+			<href>no-tree.css</href>
+		</stylesheet>
+<!--
+		<stylesheet>
+			<type>text/css</type>
+			<media>screen,projection</media>
+			<title>Spécial</title>
+			<href>special.css</href>
+		</stylesheet>
+-->
+	</stylesheets>
+</template>
+

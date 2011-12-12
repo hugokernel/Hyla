@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -26,17 +26,14 @@ class plugins {
 
 	var $cobj;
 
-
-	function plugins() {
-
-		global $cobj;
+	function plugins($cobj) {
 
 		$this->cobj = &$cobj;
 
 		$this->info = array(
 			'dir'			=>	'default',
 			'name'			=>	'Default',
-			'description'	=>	'Plugin par défaut',
+			'description'	=>	'Plugin par dÃ©faut',
 			'author'		=>	'hugo',
 			'version'		=>	'1'
 			);
@@ -48,16 +45,16 @@ class plugins {
 
 		// Si y'a pas d'extension, on cherche pas !
 		if (!empty($this->cobj->extension)) {
-			$hdl = dir(DIR_PLUGINS);
+			$hdl = dir(DIR_PLUGINS_OBJ);
 			if ($hdl) {
 				while (false !== ($occ = $hdl->read())) {
 
-					// Si on a un fichier caché...
+					// Si on a un fichier cachÃ©...
 					if ($occ{0} == '.')
 						continue;
 
-					// Si ce n'est pas un répertoire
-					if (!is_dir(DIR_PLUGINS.'/'.$occ))
+					// Si ce n'est pas un rÃ©pertoire
+					if (!is_dir(DIR_PLUGINS_OBJ.'/'.$occ))
 						continue;
 
 					$this->_getInfo($occ);
@@ -74,17 +71,17 @@ class plugins {
 
 		$ret = false;
 
-		$xfile = DIR_PLUGINS.$file.'/info.xml';
+		$xfile = DIR_PLUGINS_OBJ.$file.'/info.xml';
 		if (file_exists($xfile)) {
 			$xml =& new XPath($xfile);
 			$res = $xml->match('/plugin[contains(@ext,"'.$this->cobj->extension.'")]/*');
 			if ($res) {
 				$this->info = array(
 						'dir'			=>	$file,
-						'name'			=>	utf8_decode($xml->getData('/plugin/name')),
-						'description'	=>	utf8_decode($xml->getData('/plugin/description')),
-						'author'		=>	utf8_decode($xml->getData('/plugin/author')),
-						'version'		=>	utf8_decode($xml->getData('/plugin/version'))
+						'name'			=>	$xml->getData('/plugin/name'),
+						'description'	=>	$xml->getData('/plugin/description'),
+						'author'		=>	$xml->getData('/plugin/author'),
+						'version'		=>	$xml->getData('/plugin/version'),
 						);
 				$ret = true;
 			}
@@ -93,9 +90,9 @@ class plugins {
 		return $ret;
 	}
 
-	/*	Renvoie un tableau contenant les plugins disponibles pour un répertoire
+	/*	Renvoie un tableau contenant les plugins disponibles pour un rÃ©pertoire
 		@access	static
-		/!\ Factoriser le code ci dessous avec le reste du code, c'est pas très propre... /!\
+		/!\ Factoriser le code ci dessous avec le reste du code, c'est pas trÃ¨s propre... /!\
 	 */
 	function getDirPlugins() {
 		return plugins::_getPlugins(true);
@@ -112,19 +109,19 @@ class plugins {
 
 		$tab = array();
 
-		$hdl = dir(DIR_PLUGINS);
+		$hdl = dir(DIR_PLUGINS_OBJ);
 		if ($hdl) {
 			while (false !== ($occ = $hdl->read())) {
 
-				// Si on a un fichier caché...
+				// Si on a un fichier cachÃ©...
 				if ($occ{0} == '.')
 					continue;
 
-				// Si ce n'est pas un répertoire
-				if (!is_dir(DIR_PLUGINS.'/'.$occ))
+				// Si ce n'est pas un rÃ©pertoire
+				if (!is_dir(DIR_PLUGINS_OBJ.'/'.$occ))
 					continue;
 
-				$xfile = DIR_PLUGINS.$occ.'/info.xml';
+				$xfile = DIR_PLUGINS_OBJ.$occ.'/info.xml';
 				if (file_exists($xfile)) {
 
 					$xml =& new XPath($xfile);
@@ -132,12 +129,12 @@ class plugins {
 					$res = $xml->match($exp);
 					if ($res) {
 						$tab[] = array(
-							'dir'			=>	$xfile,
-							'name'			=>	utf8_decode($xml->getData('/plugin/name')),
-							'description'	=>	utf8_decode($xml->getData('/plugin/description')),
-							'author'		=>	utf8_decode($xml->getData('/plugin/author')),
-							'version'		=>	utf8_decode($xml->getData('/plugin/version'))
-							);
+								'dir'			=>	$xfile,
+								'name'			=>	$xml->getData('/plugin/name'),
+								'description'	=>	$xml->getData('/plugin/description'),
+								'author'		=>	$xml->getData('/plugin/author'),
+								'version'		=>	$xml->getData('/plugin/version'),
+								);
 					}
 				}
 			}
@@ -146,7 +143,7 @@ class plugins {
 		return $tab;
 	}
 
-	/*	Vérifie que le plugin existe bien
+	/*	VÃ©rifie que le plugin existe bien
 		@param	string	$plugin_name	Le nom du plugin
 		@return	Retourne true ou false
 	 */
@@ -163,54 +160,64 @@ class plugins {
 	}
 
 	/*	Charge le plugin correspondant
-		@param	string	$plugin	Le plugin forcé
-		@return	On renvoie le contenu généré par le plugin
+		@param	string	$plugin	Le plugin forcÃ©
+		@return	On renvoie le contenu gÃ©nÃ©rÃ© par le plugin
 	 */
 	function load($plugin = null) {
 
-		global $curl, $conf, $l10n;
+		global $conf, $l10n;
 
 		$var_tpl = null;
 
 		$plugin_dir = $plugin ? strtolower($plugin) : $this->info['dir'];
 
-		$pfile = DIR_PLUGINS.$plugin_dir.'/index.php';
+		$pfile = DIR_PLUGINS_OBJ.$plugin_dir.'/index.php';
 
 		if (file_exists($pfile)) {
-			include($pfile);
+			include_once($pfile);
 
-			$pname = 'Plugin_';
+			$pname = 'plugin_obj_';
 			$pname .= $plugin_dir;
 
 			// Y'a t-il un fichier de langue ?
-			$l10n_file = DIR_PLUGINS.$plugin_dir.'/'.FILE_L10N;
+			$l10n_file = DIR_PLUGINS_OBJ.$plugin_dir.'/l10n';
 			if (file_exists($l10n_file)) {
-				include($l10n_file);
+				$l10n->setSpecialFile(DIR_PLUGINS_OBJ.$plugin_dir.'/', 'messages.php');
 			}
 
 			// Chargement de la classe 
-			$p = new $pname();
+			$o = new $pname($this->cobj);
 
-			$p->plugin_name = strtolower($this->info['name']);
-
-			if (method_exists($p, 'act')) {
-				$p->act($curl->pact);
+			// Ajout de la css commune de plugins
+			$name = template::get_file(DIR_TEMPLATE.'/plugins.css');
+			if ($name) {
+				add_stylesheet_plugin($name, $o->plugin_name);
 			}
 
-			// Y'a t-il une méthode fullscreen ?
-			if (method_exists($p, 'fullscreen') && $plugin) {
-				$var_tpl = $p->fullscreen($curl->paff);
-				print($p->tpl->finish($var_tpl));
-				system::end();
+			$o->_url_2_plugin = url::getHost().REAL_ROOT_URL.'/'.DIR_PLUGINS_OBJ.$plugin_dir.'/';		// ToDo: Mettre Ã§a dans plugin_obj
+
+			// ExÃ©cution de act()
+			if (method_exists($o, 'act')) {
+				$o->act(url::getQueryPact());
 			}
 
-			$var_tpl = $p->aff($curl->paff);
-			$p = null;
-		}
+			// Y'a t-il une mÃ©thode fullscreen ?
+			if (method_exists($o, 'fullscreen') && $plugin) {
+				/*	Si la mÃ©thode fullscreen renvoie true, on stoppe l'exÃ©cution,
+					sinon, on continue
+				 */
+				if ($o->fullscreen(url::getQueryPaff()))
+					system::end();
+			}
+
+			// ExÃ©cution de aff()
+			$var_tpl = $o->aff(url::getQueryPaff());
+			$o = null;
+		} else
+			echo 'Fatal error : Inexistant plugin !';
 
 		return $var_tpl;
 	}
-
 }
 
 ?>

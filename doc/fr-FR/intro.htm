@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+
+<head>
+	<title>Administration</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<link rel="shortcut icon" type="image/x-icon" href="img/icon.png" />
+	<link rel="icon" type="image/png" href="img/icon.png"/>
+
+	<link rel="stylesheet" type="text/css" media="screen,projection" title="Standard" href="default.css" />
+
+</head>
+
+<body>
+
+	<h1>Aide - Introduction</h1>
+
+	<p>
+		<a href="index.htm">Retourner à l'index</a>
+	</p>
+
+	<ul>
+		<li><a href="#description">Description</a></li>
+		<li><a href="#pre-requi">Pré-requi</a></li>
+		<li><a href="#fonctionnement">Fonctionnement</a></li>
+	</ul>
+
+	<hr />
+
+	<h2 id="description">Description</h2>
+
+	<p>
+		Hyla est un gestionnaire de fichiers en ligne <a href="http://www.gnu.org/philosophy/free-sw.fr.html">libre sous licence GPL</a>.
+		<br />
+		Pour son fonctionnement, Hyla utilise <a href="http://www.php.net/">PHP</a> et <a href="http://www.mysql.com/">MySql</a> qui sont aussi des logiciels libres.
+	</p>
+
+	<p>
+		Voici une liste des caractéristiques de Hyla :
+	</p>
+
+	<ul>
+		<li>
+			<strong>Respecte les standards</strong>
+			<p>
+				Hyla respecte les standards et essaie d'être réellement accessible pour toute sorte de navigateur.
+			</p>
+			<p>
+				Une démarche qualité à été entreprise auprès de <a href="http://www.opquast.com/">Opquast</a>, vous pouvez
+				consulter <a href="http://www.hyla-project.org/Hyla_Rapport_Opquast.pdf">le rapport pour la version 0.8.0</a>.
+			</p>
+		</li>
+		<li>
+			<strong>
+				Installation et utilisation aisée
+			</strong>
+			<p>
+				Un script d'installation simplifie grandement la mise en place d'Hyla sur votre serveur, vous n'avez qu'à suivre les différentes étapes !
+			</p>
+		</li>
+		<li>
+			<strong>
+				S'adapte à l'apparence de votre site très facilement
+			</strong>
+			<p>
+				Afin d'intégrer Hyla à l'interface de votre site, vous pouvez au choix modifier la feuille de style ou créer un nouveau "template", simplement en
+				créant un nouveau répertoire dans tpl/, copiez uniquement les fichiers que vous voulez modifier du template par défaut dans ce dernier,
+				indiquez simplement dans l'interface d'administration que vous désirez utiliser ce nouveau template et Hyla utilisera votre fichier
+				en lieu et place de l'original.
+			</p>
+		</li>
+		<li>
+			<strong>
+				Ajout de fichiers
+			</strong>
+			<p>
+				Il vous est possible d'ajouter des fichiers (plusieurs en une seule fois) provenant de votre ordinateur local ou de mettre une url,
+				Hyla se chargera alors dans ce dernier cas, de télécharger le fichier pour vous.
+			</p>
+			<p>
+				Si vous le souhaitez, il est également possible d'autoriser l'envoie de fichiers anonymes, ainsi, les visiteurs de votre site pourront
+				envoyer leur fichiers, ces derniers seront placés dans un endroit protégé que seul un administrateur peut voir, il pourra par la suite
+				valider ou supprimer les fichiers téléchargés, il est également possible de recevoir une notification par mail lorsqu'un fichier anonyme à été envoyé.
+			</p>
+		</li>
+		<li>
+			<strong>
+				Tout est "plugin"
+			</strong>
+			<p>
+				En effet, selon l'objet courant, Hyla charge tel ou tel plugin, voici une liste des plugins existant actuellement :
+			</p>
+			<ul>
+				<li><em>Archive</em> : Vous permet de voir le contenu d'un fichier Tar, Tar.Gz, Gz ou Zip</li>
+				<li><em>Csv</em> : Visualisez le contenu de vos fichiers <acronym title="Comma-Separated Value">CVS</acronym> ou <acronym title="Tab-Separated Value">TSV</acronym> en les affichant sous forme de tableau</li>
+				<li><em>Dir</em> : C'est ce plugin qui vous permet de voir le contenu d'un répertoire sous forme de liste</li>
+				<li><em>Flv</em> : Visualiser les vidéos au format flv (plugin flash de <a href="http://blog.neolao.com/2006/02/24/13-lecteur-flash-flv">neolao</a>)</li>
+				<li><em>Gallery</em> : Créer une galerie photos</li>
+				<li><em>Image</em> : Affiche les images (png, gif, jpeg, tiff...), créer éventuellement des miniatures et affiche les informations EXIF si elles sont disponibles.</li>
+				<li><em>Mp3</em> : Lit un fichier Mp3 (plugin flash de <a href="http://blog.neolao.com/2006/02/14/11-lecteur-flash-mp3">neolao</a>)</li>
+				<li><em>Php</em> : Affiche le contenu d'un fichier PHP</li>
+				<li><em>Slideshow</em> : Créé un diaporama dynamique de votre répertoire courant</li>
+				<li><em>Swf</em> : Lit un fichier Swf (flash)</li>
+				<li><em>Text</em> : Affiche le contenu d'un fichier texte</li>
+				<li><em>VCard</em> : Visualiser le contenu de vos carte de visites</li>
+				<li><em>Video</em> : Lit vos vidéos dans un lecteur embarqué</li>
+				<li><em>Zenphoto</em> : Ce plugin permet de générer des galeries à la manière de l'application <a href="http://www.zenphoto.org/">Zenphoto</a></li>
+			</ul>
+		</li>
+		<li>
+			<strong>
+				Gérer les accès
+			</strong>
+			<p>
+				Un système de gestion de droits permet de gérer les accès par dossier et par utilisateur ou groupe d'utilisateur, ainsi
+				il vous est possible de décider qui peut ajouter des fichiers dans tel et tel dossier, qui peut ajouter des commentaires etc...
+			</p>
+			<p>
+				<a href="doc/fr-FR/rights.htm" onclick="popup(this.href); return false;">Consultez la documentation</a> pour plus d'informations sur les droits.
+			</p>
+		</li>
+		<li>
+			<strong>
+				Manipuler vos archives
+			</strong>
+			<p>
+				Ouvrez vos archives au format tar, gz, tar.gz et zip comme de simple répertoires.
+			</p>
+		</li>
+		<li>
+			<strong>
+				Une administration simple et claire
+			</strong>
+			<p>
+				Hyla possède une zone d'administration qui vous permettra de tout configurer, ainsi, vous pourrez ajouter, modifier, supprimer des utilisateurs,
+				déplacer, supprimer les fichiers anonymes qui ont été envoyés...etc...
+			</p>
+		</li>
+
+		<li>
+			<strong>
+				Divers
+			</strong>
+			<ul>
+				<li>
+					<strong>Rss :</strong> Grâce au fils rss, il vous est possible de rester connecter à l'activité du site, vous serez ainsi averti lorsqu'un
+					nouveau fichier sera présent ou lorsqu'un commentaire sera posté.
+				</li>
+				<li>
+					<strong>L'arborescence de fichiers :</strong> Elle vous permet de voir tous vos dossiers d'un seul coup d'oeil.
+				</li>
+				<li>
+					<strong>La pagination :</strong> Il est possible d'afficher qu'une certaine quantité de fichiers par répertoires, on navigue alors d'une page à l'autre,
+					lors de la visualisation d'un fichier (même contenu dans une archive), le fichier précédent et le suivant sont affichés afin d'y accéder directement.
+				</li>
+				<li>
+					<strong>Le tri</strong> Vous vouvez trier vos fichiers et répertoires par ordre alphabétique, par extensions, par catégories (images, musiques...) et par taille.
+					<br />
+					Une fonction très pratique vous permet aussi de trier par critère de tri.
+				</li>
+				<li>
+					<strong>Diaporama :</strong> Générer des diaporamas d'un seul clic pour regarder vos photos.
+				</li>
+				<li>
+					<strong>Téléchargement :</strong> Hyla vous permet de télécharger bien évidemment les fichiers mais aussi, les fichiers contenus dans les archives et aussi
+					des répertoires qui sont "zippé" à la volée.
+				</li>
+				<li>
+					<strong>Actions sur les fichiers et répertoires :</strong> Hyla vous propose différentes actions vous permettant de déplacer, renommer, supprimer, créer des répertoires
+				</li>
+				<li>
+					<strong>Description, commentaires :</strong> Il est possible de mettre une description sur vos fichiers et répertoires très simplement.
+					Vos visiteurs peuvent aussi poster des commentaires.
+				</li>
+			</ul>
+		</li>
+	</ul>
+
+
+	<h2 id="pre-requi">Pré-requi</h2>
+
+	<p>
+		Voici, ci dessous, la configuration minimale exigée par Hyla 0.8 :
+	</p>
+
+	<ul>
+		<li>
+			<strong>Php</strong> : 4.0.4
+			<ul>
+				<li><strong>Extensions</strong> :
+					<ul>
+						<li><em>Sessions</em> (Gestion des sessions...)</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li><strong>Mysql</strong> : 4.1</li>
+	</ul>
+
+	<p>
+		Afin de fonctionner convenablement, vous devez disposer de la configuration suivante :
+	</p>
+
+	<ul>
+		<li>
+			<strong>Php</strong> : 4.2.0 et supérieure
+			<ul>
+				<li>
+					<strong>Configuration</strong> :
+					<ul>
+						<li><em>allow_url_fopen</em> Téléchargement de fichiers distants</li>
+						<li><em>file_uploads</em> Téléchargement de fichiers du poste client vers le serveur</li>
+					</ul>
+				</li>
+				<li>
+					<strong>Extensions</strong> :
+					<ul>
+						<li><em>GD</em> (Création des miniatures)</li>
+						<li><em>EXIF</em> (Création des miniatures)</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li><strong>Mysql</strong> : 4.1 et supérieure</li>
+	</ul>
+
+	<h2 id="fonctionnement">Fonctionnement</h2>
+
+	<p>
+		Le fonctionnement de Hyla est assez simple, tout est basé sur <a href="dev.htm#plugins">un système de plugins</a>, ainsi, à l'ouverture d'un objet (c'est ainsi que sont nommés
+		les fichiers ou dossiers au sein de Hyla), Hyla va charger le plugin correspondant au type de ce dernier, si l'objet courant est un dossier,
+		un plugin listage de dossier va être ouvert, si, par contre, l'objet courant est un fichier, Hyla va tenter d'ouvrir ce dernier avec un plugin
+		adéquate en fonction de l'extension du fichier, si Hyla ne trouve pas de plugin, il vous sera possible de forcer l'ouverture d'un plugin.
+	</p>
+
+	<hr />
+
+	<a href="#">Remonter</a>
+
+</body>
+
+</html>

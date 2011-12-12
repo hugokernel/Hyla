@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -26,14 +26,14 @@ class db
 	var $_db_host;		// Serveur MySQL
 	var $_db_user;		// Login de la base
 	var $_db_pass;		// Mot de Passe de la base
-	var $_db_base;		// Base de données
+	var $_db_base;		// Base de donnÃ©es
 
 	/*	Attribut divers
 	 */
-	var $_id_bdd;		// ID de la connexion à la base
-	var $_id_query;		// ID de la dernière requête
-	var $_nbr_query;	// Comptage des requêtes
-	var $_last_query;	// La dernière requête
+	var $_id_bdd;		// ID de la connexion Ã  la base
+	var $_id_query;		// ID de la derniÃ¨re requÃªte
+	var $_nbr_query;	// Comptage des requÃªtes
+	var $_last_query;	// La derniÃ¨re requÃªte
 
 
 	/*	Le constructeur...
@@ -64,15 +64,19 @@ class db
 		
 		//extension_loaded('mysql');
 		
-		// Connexion à la base de données
+		// Connexion Ã  la base de donnÃ©es
 		if (!$this->_id_bdd = mysql_connect($this->_db_host, $this->_db_user, $this->_db_pass))
 			trigger_error(__('Couldn\'t connect to sql server !'));
+
+		// Pour l'UTF8
+		mysql_query("SET NAMES 'utf8'");
+		mysql_query("SET character_set_server = utf8");
 
 		return $this->_id_bdd;
 	}
 
-	/*	Sélection de la base de données
-		@param	string	$_db_base	Base de données
+	/*	SÃ©lection de la base de donnÃ©es
+		@param	string	$_db_base	Base de donnÃ©es
 	 */
 	function select($_db_base) {
 		$this->_db_base = $_db_base;
@@ -83,7 +87,7 @@ class db
 		return $db;
 	}
 
-	/*	Fermeture de la base de données
+	/*	Fermeture de la base de donnÃ©es
 	 */
 	function close($_id_bdd = null) {
 		if ($_id_bdd == null)
@@ -93,7 +97,7 @@ class db
 		return $ret;
 	}
 
-	/*	Exécution d'une requête
+	/*	ExÃ©cution d'une requÃªte
 	 */
 	function execQuery($qry, $_id_bdd = null) {
 		$this->_nbr_query++;
@@ -103,12 +107,12 @@ class db
 		$this->_last_query = $qry;
 		$this->_id_query = mysql_query($qry, $_id_bdd);
 		
-//echo '<hr>'.$qry.'<hr>';
+		//echo '<hr>'.$qry.'<hr>';
 
 		return $this->_id_query;
 	}
 
-	/*	Renvoie le nombre de requêtes exécuté en tout !
+	/*	Renvoie le nombre de requÃªtes exÃ©cutÃ© en tout !
 	 */
 	function getNbrQuery() {
 		return $this->_nbr_query;
@@ -128,35 +132,35 @@ class db
 		return mysql_data_seek($_id_query, 0);
 	}
 
-	/*	Retourne une ligne de résultat sous la forme d'un tableau associatif
+	/*	Retourne une ligne de rÃ©sultat sous la forme d'un tableau associatif
 	 */
 	function fetchArray($_id_query = null) {
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
 		return mysql_fetch_array($_id_query);
 	}
 
-	/*	Retourne une ligne de résultat sous la forme d'un tableau associatif
+	/*	Retourne une ligne de rÃ©sultat sous la forme d'un tableau associatif
 	 */
 	function fetchAssoc($_id_query = null) {
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
 		return mysql_fetch_assoc($_id_query);
 	}
 
-	/*	Retourne le nombre de ligne d'un résultat
+	/*	Retourne le nombre de ligne d'un rÃ©sultat
 	 */
 	function getNumRows($_id_query = null) {
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
 		return mysql_num_rows($_id_query);
 	}
 
-	/*	Efface le résultat de la mémoire
+	/*	Efface le rÃ©sultat de la mÃ©moire
 	 */
-	function freeResult($_id_query) {
+	function freeResult($_id_query = null) {
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
 		return mysql_free_result($_id_query);
 	}
 
-	/*	Retourne l'identifiant généré par la dernière requête INSERT
+	/*	Retourne l'identifiant gÃ©nÃ©rÃ© par la derniÃ¨re requÃªte INSERT
 	 */
 	function getInsertID($_id_bdd = null) {
 		if (!$_id_bdd)
@@ -164,7 +168,7 @@ class db
 		return mysql_insert_id($_id_bdd);
 	}
 
-	/*	Retourne le numéro d'erreur et l'erreur
+	/*	Retourne le numÃ©ro d'erreur et l'erreur
 	 */
 	function getError() {
 		$error['message'] = mysql_error($this->_id_bdd);

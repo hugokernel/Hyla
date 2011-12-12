@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin target="file" ext="flv">
+	<name>Flv</name>
+	<description>Ce plugin flash permet de lire les fichiers flv</description>
+	<author>hugo</author>
+	<version>1</version>
+</plugin>

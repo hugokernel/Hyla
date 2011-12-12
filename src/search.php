@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -28,15 +28,17 @@ $tpl->set_block('search', array(
 		'result'	=>	'Hdlresult',
 		));
 
+$l10n->setFile('search.php');
+
 if (isset($_POST['word']) && !empty($_POST['word'])) {
 
 	$scandir = (isset($_POST['scandir'])) ? true : false;
 	$recurs = (isset($_POST['recurs'])) ? true : false;
 
-	$tab = file::searchFile($cobj->path, $_POST['word'], $recurs, FOLDER_ROOT, $scandir, $conf['view_hidden_file']);
+	$tab = file::searchFile($cobj->path, $_POST['word'], $recurs, FOLDER_ROOT, $scandir, $conf['view_hidden_file']);
+	$tab = $obj->getDirContent(null, null, 0, 10000, $tab);
+
 	if ($tab) {
-		$tab = $obj->getDirContent(null, null, 0, 10000, $tab);
-	
 		$size = sizeof($tab);
 		for($i = 0; $i < $size; $i++) {
 			$tpl->set_var(array(
@@ -51,7 +53,6 @@ if (isset($_POST['word']) && !empty($_POST['word'])) {
 		}
 		
 		$tpl->parse('Hdlresult', 'result', true);
-		
 	} else
 		$tpl->set_var('ERROR', view_error(__('No result')));
 	
@@ -60,13 +61,16 @@ if (isset($_POST['word']) && !empty($_POST['word'])) {
 			'RECURS_CHECKED'	=>	isset($_POST['recurs']) ? 'checked="checked"' : null,
 			'WORD'				=>	strip_tags($_POST['word']),
 			));
+
+	$l10n->setStr('search.php', 'Search results for &laquo; %s &raquo; :', strip_tags($_POST['word']));
 }
 
-$tpl->set_var(array(
-		'FORM_SEARCH'	=>	url::getCurrentObj('search'),
-		'OBJECT'		=>	$cobj->path
-		));
+$tpl->set_var('FORM_SEARCH', url::getCurrentObj('search'));
+
+$l10n->setStr('search.php', 'Search in &laquo; %s &raquo;', $cobj->path);
 
 $var_tpl = $tpl->parse('OutPut', 'search');
+
+$var_tpl = $l10n->parse($var_tpl, 'search.php');
 
 ?>

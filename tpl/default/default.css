@@ -3,6 +3,7 @@ body {
 /*	font-family: Verdana, Arial, Helvetica, sans-serif;*/
 	font-family: Bitstream Vera Sans, sans-serif;
 	background: white;
+	font-size: 80%;
 }
 
 a {
@@ -17,73 +18,53 @@ a:hover {
 	text-decoration: none;
 }
 
-#tree {
-	float: left;
-	overflow: auto;
-	width: 15%;
-	height: 50%;
-}
-
-#tree a {
-	color: #111;
-}
-
-#tree ul {
-	padding-left: 10px;
-	margin-left: 10px;
-}
-
-#tree li {
-	list-style-type: none;
-}
 
 #content {
 	float: right;
 	width: 81%;
-	margin-left: 1%;
-	margin-right: 1%;
-}
-
-#content-no_tree {
-	margin-left: 2%;
-	margin-right: 2%;
-	width: 96%;
+	margin: 1%;
 }
 
 
-.tab {
-	border: 1px solid #999;
-}
-.tab td {
-	padding: 1px;
-	margin: 1px;
-	border: 1px solid #999;
+.icon {
+	width: 32px;
+	height: 32px;
 }
 
 
 
-.line {
-	background: transparent;
-}
-
-.line:hover {
-	background: #DDD;
-}
-
-.line td {
-	border-bottom: 1px solid #BBB;
-}
-
-
-.table .header {
-	padding: 10px;
+.header {
 	background: #EEE;
-	font-size: 110%;
 }
 
-.header-info {
-	font-size: 115%;
+
+.ok {
+	font-size: 110%;
+	color: green;
 	font-weight: bold;
+}
+
+.no {
+	font-size: 110%;
+	color: red;
+	font-weight: bold;
+}
+
+
+/*	Affichage comme pour un listage de dossier du plugin Dir
+ */
+.line {
+	border-collapse: collapse;
+}
+
+.line td, .line th {
+	padding: 5px;
+	border: 0px;
+	border-bottom: 1px solid #CCC;
+}
+
+.line tr:hover {
+	background: #DDD;
 }
 
 .line a {
@@ -95,40 +76,96 @@ a:hover {
 
 .line a:hover {
 	color: #000;
+}
+
+
+table {
+	empty-cells: show;
+}
+
+
+/*	Affichage tableau avec contour
+ */
+.tab {
+	width: 100%;
+	border-collapse: collapse;
+	background: transparent;
+	border: 1px solid #CCC;
+}
+
+.tab tr:hover {
+	background: #DDD;
+}
+
+
+.tab td, .tab th {
+	padding: 5px;
+	border: 1px solid #BBB;
+}
+
+.tab a {
+	color: #00F;
 	font-style: normal;
 	text-decoration: none;
+	font-size: 100%;
 }
+
+.tab a:hover {
+	color: #000;
+}
+
+.tab .selected {
+	background: #C00;
+}
+
+.tab .selected:hover {
+	background: #F00;
+}
+
+
+
+
+.suggestion {
+	background: #FFC;
+	padding: 10px;
+
+	font-weight: normal;
+
+	margin: 10%;
+
+	-moz-border-radius: 10px;
+}
+
 
 .status {
 	background: #FFF;
 	padding: 5px;
 	margin: 5px;
 	-moz-border-radius: 10px;
-	border: 2px #AAA dashed;
+	border: 2px dashed #AAA;
 }
 
 .error {
 	color: red;
 	background: #FCC;
 	font-weight: bold;
-	padding: 5px;
-	margin: 5px;
+	padding: 10px;
+	margin: 10px;
 	-moz-border-radius: 10px;
 }
 
-h4 {
-	border: 2px solid #CCC;
-	padding: 5px;
+h4.description {
+	border: 2px solid #DDD;
+	padding: 10px;
+	margin: 20px;
 	background: #EEE;
 	font-weight: normal;
+	font-size: 85%;
+	color: #AA0;
+	clear: both;
 }
 
 
-fieldset {
-	padding: 10px;
-	margin: 0px;
-	font-size: 80%;
-}
 
 .copyright {
 	padding: 5px;
@@ -141,39 +178,50 @@ fieldset {
 	clear: both;
 }
 
+
 #toolbar {
 	margin-top: 2%;
 	clear: both;
+	padding-top: 20px;
 }
 
-/*
-#toolbar > fieldset > ul {
-	list-style-type: none;
-	list-style-image: none;
+#toolbar img {
+	width: 32px;
+	height: 32px;
 }
 
-#toolbar > fieldset > ul > li {
-	margin: 0;
-	margin-right: 5px;
-	padding: 10px;
-	display:inline;
-}
-*/
+#toolbar a {
+	float: left;
 
-#toolbar > fieldset > a {
-	padding: 2px;
-	border: 1px solid transparent;
+	/*	Pour IE 6 */
 	margin-right: 10px;
+	padding: 2px;
+	border: 1px solid #EEE;
 }
 
-#toolbar > fieldset > a:hover {
-	background: #EEE;
+/* pour les autres navigateurs */
+* > #toolbar a {
+	border: 1px solid transparent;
+	padding: 5px;
+	padding-right: 10px;
+}
+
+/* pour IE 7 */
+*+html #toolbar a {
+	padding: 5px;
+}
+
+#toolbar a:hover {
+	background: #DDD;
 	border: 1px solid #BBB;
 }
 
-.description {
-	font-size: 85%;
-	color: #AA0;
+#toolbar #administration {
+	color: red;
+}
+
+#toolbar #username {
+	font-weight: bold;
 }
 
 
@@ -213,47 +261,68 @@ input[type=submit]:hover {
 	background: #DDD;
 }
 
+select {
+	background: #FFE;
+	border: 1px solid #CCC;
+}
+
+
 
 fieldset {
 	border: 1px solid #CCC;
 	background: #EEE;
+	margin: 10px;
+	font-size: 90%;
+
+	/* Pour avoir un fieldset qui ressemble à quelque chose sous IE */
+    position: relative;
+    padding: 0 0.5em 1em 0.5em;
+
+	/*	Pour IE 6 */
+	margin-top: 30px;
 }
+
+/* pour les autres navigateurs */
+* > fieldset {
+	margin-top: 0px;
+}
+
+/* pour IE 7 */
+*+html fieldset {
+	margin-top: 30px;
+}
+
 
 legend {
 	font-size: 120%;
 	font-weight: bold;
+
+	/* Pour avoir un fieldset qui ressemble à quelque chose sous IE */
+    position: relative;
+    top: -1.5em;
+    padding: 0.4em;
 }
 
 
 #form_misc {
-	padding: 40px;
+/*	padding: 10%;*/
 	width: 100%;
 }
 
-.comment_line {
-	margin: 5px;
-	padding: 10px;
-	background: #EEE;
-	font-size: 90%;
-	-moz-border-radius: 15px;
-}
+
 
 
 .comment_info {
-	font-weight: bold;
 	padding: 1px;
 }
 
 .comment_content {
 	padding: 10px;
+	background: #EEE;
+	-moz-border-radius: 10px;
 }
 
 .comment_nbr {
-/*
-	background : transparent url(img/PostIt.png) repeat-x top left;
-	width: 100px;
-	height: 70px;
-*/
 	color: #990;
 	display: inline;
 }
@@ -262,22 +331,17 @@ legend {
 
 img {
 	border: 0px;
+	vertical-align: middle;
 }
 
 
 
 .option {
 	padding: 5px;
-	border: 1px #BBB solid;
+	border: 1px solid #BBB;
 	background: #EEE;
 }
 
-
-.plugin {
-	padding: 5px;
-	border: 2px #AAA dashed;
-	text-align: center;
-}
 
 
 .info {
@@ -305,168 +369,159 @@ th {
 	text-align: center;
 	font-size: 100%;
 	padding-bottom: 20px;
+	clear: both;
 }
 
-.pagination > #current {
-	width: 30%;
+.pagination #current_page {
+	font-weight: bold;
 }
 
-.pagination > #previous {
+.pagination #previous {
 	float: left;
-	width: 30%;
+	width: 20%;
+	text-align: left;
 }
 
-.pagination > #next {
+.pagination #num_page {
+	width: 60%;
+	float: left;
+}
+
+.pagination #next {
 	float: right;
-	width: 30%;
+	width: 20%;
+	text-align: right;
 }
 
 
 
 .action {
-	width: 80%;
-	margin-left: 10%;
-	margin-right: 10%;
+	width: 100%;
 }
 
 #main {
-	width: 90%;
+	width: 96%;
 
-	margin-left: 5%;
-	margin-right: 5%;
+	margin-left: 2%;
+	margin-right: 2%;
 }
 
 
 
 
 #sidebar {
-	padding: 1em;
+	padding: 15px;
 }
 
-#sidebar a{
-	padding: 0.5em;
+#sidebar a {
+	padding: 10px;
 	text-decoration: none;
+
+	/*	Pour IE 6 */
+	margin-right: 10px;
+	padding: 2px;
+	border: 1px solid #FFF;
 }
 
-#sidebar a:hover{
-	background: #DDD;
-	-moz-border-radius: 10px;
+/* pour les autres navigateurs */
+* > #sidebar a {
+	border: 1px solid transparent;
+	padding: 10px;
+	padding-right: 10px;
 }
 
-#sidebar ul{
+/* pour IE 7 */
+*+html #sidebar a {
+	padding: 5px;
+}
+
+#sidebar a:hover {
+	background: #EEE;
+	border: 1px solid #DDD;
+}
+
+#sidebar ul {
 	list-style-type: none;
 	list-style-image: none;
 	margin: 0;
 	padding: 0;
 }
 
-#sidebar li{
+#sidebar li {
 	margin: 0;
 	padding: 0;
 	display:inline;
 }
 
 
-
-
-.gallery {
-	width: 100%;
-	text-align: center;
-}
-
-
-
-.gallery td {
-	background: #EEE;
-	border: 1px solid #CCC;
-	font-size: 80%;
-	text-align: right;
-}
-
-
-.gal_item {
-
-}
-
-.gal_comment {
-/*	text-align: left;
-	background: #DDD;*/
-/*	float: right;*/
-/*	top: 1px;
-	left: 1px;*/
-/*	position: absolute;*/
-}
-
-.gal_img {
-	text-align: center;
-	padding: 5%;
-}
-
-
-.gallery fieldset {
-	border: 0px;
-	border: 1px #CCC solid;
-	background: #EEE;
-}
-
-.gallery fieldset legend {
-	border: 1px #CCC solid;
-	background: #DDD;
-}
-
-
-
-.gallery > .img1 {
-	margin-left: 50%;
-}
-
-.gallery > .img2 {
-	margin-right: 50%;
-}
-
-/*	Plugin Php, text
+/*	L'arborescence
  */
-.textbox {
-	background: #FFF;
-	text-align: left;
-	padding: 10px;
-}
-
-
-/*	Zenphoto
- */
-#zenphoto {
-	text-align: left;
-	margin-left: 5%;
-	margin-right: 5%;
-	width: 90%;
-}
-
-#zenphoto .header-info {
-	clear: both;
-	margin: 0%;
-	padding: 2% 0% 0% 0%;
-}
-
-#zenphoto .imagethumb a {
-	display: block;
-	padding: 10px;
-	margin: 6px;
-	
-	border: 1px solid #92BED3;
-	background: #DDEAF0;
-	line-height: 0px;
-
-	height: 120px;
-	width: 120px;
-}
-
-#zenphoto .imagethumb a:hover {
-	border: 1px solid #62A0BF;
-	background: #F4F9FB;
-}
-
-#zenphoto .imagethumb {
+#tree {
 	float: left;
+	overflow: auto;
+	width: 15%;
+	height: 50%;
+	clear: both;
 }
+
+#tree a {
+	color: blue;
+}
+
+#content-no-tree {
+	clear: both;
+	padding-top: 10px;
+}
+
+
+
+ul#arbre {
+	padding-left: 0;
+	margin-left: 0;
+}
+
+ul#arbre span {
+    font-weight: normal;
+    padding: 0 0 0 20px;
+    margin: 0 0 0 -7px;
+    background-image: url(img/bullet.gif);
+    background-repeat: no-repeat;
+    background-position: 0;
+}
+
+ul#arbre span.arbre-plus {
+    background-image: url(img/plus.gif);
+    cursor: pointer;
+}
+
+ul#arbre span.arbre-minus {
+    background-image: url(img/minus.gif);
+    cursor: pointer;
+}
+
+ul#arbre ul {
+    padding: 0;
+    margin: 0;
+}
+
+ul#arbre li {
+    padding: 0;
+    margin: 0;
+    list-style: none; 
+}
+
+ul#arbre li li {
+	margin: 2px 0 0 16px;
+}
+
+ul#arbre li:last-child {
+    border-left: 0;
+}
+
+.hide {
+    display: none;
+}
+
+
+
 

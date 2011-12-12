@@ -1,0 +1,31 @@
+
+.tab {
+	width: 100%;
+	border-collapse: collapse;
+	background: transparent;
+	border: 1px solid #CCC;
+}
+
+.tab tr:hover {
+	background: #DDD;
+}
+
+.tab td, .tab th {
+	padding: 5px;
+	border: 1px solid #BBB;
+}
+
+.tab a {
+	color: #00F;
+	font-style: normal;
+	text-decoration: none;
+	font-size: 100%;
+}
+
+.tab a:hover {
+	color: #000;
+}
+
+.tab th {
+	background: #CCC;
+}

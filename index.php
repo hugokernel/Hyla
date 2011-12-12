@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -21,23 +21,11 @@
 
 define('PAGE_HOME', true);
 
-require 'src/conf.php';
+require 'src/init.php';
+require 'src/inc/plugin_auth.class.php';
 
-require 'src/db/mysql.class.php';
-require 'src/inc/users.class.php';
-require 'src/inc/file.class.php';
-require 'src/inc/obj.class.php';
-require 'src/inc/url.class.php';
-require 'src/lib/template.inc';
 
-$starttime = system::chrono();
-
-$msg_error = null;
-
-$tab_icon = array();
-load_icon_info();
-
-/*	Connection à la base
+/*	Connection Ã  la base
  */
 $bdd =& new db();
 if (!$bdd->connect(SQL_HOST, SQL_USER, SQL_PASS))
@@ -46,36 +34,62 @@ if (!$bdd->connect(SQL_HOST, SQL_USER, SQL_PASS))
 if (!$bdd->select(SQL_BASE))
 	system::end(__('Unable to use database &laquo; %s &raquo;', SQL_BASE));
 
+
 /*	Chargement des infos de l'utilisateur courant
  */
-session_start();
+$auth = new plugin_auth();
+$auth->load();
+$cuser = $auth->getUser();
 
-if (isset($_SESSION['sess_cuser']) && $_SESSION['sess_cuser']) {
-	$cuser = unserialize($_SESSION['sess_cuser']);
-} else {
-	$usr = new users();
-	$cuser = $usr->getUser(1);
-	unset($usr);
-	$_SESSION['sess_cuser'] = serialize($cuser);
+
+/*	Chargement du dossier de partage et des droits
+ */
+$obj = new obj(FOLDER_ROOT);
+$obj->loadRights();
+
+
+/*	Analyse de l'url
+ */
+$url = new url(false);
+$url->scan();
+if (!url::getQueryObj() && url::getQueryAff(0) != 'page') {
+	url::setQueryObj('/');
+	url::setQueryAff(0, 'obj');
 }
 
-$obj = new obj(FOLDER_ROOT);
 
-$curl = url::scan();
-
-$cobj = ($curl->aff[0] != 'page') ? $obj->getInfo($curl->obj) : new tFile;
-
-/*	On vérifie que le chemin est bon
+/*	On vÃ©rifie que le chemin est bon
  */
-if ($curl->aff[0] == 'obj' && $cobj->type == TYPE_UNKNOW) {
+$cobj = (url::getQueryAff(0) != 'page') ? $obj->getInfo(url::getQueryObj(), true, true) : new tFile;
+if (!$cobj && url::getQueryAff(0) == 'obj' && ($cobj->type == TYPE_UNKNOW || !($obj->getCUserRights4Path($cobj->path) & AC_VIEW))) {
+	if (!$cobj || $cobj->file == '/') {
+		if ($cuser->id != ANONYMOUS_ID && ($obj->getCUserRights4Path('/') & AC_VIEW)) {
+			header('HTTP/1.x 404 Not Found');
 
-//	echo DIR_ROOT.'conf/config.inc.php';
-//	system::end('For security reason, you must have ');
-
-	header('HTTP/1.x 404 Not Found');
-	redirect(__('Error'), '?', __('Object not found !'));
+			// Si l'utilisateur est logguÃ©, on redirige vers l'admin
+			if (!is_readable(FOLDER_ROOT)) {
+				redirect(__('Error'), url::getPage('admin').'#configuration', __('Object not found !'));
+			} else {
+				redirect(__('Error'), url::getObj('/'), __('Object not found !'));
+			}
+		} else {
+			header('HTTP/1.x 401 Authorization Required');
+			redirect(__('Error'), url::getPage('login'), __('You do not have the rights sufficient to reach the resource !'));
+		}
+	} else {
+		header('HTTP/1.x 404 Not Found');
+		redirect(__('Error'), url::getObj('/'), __('Object not found !'));
+	}
 	system::end();
 }
+
+
+/*	Interdit de lire la config
+ */
+if (file::isInPath($cobj->realpath, file::dirName(__FILE__).'/'.DIR_CONF)) {
+	system::end(__('You do not have the rights sufficient to reach the resource !'));
+}
+
 
 /*	Traitement des actions suivi de l'affichage correspondant
  */

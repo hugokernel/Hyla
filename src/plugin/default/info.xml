@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
-
-<plugin target="file" ext="">
-	<name>Default</name>
-	<description>Plugin utilisé lorsqu'aucun autre plugin n'est trouvé</description>
-	<author>hugo</author>
-	<version>1</version>
-</plugin>
-

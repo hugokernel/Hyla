@@ -1,21 +1,31 @@
 <!-- BEGIN current_comment -->
-<a href="#comment" name="comment" onclick="swap_couche('comment');"><img src="{DIR_TEMPLATE}/img/comment.png" width="32" height="32" alt="Voir / Cacher les commentaires" /> {COMMENT_NBR} commentaire(s)</a>
-<div id="Layercomment" style="display: none;">
-	<div id="comment">
-		<!-- BEGIN comment_line -->	
-		<div class="comment_line">
-			<div class="comment_info">
-				{DATE} - <a href="{MAIL}">{AUTHOR}</a> <a href="{URL}">{URL}</a>
-			</div>
-			<div class="comment_content">
-				{COMMENT}
-			</div>
+<div style="clear: both">
+	<a href="#comment" onclick="swap_layer('comment');"><img src="{DIR_IMAGE}/comment.png" width="32" height="32" alt="Voir / Cacher les commentaires" /> {COMMENT_NBR} commentaire(s)</a>
+</div>
+
+<div style="width: 80%">
+
+	<div id="comment" class="jhidden">
+
+		<p>
+			{MSG}
+		</p>
+
+		<!-- BEGIN comment_line -->
+		<div id="comment,{ID}">
+			<p class="comment_info">
+				Le {DATE} par <strong><a href="{URL}">{AUTHOR}</a></strong> | <a href="#comment,{ID}">#</a>
+			</p>
+			<blockquote class="comment_content">
+				<p>
+					{COMMENT}
+				</p>
+			</blockquote>
 		</div>
 		<!-- END comment_line -->	
-	</div>
 
-	<div id="form_misc">
-		<form method="post" name="cm_form" action="{FORM_ADD_COMMENT}">
+		<!-- BEGIN add_comment -->
+		<form method="post" name="cm_form" action="{FORM_ADD_COMMENT}#comment" style="width: 60%">
 			<fieldset>
 				{ERROR}
 				<legend>Ajouter un commentaire</legend>
@@ -38,6 +48,8 @@
 				<input type="submit" name="Submit" value="Envoyer" />
 			</fieldset>
 		</form>
+		<!-- END add_comment -->
+
 	</div>
 
 </div>
@@ -45,20 +57,24 @@
 
 <!-- BEGIN last_comment -->
 <h2>Liste des derniers commentaires</h2>
-<div id="comment">
-	<p>
-		{MSG}
+
+<p>
+	{MSG}
+</p>
+
+<!-- BEGIN last_comment_line -->
+<div id="comment,{ID}">
+	<p class="comment_info">
+		<a href="{PATH_INFO}"><img src="{FILE_ICON}" width="32" height="32" border="0" align="middle" alt="Infos" /></a>
+		<strong>{PATH_FORMAT}</strong>
+		<br />
+		Le {DATE} par <strong><a href="{URL}">{AUTHOR}</a></strong> | <a href="#comment,{ID}">#</a>
 	</p>
-	<!-- BEGIN last_comment_line -->
-	<div class="comment_line">
-		<div class="comment_info">
-			<a href="{PATH_INFO}"><img src="{FILE_ICON}" width="32" height="32" border="0" align="middle" alt="Infos" /></a> {PATH_FORMAT}
-			{DATE} - <a href="{MAIL}">{AUTHOR}</a> <a href="{URL}">{URL}</a>
-		</div>
-		<div class="comment_content">
+	<blockquote class="comment_content">
+		<p>
 			{COMMENT}
-		</div>
-	</div>
-	<!-- END last_comment_line -->	
+		</p>
+	</blockquote>
 </div>
+<!-- END last_comment_line -->	
 <!-- END last_comment -->

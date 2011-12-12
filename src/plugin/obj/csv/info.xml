@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin target="file" ext="csv,tsv">
+	<name>Csv</name>
+	<description>Affichage du contenu de fichiers au format csv, tsv.</description>
+	<author>hugo</author>
+	<version>1</version>
+</plugin>
+

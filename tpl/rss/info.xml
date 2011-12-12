@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<template>
+	<name>Rss</name>
+	<description>Flux rss</description>
+	<author>hugo</author>
+	<version>1</version>
+	<header>Content-Type: text/rss+xml; charset=UTF-8</header>
+	<php-function>./tpl/default/function.php</php-function>
+</template>
+

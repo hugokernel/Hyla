@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin target="file" ext="vcf,vcard">
+	<name>Vcard</name>
+	<description>Affichage du contenu des fichiers Vcard</description>
+	<author>Alexandre Ravaux</author>
+	<version>1.3</version>
+</plugin>
+

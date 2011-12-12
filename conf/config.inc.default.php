@@ -2,7 +2,7 @@
 /*
 	This file is part of Hyla
 	Copyright (c) 2004-2006 Charles Rincheval.
-	All rights reservednstall.php?etape=5
+	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published
@@ -21,28 +21,31 @@
 
 
 /*	+----------------------------------------------------+
- 	| RÈpertoire contenant vos fichiers ‡ lister         |
+ 	| R√©pertoire contenant vos fichiers √† lister         |
  	| /!\ ATTENTION, pas de slash ou anti slash de fin ! |
  	+----------------------------------------------------+
  */
 define('FOLDER_ROOT', '/var/www');
 
 
-/*	L'emplacement de ifile aprËs le nom de domaine (sans slash de fin !)
+/*	L'emplacement de Hyla apr√®s le nom de domaine (sans slash de fin !)
 	Ex: http://ifile.free.fr/				-> mettez ''
-	Ex: http://ifile.free.fr/ifile/			-> mettez '/ifile'
-	Ex: http://ifile.free.fr/data/ifile		-> mettez '/data/ifile'
+	Ex: http://ifile.free.fr/hyla/			-> mettez '/hyla'
+	Ex: http://ifile.free.fr/data/hyla		-> mettez '/data/hyla'
 
-	Vous pouvez laisser ce champs vide, la valeur de $_SERVER['PHP_SELF'] sera alors utilisÈe
+	* Si ce champs est vide, la valeur de $_SERVER['PHP_SELF'] sera utilis√©e
  */
 //define('ROOT_URL', '');
 
 
+
 /*	+---------------------------------+
-	| Connection ‡ la base de donnÈes |
+	| Connection √† la base de donn√©es |
 	+---------------------------------+
+	Dans SQL_HOST, il est possible de sp√©cifier un port diff√©rent
+	de la mani√®re suivante : 'server:3300'
  */
-define('SQL_HOST',	'localhost');
+define('SQL_HOST',	'');
 define('SQL_BASE',	'');
 define('SQL_USER',	'');
 define('SQL_PASS',	'');

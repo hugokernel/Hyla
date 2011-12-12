@@ -1,0 +1,25 @@
+
+.line {
+	border-collapse: collapse;
+}
+
+.line td, .line th {
+	padding: 5px;
+	border: 0px;
+	border-bottom: 1px solid #CCC;
+}
+
+.line tr:hover {
+	background: #DDD;
+}
+
+.line a {
+	color: #00F;
+	font-style: normal;
+	text-decoration: none;
+	font-size: 100%;
+}
+
+.line a:hover {
+	color: #000;
+}

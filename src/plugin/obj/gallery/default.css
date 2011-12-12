@@ -1,0 +1,51 @@
+
+.gallery {
+	width: 100%;
+	text-align: center;
+}
+
+
+
+.gallery td {
+	background: #EEE;
+	border: 1px solid #CCC;
+	font-size: 80%;
+	text-align: right;
+	padding: 5px;
+}
+
+.gal_item {
+
+}
+
+.gal_comment {
+
+}
+
+.gal_img {
+	text-align: center;
+	padding: 5%;
+}
+
+.gallery fieldset {
+	border: 0px;
+	border: 1px #CCC solid;
+	background: #EEE;
+}
+
+.gallery fieldset legend {
+	border: 1px #CCC solid;
+	background: #DDD;
+}
+
+
+
+.gallery .img1 {
+	margin-left: 50%;
+}
+
+.gallery .img2 {
+	margin-right: 50%;
+}
+
+

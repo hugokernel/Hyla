@@ -1,0 +1,22 @@
+﻿ <tree id="elem" flex="1">
+     <treecols>
+            <treecol id="col1" label="Objet" flex="1" />
+            <treecol id="col2" label="Description" flex="1"/>
+            <treecol id="col2" label="Taille" flex="1"/>
+     </treecols>
+	<treechildren id="liste-donnees">
+	<!-- BEGIN line -->
+	<!-- BEGIN line_content -->
+        <treeitem>
+            <treerow>
+                <treecell label="{FILE_NAME}" value="index.php" src="{FILE_ICON}" />
+                <treecell label="{FILE_DESCRIPTION}" />
+                <treecell label=" {FILE_SIZE} " /> <!-- {PATH_INFO} -->
+            </treerow>
+         </treeitem>
+	<!-- END line_content -->
+	<!-- END line -->
+   </treechildren>
+ </tree>
+
+

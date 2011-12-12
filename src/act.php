@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -23,46 +23,29 @@ if (!defined('PAGE_HOME'))
 	header('location: ../index.php');
 
 require 'src/inc/string.class.php';
-require 'src/inc/plugin.class.php';
-require 'src/lib/XPath.class.php';
+require 'src/inc/plugin_obj.class.php';
 require 'src/inc/plugins.class.php';
 require 'src/inc/cache.class.php';
 
 
-function test_perm($niv) {
-	global $cobj, $cuser;
-	if (($cuser->id == ANONYMOUS_ID) && !($cuser->perm & $niv)) {
-		$_SESSION['sess_url'] = $_SERVER['REQUEST_URI'];
-		// Merci de procéder à une authentification
-		redirect(__('Error'), url::getCurrentObj('login'), __('Thank you for authenticate you'));
-		system::end();
-	} else if (($cuser->perm & $niv) != $niv) {
-		// Interdit !
-		redirect(__('Error'), url::getCurrentObj(), __('You cannot use this functionality !'));
-		system::end();
-	}
-}
-
-
-/*	Gestion des paramètres de visualisation, tri...
+/*	Gestion des paramÃ¨tres de visualisation, tri...
  */
-$param = $_REQUEST['param'];
+$param = @$_REQUEST['param'];
 
-
-$sort = (isset($_SESSION['sess_sort'])/* && !empty($_SESSION['sess_sort'])*/) ? $_SESSION['sess_sort'] : $conf['sort_config'];
+$sort = (isset($_SESSION['sess_sort'])) ? $_SESSION['sess_sort'] : $conf['sort_config'];
 $grp = (isset($_SESSION['sess_grp'])) ? $_SESSION['sess_grp'] : $conf['group_by_sort'];
-$ffirst = (isset($_SESSION['sess_ffirst'])) ? $_SESSION['sess_ffirst'] : $conf['folder_first'];
+$ffirst = (isset($_SESSION['sess_ffirst'])) ? $_SESSION['sess_ffirst'] : null;
 
 if (isset($param)) {
 	$tab = array(
 			'-1'=> -1,
 			'0' => SORT_DEFAULT,
-			'1' => SORT_ALPHA,
-			'2' => SORT_ALPHA_R,
-			'3' => SORT_ALPHA_EXT,
-			'4' => SORT_ALPHA_EXT_R,
-			'5' => SORT_ALPHA_CAT,
-			'6' => SORT_ALPHA_CAT_R,
+			'1' => SORT_NAME_ALPHA,
+			'2' => SORT_NAME_ALPHA_R,
+			'3' => SORT_EXT_ALPHA,
+			'4' => SORT_EXT_ALPHA_R,
+			'5' => SORT_CAT_ALPHA,
+			'6' => SORT_CAT_ALPHA_R,
 			'7' => SORT_SIZE,
 			'8' => SORT_SIZE_R,
 			);
@@ -99,21 +82,25 @@ $_SESSION['sess_ffirst'] = $ffirst;
 
 /*	Gestion des actions
  */
-switch (url::getAct(0)) {
+switch (url::getQueryAct(0)) {
 
-	#	On se déloggue !
+	#	On se dÃ©loggue !
 	case 'logout':
-		if ($cuser->id != ANONYMOUS_ID) {
-			session_destroy();
-			redirect('', url::getCurrentObj(), __('You are now disconnected'));
-			system::end();
+		$auth->logout();
+
+		// Redirection vers le bon endroit
+		if ($obj->getUserRights4Path($cobj->path, ANONYMOUS_ID) & AC_VIEW) {
+			$new_url = url::getCurrentObj();
+		} else {
+			$new_url = ($obj->getUserRights4Path('/', ANONYMOUS_ID) & AC_VIEW) ? url::getObj('/') : url::getPage('login');
 		}
+		redirect('', $new_url, __('You are now disconnected'));
+		system::end();
 		break;
 
-	#	Un commentaire à été envoyé
+	#	Un commentaire Ã  Ã©tÃ© envoyÃ©
 	case 'addcomment':
-
-		test_perm(ADD_COMMENT);
+		acl_test(AC_ADD_COMMENT);
 
 		$_POST['cm_author'] = strip_tags($_POST['cm_author']);
 		$_POST['cm_author'] = ($cuser->id != ANONYMOUS_ID) ? $cuser->name : $_POST['cm_author'];
@@ -129,13 +116,13 @@ switch (url::getAct(0)) {
 			$msg_error = __('User already exists !');
 		} else {
 			$val = verif_value(array(
-					$_POST['cm_author']	=>	__('The author field is required'),
+					$_POST['cm_author']		=>	__('The author field is required'),
 					$_POST['cm_content']	=>	__('The message field is required')), $msg_error);
 		}
 
 		unset($usr);
 
-		// Les champs indispensables sont-ils remplis ?
+		// Les champs indispensables sont remplis ?
 		if ($val) {
 			if ($_POST['cm_site'] == 'http://')
 				$_POST['cm_site'] = null;
@@ -144,65 +131,126 @@ switch (url::getAct(0)) {
 			$_POST['cm_site'] = string::format($_POST['cm_site'], false);
 			$_POST['cm_content'] = string::format($_POST['cm_content']);
 
-			$obj->addComment($cobj, $_POST['cm_author'], $_POST['cm_mail'], $_POST['cm_site'], $_POST['cm_content']);
+			$id = $obj->addComment($_POST['cm_author'], $_POST['cm_mail'], $_POST['cm_site'], $_POST['cm_content']);
 
 			// On reste en phase avec l'objet courant !
 			$csize = sizeof($cobj->info->comment);
 			$cobj->info->nbr_comment++;
 			$cobj->info->comment[$csize] = new tComment;
+			$cobj->info->comment[$csize]->id = $id;
 			$cobj->info->comment[$csize]->author = $_POST['cm_author'];
 			$cobj->info->comment[$csize]->mail = $_POST['cm_mail'];
 			$cobj->info->comment[$csize]->url = $_POST['cm_site'];
-			$cobj->info->comment[$csize]->content = $_POST['cm_content'];
+			$cobj->info->comment[$csize]->content = stripslashes($_POST['cm_content']);
 			$cobj->info->comment[$csize]->date = system::time();
 
+			$id = null;
 			$_POST['cm_content'] = null;
 		}
-
 		break;
 
 	#	Modification description
 	case 'setdescription':
-		test_perm(EDIT_FILE);
+		acl_test(AC_EDIT_DESCRIPTION);
+
 		$description = string::format($_POST['description'], true, true);
-		$obj->setDescription($cobj->file, $description);
+		$obj->setDescription($description);
+
 		$cobj->info->description = stripslashes($description);
 
-		if ($_POST['redirect'] == '1') {
+		if (isset($_POST['redirect']) && $_POST['redirect'] == '1') {
 			redirect($cobj->file, url::getCurrentObj(), __('You will be redirected towards the object !'));
 			system::end();
 		}
-
 		break;
 
 	#	Modification plugin courant
 	case 'setplugin':
-		test_perm(EDIT_FILE);
+		acl_test(AC_EDIT_PLUGIN);
+
 		if ($cobj->type = TYPE_DIR) {
 			$plugin_name = $_POST['pg_name'];
-			if ($plugin_name == 'default')
-				$obj->setPlugin($cobj->file, null);
-			else {
-				// On vérifie que le plugin existe bien
-				if (plugins::isValid($plugin_name))
-					$obj->setPlugin($cobj->file, $plugin_name);
+			$plugin_name = ($plugin_name == 'default') ? null : $plugin_name;
+
+			if ($obj->setPlugin($plugin_name)) {
+				$cobj->info->plugin = $plugin_name;
+				if ($cobj->type == TYPE_DIR) {
+					$icon = DIR_PLUGINS_OBJ.$plugin_name.'/'.DIR_ICON;
+					$cobj->icon = (($plugin_name) ? (file_exists($icon) ? $icon : get_icon('.')) : DIR_PLUGINS_OBJ.$conf['dir_default_plugin'].'/'.DIR_ICON);
+				}
 			}
 
-			if ($_POST['redirect'] == '1') {
+			if (isset($_POST['redirect']) && $_POST['redirect'] == '1') {
 				redirect($cobj->file, url::getCurrentObj(), __('You will be redirected towards the object !'));
 				system::end();
 			}
-
 		}
+		break;
 
+	#	Modification image courante
+	case 'seticon':
+		acl_test(AC_EDIT_ICON);
+
+		if ($cobj->type = TYPE_DIR) {
+			$icon_name = ($_POST['icon_name'] == 'default') ? null : htmlentities($_POST['icon_name'], ENT_QUOTES);
+			$icon_name = file::getRealFile($icon_name, DIR_ROOT.DIR_IMG_PERSO);
+
+			$icon_name = ($icon_name) ? DIR_IMG_PERSO.$icon_name : null;
+			$cobj->icon = $obj->setIcon($icon_name);
+
+			if (isset($_POST['redirect']) && $_POST['redirect'] == '1') {
+				redirect($cobj->file, url::getCurrentObj(), __('You will be redirected towards the object !'));
+				system::end();
+			}
+		}
+		break;
+
+	#	Ajoute un droit
+	case 'addrights':
+		acl_test(ADMINISTRATOR_ONLY);
+
+		$right = $obj->calculateRights($_POST['rgt_value']);
+
+		if (isset($_POST['rgt_users'])) {
+			foreach ($_POST['rgt_users'] as $user) {
+				$obj->addRight($cobj->file, $user, $right);
+			}
+		}
+		break;
+
+	#	Ã‰dite un droit
+	case 'editrights':
+		acl_test(ADMINISTRATOR_ONLY);
+
+		$right = 0;
+		if (isset($_POST['rgt_value'])) {
+			foreach ($_POST['rgt_value'] as $perm) {
+				$right |= $perm;
+			}
+		}
+		$obj->setRight($cobj->file, $_POST['rgt_user'], $right);
+		break;
+
+	#	Supprime un droit
+	case 'delrights':
+		acl_test(ADMINISTRATOR_ONLY);
+
+		if (isset($_POST['rgt_user'])) {
+			foreach ($_POST['rgt_user'] as $user_id) {
+				$obj->delRight($cobj->file, $user_id);
+			}
+		}
 		break;
 
 	#	Renommage
 	case 'rename':
-		test_perm(($cobj->type == TYPE_DIR ? (CREATE_DIR | DEL_DIR) : (ADD_FILE | DEL_FILE)));
+		acl_test(AC_RENAME);
+
+		$new_name = stripslashes($_POST['rn_newname']);
+		$new_name = get_2_fs_charset($new_name);
 
 		// Le Renommage d'une archive n'est pas possible
-		if ($cobj->type == TYPE_ARCHIVE) {
+		if ($cobj->type == TYPE_ARCHIVED) {
 			redirect($cobj->file, url::getCurrentObj(), __('Not implemented !'));
 			system::end();
 		}
@@ -213,92 +261,178 @@ switch (url::getAct(0)) {
 			system::end();
 		}
 
-		// Il ne doit pas y avoir de caractère interdit !
-		if (string::test($_POST['rn_newname'], UNAUTHORIZED_CHAR)) {
+		// Il ne doit pas y avoir de caractÃ¨re interdit !
+		if (string::test($new_name, UNAUTHORIZED_CHAR)) {
 			$msg_error = __('There are an invalid char in the file name, unauthorized char are : %s', UNAUTHORIZED_CHAR);
-			url::setAff(1, 'rename');
+			url::setQueryAff(1, 'rename');
 			break;
 		}
 
-		// On vérifie tout d'abord si l'objet de destination existe déjà
-		$newname = ($cobj->type == TYPE_FILE) ? $cobj->path.$_POST['rn_newname'] : file::downPath($cobj->path).$_POST['rn_newname'];
-		if (file_exists(FOLDER_ROOT.$newname)) {
-			$msg_error = is_dir(FOLDER_ROOT.$_POST['rn_newname']) ? __('The dir already exists !') : __('The file already exists !');
-			url::setAff(1, 'rename');
+		// On vÃ©rifie tout d'abord si l'objet de destination existe dÃ©jÃ 
+		$newname = ($cobj->type == TYPE_FILE) ? $cobj->path.$new_name : file::downPath($cobj->path).$new_name;
+		if (file_exists(FOLDER_ROOT.$newname) && $cobj->realpath != FOLDER_ROOT.$newname.'/') {
+			$msg_error = is_dir(FOLDER_ROOT.$new_name) ? __('The dir already exists !') : __('The file already exists !');
+			url::setQueryAff(1, 'rename');
 			break;
 		}
 
-		if ($obj->rename($cobj->file, $_POST['rn_newname'])) {
+		if ($obj->rename($cobj->file, $new_name)) {
 			$msg = view_status(__('The objet was renamed !'));
-			$var = isset($_POST['rn_redirect']) ? url::getObj($newname) : url::getObj(($cobj->type == TYPE_DIR) ? file::downPath($cobj->path) : $cobj->path);
+			$var = isset($_POST['rn_redirect']) ? $newname : ($cobj->type == TYPE_DIR) ? file::downPath($cobj->path) : $cobj->path;
 		} else {
 			$msg = view_error(__('An error occured during rename !'));
-			$var = url::getObj($cobj->file);
+			$var = $cobj->file;
 		}
 
-		redirect($cobj->file, $var, $msg);
+		redirect($cobj->file, url::getObj($var), $msg);
 		system::end();
 		break;
 
-	#	Déplacement
-	case 'move':
-		test_perm(($cobj->type == TYPE_DIR ? (CREATE_DIR | DEL_DIR) : (ADD_FILE | DEL_FILE)));
+	#	Copie
+	case 'copy':
+		acl_test(AC_COPY);
 
-		// Le déplacement d'une archive n'est pas possible
-		if ($cobj->type == TYPE_ARCHIVE) {
+		//	Si le rÃ©pertoire de destination n'est pas valable
+		$dest_dir = stripslashes($_POST['cp_destination']);
+		$dest_dir = get_2_fs_charset($dest_dir);
+		$dest_dir = file::getRealDir($dest_dir, FOLDER_ROOT);
+		if (!$dest_dir) {
+			redirect(__('Error'), url::getCurrentObj(), __('An error occured during copy !'));
+			system::end();
+		}
+
+		// On vÃ©rifie que l'on essaie pas de copier le rÃ©pertoire sur lui mÃªme !
+		if ($cobj->type == TYPE_DIR && $dest_dir.'/' == $cobj->file) {
+			$msg_error = __('Impossible to copy dir on him !');
+			url::setQueryAff(1, 'copy');
+			break;
+		}
+
+		// On vÃ©rifie tout d'abord si l'objet de destination existe dÃ©jÃ 
+		if ($cobj->type == TYPE_FILE) {
+			$file = $cobj->file;
+			$base = FOLDER_ROOT;
+			$dest = $dest_dir.$cobj->name;
+		} else if ($cobj->type == TYPE_DIR) {
+			$file = $cobj->path;
+			$base = FOLDER_ROOT;
+			$dest = $dest_dir.$cobj->name;
+		} else if ($cobj->type == TYPE_ARCHIVED) {
+			$file = basename($cobj->target);
+			$base = file::dirName(get_real_directory());
+			$dest = $dest_dir.$cobj->target;
+		}
+
+		// L'utilisateur a-t-il le droit de copier dans le dossier de destination ?
+		$right = $obj->getCUserRights4Path($dest);
+		if (!($right & AC_COPY)) {
+			$msg_error = __('You don\'t have copy right for destination dir !');
+			url::setQueryAff(1, 'copy');
+			break;
+		}
+
+		// On test si l'objet final existe dÃ©jÃ  ou non
+		if (file_exists(FOLDER_ROOT.$dest)) {
+			$msg_error = is_dir(FOLDER_ROOT.$dest) ? __('The dir already exists !') : __('The file already exists !');
+			url::setQueryAff(1, 'copy');
+			break;
+		}
+
+		// Sinon, on copie !
+		if ($ret = $obj->copy($file, $dest, $base)) {
+			$msg = __('%s objets was copied !', $ret);
+			$msg = view_status($msg);
+
+			if (isset($_POST['cp_redirect'])) {
+				$var = $dest;
+			} else {
+				$var = $cobj->path;	//($cobj->type == TYPE_DIR) ? file::downPath($cobj->path) : $cobj->path;
+			}
+		} else {
+			$msg = __('An error occured during copy !');
+			$msg = view_error($msg);
+			$var = $cobj->file;
+		}
+
+		redirect($cobj->file, url::getObj($var), $msg);
+		system::end();	
+		break;
+
+	#	DÃ©placement
+	case 'move':
+		acl_test(AC_MOVE);
+
+		// Le dÃ©placement d'une archive n'est pas possible
+		if ($cobj->type == TYPE_ARCHIVED) {
 			redirect($cobj->file, url::getCurrentObj(), __('Not implemented !'));
 			system::end();
 		}
 
-		// On ne peut pas déplacer la racine
+		// On ne peut pas dÃ©placer la racine
 		if ($cobj->file == '/') {
 			redirect(__('Error'), url::getCurrentObj(), __('Impossible to move the root'));
 			system::end();
 		}
 
-		//	Si le répertoire de destination n'est pas valable
-		$dest_dir = file::getRealDir($_POST['mv_destination'], FOLDER_ROOT);
+		//	Si le rÃ©pertoire de destination n'est pas valable
+		$dest_dir = stripslashes($_POST['mv_destination']);
+		$dest_dir = get_2_fs_charset($dest_dir);
+		$dest_dir = file::getRealDir($dest_dir, FOLDER_ROOT);
 		if (!$dest_dir) {
 			redirect(__('Error'), url::getCurrentObj(), __('An error occured during move !'));
 			system::end();
 		}
 
-		// On vérifie tout d'abord si l'objet de destination existe déjà
-		$dest = ($cobj->type == TYPE_FILE) ? ($dest_dir == '/' ? '/' : $dest_dir.'/').$cobj->name :
-				($dest_dir == '/' ? '/' : $dest_dir.'/').file::getLastDir($cobj->path);
-		// On test si l'objet final existe déjà ou non
-		if (file_exists(FOLDER_ROOT.$dest)) {
-			$msg_error = is_dir(FOLDER_ROOT.$dest) ? __('The dir already exists !') : __('The file already exists !');
-			url::setAff(1, 'move');
+		// L'utilisateur a-t-il le droit de copier dans la dossier de destination ?
+		$right = $obj->getCUserRights4Path($dest_dir);
+		if (!($right & AC_MOVE)) {
+			$msg_error = __('You don\'t have move right for destination dir !');
+			url::setQueryAff(1, 'move');
 			break;
 		}
 
-		// On vérifie que l'on essaie pas de copier le répertoire sur lui même !
-		if ($cobj->type == TYPE_DIR && $dest_dir.'/' == $cobj->file) {
+		// On vÃ©rifie tout d'abord si l'objet de destination existe dÃ©jÃ 
+		$dest_dir = ($cobj->type == TYPE_FILE) ? $dest_dir.$cobj->name : $dest_dir.$cobj->name.'/';
+
+		// On test si l'objet final existe dÃ©jÃ  ou non
+		if (file_exists(FOLDER_ROOT.$dest_dir)) {
+			$msg_error = is_dir(FOLDER_ROOT.$dest_dir) ? __('The dir already exists !') : __('The file already exists !');
+			url::setQueryAff(1, 'move');
+			break;
+		}
+
+		// On vÃ©rifie que l'on essaie pas de copier le rÃ©pertoire sur lui mÃªme !
+		if ($cobj->type == TYPE_DIR && ($dest_dir.'/' == $cobj->file || file::isInPath($dest_dir, $cobj->path))) {
 			$msg_error = __('Impossible to move dir on him !');
-			url::setAff(1, 'move');
+			url::setQueryAff(1, 'move');
 			break;
 		}
 
-		// Sinon, on déplace !
-		if ($ret = $obj->move($cobj->realpath, $dest_dir)) {
-			$msg = view_status(__('%s objets was moved !', $ret));
-			$var = isset($_POST['mv_redirect']) ? url::getObj($dest) : url::getObj(($cobj->type == TYPE_DIR) ? file::downPath($cobj->path) : $cobj->path);
+		// Sinon, on dÃ©place !
+		if ($ret = $obj->move($cobj->file, $dest_dir, FOLDER_ROOT)) {
+			$msg = __('%s objets was moved !', $ret);
+			$msg = view_status($msg);
+			if (isset($_POST['mv_redirect'])) {
+				$var = $dest_dir;
+			} else {
+				$var = ($cobj->type == TYPE_DIR) ? file::downPath($cobj->path) : $cobj->path;
+			}
 		} else {
-			$msg = view_error(__('An error occured during move !'));
-			$var = url::getObj(($cobj->type == TYPE_DIR) ? file::downPath($cobj->path) : $cobj->file);
+			$msg = __('An error occured during move !');
+			$msg = view_error($msg);
+			$var = ($cobj->type == TYPE_DIR) ? file::downPath($cobj->path) : $cobj->file;
 		}
 
-		redirect($cobj->file, $var, $msg);
+		redirect($cobj->file, url::getObj($var), $msg);
 		system::end();
 		break;
 
 	#	Suppression d'un objet
 	case 'del':
-		test_perm(($cobj->type == TYPE_DIR) ? DEL_DIR : DEL_FILE);
+		acl_test(($cobj->type == TYPE_DIR) ? AC_DEL_DIR : AC_DEL_FILE);
 
 		// La suppression d'une archive n'est pas possible
-		if ($cobj->type == TYPE_ARCHIVE) {
+		if ($cobj->type == TYPE_ARCHIVED) {
 			redirect($cobj->file, url::getCurrentObj(), __('Not implemented !'));
 			system::end();
 		}
@@ -309,47 +443,91 @@ switch (url::getAct(0)) {
 			system::end();
 		}
 
-		// Faut avoir les droits !
+		// Il faut avoir les droits !
 		if (!is_writable($cobj->realpath)) {
-			redirect(__('Error'), url::getCurrentObj(), __('Impossible to remove object, check permissions !'));
+			redirect(__('Error'), url::getCurrentObj(), view_error(__('Impossible to remove object, check permissions !')));
 			system::end();
 		}
 
-		cache::del($cobj->file);
+		// Suppression de l'objet
+		if ($obj->delete($cobj)) {
+			cache::del($cobj->file);
+			$msg = __('Object was deleted');
+			$msg = view_status($msg);
+		} else {
+			$msg = __('An error occured during delete !');
+			$msg = view_error($msg);
+		}
 
-		$msg = $obj->delete($cobj) ? view_status(__('Object was deleted')) : view_error(__('An error occured during delete !'));
-		redirect($cobj->file, url::getObj((($cobj->type == TYPE_DIR) ? file::downPath($cobj->path) : $cobj->path)), $msg);
+		/*	On redirige proprement :
+			1. Existe-t-il un objet prÃ©cÃ©dent
+			2. Si il n'en existe pas, on prend le suivant
+			3. Sinon, on redirige vers les dossier parent
+		 */
+		if ($cobj->prev) {
+			$var = $cobj->prev->file;
+		} else if ($cobj->next) {
+			$var = $cobj->next->file;
+		} else {
+			$var = ($cobj->type == TYPE_DIR) ? file::downPath($cobj->path) : $cobj->path;
+		}
+
+		redirect($cobj->file, url::getObj($var), $msg);
 		system::end();
 
 		break;
 
-	#	Création d'un répertoire
+	#	CrÃ©ation d'un rÃ©pertoire
 	case 'mkdir':
-		test_perm(CREATE_DIR);
+		acl_test(AC_CREATE_DIR);
 
-		// Il ne doit pas y avoir de caractère interdit !
+		$_POST['mk_name'] = stripslashes($_POST['mk_name']);
+
+		// Il ne doit pas y avoir de caractÃ¨re interdit !
 		if (string::test($_POST['mk_name'], UNAUTHORIZED_CHAR)) {
 			$msg_error = __('There are an invalid char in the file name, unauthorized char are : %s', UNAUTHORIZED_CHAR);
-			url::setAff(1, 'mkdir');
+			url::setQueryAff(1, 'mkdir');
 			break;
 		}
 
-		// On vérifie tout d'abord si l'objet de destination existe déjà
+		// On vÃ©rifie tout d'abord si l'objet de destination existe dÃ©jÃ 
 		$dest = $cobj->path.$_POST['mk_name'];
 		if (file_exists(FOLDER_ROOT.$dest)) {
 			$msg_error = __('The dir already exists !');
-			url::setAff(1, 'mkdir');
+			url::setQueryAff(1, 'mkdir');
 			break;
 		}
 
-		$msg = (mkdir(FOLDER_ROOT.$dest, $conf['dir_chmod'])) ? __('Dir created !') : __('An unknown error occured during dir creation !');
-		$var = isset($_POST['mk_redirect']) ? url::getObj($dest) : url::getCurrentObj();
+		// CrÃ©ation du dossier
+		$dest = get_2_fs_charset($dest);
+		if (mkdir(FOLDER_ROOT.$dest, $conf['dir_chmod'])) {
+			$msg = __('Dir created !');
+			$msg = view_status($msg);
+		} else {
+			$msg = __('An unknown error occured during dir creation !');
+			$msg = view_error($msg);
+		}
+
+		// Redirection
+		if (isset($_POST['mk_redirect'])) {
+			switch ($_POST['mk_redirect']) {
+				case 'new':
+					$var = url::getObj($dest);
+					break;
+				case 'edit':
+					$var = url::getObj($dest, 'edit');
+					break;
+				case 'parent':
+				default:
+					$var = url::getCurrentObj();
+					break;
+			}
+		}
 
 		redirect($cobj->file, $var, $msg);
 		system::end();
 
 		break;
 }
-
 
 ?>

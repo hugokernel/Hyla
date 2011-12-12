@@ -1,0 +1,51 @@
+
+body {
+	font-family: Bitstream Vera Sans, sans-serif;
+	background: white;
+
+	margin-left: 10%;
+	margin-right: 10%;
+
+	text-align: justify;
+}
+
+h1 {
+	color: #00C;
+}
+
+h2 {
+	color: #00A;
+}
+
+.remarque {
+	margin-left: 10px;
+	padding: 5px;
+	background: #EE0;
+	-moz-border-radius: 5px;
+}
+
+table {
+	margin-left: 5%;
+	margin-right: 5%;
+	width: 90%;
+	text-align: left;
+	border-collapse: collapse;
+}
+
+th {
+	background: #EEE;
+}
+
+td, th {
+	padding: 3px;
+	border: 1px solid #CCC;
+}
+
+.path {
+	background: #EEE;
+	border: 1px solid #FFF;
+}
+
+pre {
+	background: #FFE;
+}

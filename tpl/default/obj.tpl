@@ -3,7 +3,7 @@
 <div class="pagination">
 	<!-- BEGIN previous_page -->
 		<span id="previous">
-			<a href="{PREV_PATH}" title="Objet précédent"> &laquo; <img src="{PREV_FILE_ICON}" width="32" height="32" border="0" align="middle" alt="Icone" />{OBJ_PREV}</a>
+			<a href="{PREV_PATH}" title="Objet prÃ©cÃ©dent"> &laquo; <img src="{PREV_FILE_ICON}" width="32" height="32" border="0" align="middle" alt="Icone" />{OBJ_PREV}</a>
 		</span>
 	<!-- END previous_page -->
 	<!-- BEGIN next_page -->
@@ -14,18 +14,20 @@
 </div>
 <!-- END pagination -->
 
-<h4>{DESCRIPTION}</h4>
+<!-- BEGIN description -->
+<h4 class="description">{DESCRIPTION}</h4>
+<!-- END description -->
 
 <!--{ERROR}-->
 
-<!-- BEGIN tree -->
+<!-- BEGIN with_tree -->
 <div id="tree">
 	{TREE_ELEM}
 </div>
 <div id="content">
 	{CONTENT}
 </div>
-<!-- END tree -->
+<!-- END with_tree -->
 
 <!-- BEGIN no_tree -->
 <div id="content-no-tree">
@@ -33,17 +35,31 @@
 </div>
 <!-- END no_tree -->
 
+
 <!-- BEGIN dir_pagination -->
-<div class="pagination" style="clear: both;">
-	<!-- BEGIN dir_previous_page -->
-		<span id="previous">
-			<a href="{PREV_PATH}" title="Page précédente"> &laquo; Page précédente</a>
-		</span>
-	<!-- END dir_previous_page -->
-	<!-- BEGIN dir_next_page -->
-		<span id="next">
-			<a href="{NEXT_PATH}" title="Page suivante">Page suivante &raquo; </a>
-		</span>
-	<!-- END dir_next_page -->
+<div class="pagination">
+	<div id="previous">
+		&nbsp;
+		<!-- BEGIN dir_previous_page -->
+		<a href="{PREV_PATH}" title="Page prÃ©cÃ©dente"> &laquo; Page prÃ©cÃ©dente</a>
+		<!-- END dir_previous_page -->
+	</div>
+
+	<!-- BEGIN dir_page -->
+	<div id="num_page">
+		Pages :
+	<!-- BEGIN dir_page_num -->
+		<a href="{PAGE_URL}"<!-- BEGIN dir_page_num_cur --> id="current_page"<!-- END dir_page_num_cur -->>{PAGE_NUM}</a>
+	<!-- END dir_page_num -->
+	</div>
+	<!-- END dir_page -->
+
+	<div id="next">
+		&nbsp;
+		<!-- BEGIN dir_next_page -->
+		<a href="{NEXT_PATH}" title="Page suivante">Page suivante &raquo; </a>
+		<!-- END dir_next_page -->
+	</div>
 </div>
 <!-- END dir_pagination -->
+

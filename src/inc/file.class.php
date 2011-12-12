@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -22,22 +22,15 @@
 class file
 {
 	/*	Copie un dossier dans un autre
-		@param	string	$dir			Le répertoire
-		@param	string	$dest			La cible
-		@param	octal	$dir_chmod		Le mode de création des répertoires
-		@return	Renvoie le nombre de fichiers et répertoires créés
+		@param	string	$folder_origin	Le rÃ©pertoire
+		@param	string	$folder_dest	La cible
+		@param	octal	$dir_chmod		Le mode de crÃ©ation des rÃ©pertoires
+		@return	Renvoie le nombre de fichiers et rÃ©pertoires crÃ©Ã©s
 	 */
 	function copyDir($folder_origin, $folder_dest, $dir_chmod = 0765) {
 
 		static $var = true;
 		$ret = 0;
-
-		// Récupération et création du premier répertoire de destination
-		if ($var) {
-			$folder_dest = $folder_dest.(($folder_dest{strlen($folder_dest) - 1} == '/') ? null : '/').file::getLastDir($folder_origin);
-			$ret += mkdir($folder_dest, $dir_chmod);
-			$var = false;
-		}
 
 		$hdl = dir($folder_origin);
 		if ($hdl) {
@@ -59,21 +52,8 @@ class file
 		return $ret;
 	}
 
-	/*	Renvoie le nom du dernier dossier
-		@param	string	$path	Le chemin à scanner
-	 */
-	function getLastDir($path) {
-		$size = strlen($path);
-		if ($path{$size - 1} == '/')
-			$path{$size - 1} = null;
-		$path = trim($path);
-		$last_dir = strrchr($path, '/');
-		$last_dir = substr($last_dir, 1);
-		return $last_dir;
-	}
-
-	/*	Créer des répertoires (php.net)
-		@param	string	$dir	Le chemin complet contenant les répertoires à créer
+	/*	CrÃ©er des rÃ©pertoires (php.net)
+		@param	string	$dir	Le chemin complet contenant les rÃ©pertoires Ã  crÃ©er
 		@param	octal	$mode	Les droits
 	 */
 	function mkDirs($dir, $mode = 0755) {
@@ -81,12 +61,12 @@ class file
 			return false;
 		if (is_dir($dir) || $dir == '/')
 			return true;
-		if (file::mkdirs(dirname($dir), $mode))
+		if (file::mkdirs(file::dirName($dir), $mode))
 			return mkdir($dir, $mode);
 		return false;
 	}
 
-	/*	Supprime un répertoire et tout son contenu
+	/*	Supprime un rÃ©pertoire et tout son contenu
 		@param string $dir
 	 */
 	function rmDirs($dir) {
@@ -105,7 +85,7 @@ class file
 		return rmdir($dir);
 	}
 
-	/*	Si le fichier existe déjà dans la racine, retourne le nom du fichier préfixé d'une chaine le rendant unique
+	/*	Si le fichier existe dÃ©jÃ  dans la racine, retourne le nom du fichier prÃ©fixÃ© d'une string le rendant unique
 		@param	string	$name	Le nom du fichier
 		@param	string	$root	La racine
 	 */
@@ -124,13 +104,13 @@ class file
 		return $name;
 	}
 
-	/*	Retourne un tableau contenant l'arborescence du repertoire spécifié
-		@param	string	$_folder_root	Le répertoire racine
-		@param	string	$_folder		Sous répertoire
-		@param	bool	$hidden			Renvoie ou non les objets cachés
+	/*	Retourne un tableau contenant l'arborescence du repertoire spÃ©cifiÃ©
+		@param	string	$_folder_root	Le rÃ©pertoire racine
+		@param	string	$_folder		Sous rÃ©pertoire
+		@param	bool	$hidden			Renvoie ou non les objets cachÃ©s
 	 */
 	function scanDir($_folder_root, $hidden = true, $_folder = null) {
-		static $tab_dir = null;
+		static $tab_dir, $tab = null;
 		static $cmpt = 0;
 		$cmpt++;
 
@@ -155,18 +135,20 @@ class file
 		return $tab;
 	}
 
-	/*	Les fichiers correspondant l'expression régulière sont stockés dans un tableau
-		@param	string	$folder		Répertoire pour le scan (finissant par un '/')
-		@param	string	$exp		L'expression régulière
-		@param	boolean	$recurs		Faire ça récursivement
-		@param	string	$base		Répertoire de base
-		@param	boolean	$scandir	Scanner aussi le nom des répertoire
-		@param	bool	$hidden		Renvoie ou non les objets cachés
+	/*	Les fichiers matchant l'expression rÃ©guliÃ¨re sont stockÃ©s dans un tableau
+		@param	string	$folder		RÃ©pertoire pour le scan (finissant par un '/')
+		@param	string	$exp		L'expression rÃ©guliÃ¨re
+		@param	boolean	$recurs		Faire Ã§a rÃ©cursivement
+		@param	string	$base		RÃ©pertoire de base
+		@param	boolean	$scandir	Scanner aussi le nom des rÃ©pertoire
+		@param	bool	$hidden		Renvoie ou non les objets cachÃ©s
 	 */
 	function searchFile($folder, $exp, $recurs = true, $base = null, $scandir = false, $hidden = false) {
 		static $tab_file = null;
 		static $cmpt = 0;
 		$cmpt++;
+
+		$tab = null;
 
 		if (!$tab_file && $folder == '/')
 			$folder = null;
@@ -184,7 +166,8 @@ class file
 
 					if ($recurs)
 						file::searchFile($folder.'/'.$_occ, $exp, $recurs, $base, $scandir, false);
-				} else if (is_file($base.$folder.'/'.$_occ) && $_occ != '.' && $_occ != '..') {					 if (fnmatch(strtolower($exp), strtolower($_occ))) {
+				} else if (is_file($base.$folder.'/'.$_occ) && $_occ != '.' && $_occ != '..') {
+					 if (fnmatch(strtolower($exp), strtolower($_occ))) {
 						$tab_file[] = $folder.'/'.$_occ;
 					}
 				}
@@ -200,45 +183,80 @@ class file
 		$cmpt--;
 		return $tab;
 	}
-	
+
+	/*	Renvoie la taille totale occupÃ©e par le dossier et le nombre de fichiers contenus
+		@param	string	$path	Le chemin
+		@param	bool	$recurs	RÃ©cursivement ?
+		@return array('size', 'nbr')
+	 */
+	function getDirSize($path, $recurs = true) {
+		$ret = array('size' => 0, 'nbr' => 0);
+		$dir = opendir($path);
+		while ($file = readdir($dir)) {
+			if (is_file($path.'/'.$file)) {
+				$ret['size'] += filesize($path.'/'.$file);
+				$ret['nbr']++;
+			} else if (is_dir($path.'/'.$file) && $file != '.' && $file != '..' && $recurs) {
+				$r = file::getDirSize($path.'/'.$file);
+				$ret['size'] += $r['size'];
+				$ret['nbr'] += $r['nbr'];
+			}
+		}
+		return $ret;
+	}
+
+	/*	Renvoie le nom du dernier dossier
+		@param	string	$path	Le chemin Ã  scanner
+	 */
+	function getLastDir($path) {
+		$size = strlen($path);
+		if ($path{$size - 1} == '/')
+			$path{$size - 1} = null;
+		$path = trim($path);
+		$last_dir = strrchr($path, '/');
+		$last_dir = substr($last_dir, 1);
+		return $last_dir;
+	}
+
 	/*	Retourne l'extension d'un fichier
-		@param string $file Le nom du fichier concerné
+		@param string $file Le nom du fichier concernÃ©
 	 */
 	function getExtension($file) {
 		$ext = null;
 		$pos = strrpos($file, '.');
 
-		// Attention car si on envoie toto/super.txt/cool, ça va retourner txt/cool
+		// Attention car si on envoie toto/super.txt/cool, Ã§a va retourner txt/cool
 		if ($pos)
 			$ext = substr(strtolower($file), $pos + 1, strlen($file));
 
 		return $ext;
 	}
 
-	/*	Retourne le répertoire
-		ATTENTION :	Différent de dirname car vérifie si le répertoire existe vraiment et si
+	/*	Retourne le rÃ©pertoire
+		ATTENTION :	DiffÃ©rent de dirname car vÃ©rifie si le rÃ©pertoire existe vraiment et si
 					$folder est un chemin avec un fichier, il extrait le chemin si il existe
-		@param	string	$folder Le répertoire avec un nom de fichier ou non
+		@param	string	$folder Le rÃ©pertoire avec un nom de fichier ou non
 		@param	string	$base La racine qui comporte $folder
-		@return Le chemin réel
+		@return Le chemin rÃ©el
 	 */
 	function getRealDir($folder, $base = null) {
 		$ret = null;
+
 		if (is_file($base.$folder)) {
 			if (file::_isLegalPath($base, $folder, $rpath))	
 				$ret = substr($rpath, strlen($base), (strlen($rpath) - strlen(file::getRealFile($folder, $base))) - strlen($base));
 		} else if (is_dir($base.$folder)) {
 			if (file::_isLegalPath($base, $folder, $rpath)) {
-				$ret = substr($rpath, strlen($base), (strlen($rpath) - strlen(file::getRealFile($folder, $base))) - strlen($base));
-				if (!$ret)
-					$ret = '/';
+				$ret = substr($rpath, strlen($base), strlen($rpath) - strlen($base));
+				$ret .= '/';
 			}
 		}
+
 		return file::formatPath($ret);
 	}
 	
 	/*	Retourne le nom du fichier
-		ATTENTION : Différent de basename car vérifie si le fichier existe vraiment
+		ATTENTION : DiffÃ©rent de basename car vÃ©rifie si le fichier existe vraiment
 		@param	string	$file Le nom du fichier
 		@param	string	$base La racine comportant le fichier
 	 */
@@ -264,8 +282,8 @@ class file
 		switch ($ext) {
 			case 'mpeg':
 			case 'mpg':
-			case 'mpe':	$ctype = 'video/mpeg';			break;	// Vidéos Mpg
-			case 'avi':		$ctype = 'video/avi';			break;	// Vidéos Microsoft Windows
+			case 'mpe':		$ctype = 'video/mpeg';			break;	// VidÃ©os Mpg
+			case 'avi':		$ctype = 'video/avi';			break;	// VidÃ©os Microsoft Windows
 			case 'doc':		$ctype = 'application/word';	break;
 			case 'zip':		$ctype = 'application/zip';		break;
 			case 'pdf':		$ctype = 'application/pdf';		break;
@@ -273,7 +291,7 @@ class file
 			case 'gif':		$ctype = 'image/gif';			break;
 			case 'jpeg':
 			case 'jpg':		$ctype = 'image/jpeg';			break;
-			case 'mp3':	$ctype = 'audio/mpeg3';			break;
+			case 'mp3':		$ctype = 'audio/mpeg3';			break;
 			case 'htm':
 			case 'html':	$ctype = 'text/html';			break;
 			
@@ -331,7 +349,7 @@ class file
 		return $ret;
 	}
 	
-	/*	Descend d'une arborescence (ATTENTION, uniquement des chemins *NIX
+	/*	Descend d'une arborescence (ATTENTION, uniquement des chemins *NIX)
 		Ex:	* /usr/local/apache -> /usr/local
 			* /home/toto/doc.htm -> /home/toto
 		@param string $path Le chemin
@@ -352,9 +370,10 @@ class file
 		return $path;
 	}
 
-	/*	Certain hébergeur désactive realpath pour des raisons de sécurité, pourtant la fonction existe et ne renvoie rien (merci Free)...
-		@param	string	$path	Le chemin à tester
-		@param	bool	$exist	Test si le fichier ou répertoire existe vraiment (avec ce paramètre à true, cette fonction simule parfaitement realpath)
+	/*	Cette fonction renvoie le chemin canonique absolu
+		Certain hÃ©bergeur dÃ©sactive realpath pour des raisons de sÃ©curitÃ©, pourtant la fonction existe et ne renvoie rien (merci Free)...
+		@param	string	$path	Le chemin Ã  tester
+		@param	bool	$exist	Test si le fichier ou rÃ©pertoire existe vraiment (avec ce paramÃ¨tre Ã  true, cette fonction simule parfaitement realpath)
 	 */
 	function realpath($path, $exist = false) {
 
@@ -362,18 +381,23 @@ class file
 		$path = file::formatPath($path);
 
 		if ($exist && $path == '.')
-			return dirname($_SERVER['PATH_TRANSLATED']);
+			return file::dirName($_SERVER['PATH_TRANSLATED']);
 
 		$dirs = explode('/', $path);
 		$dirs_out = array();
 
 		$i = 0;
+
 		foreach ($dirs as $k => $v) {
 			if ($v == null || $v == '.')
 				continue;
 			if ($v == '..') {
 				$dirs_out[--$i] = null;
-			} else {
+			}
+			// EmpÃªcher les ..... pour descendre dans l'arbo
+			if ($v == str_repeat('.', strlen($v)))
+				continue;
+			else {
 				$dirs_out[$i++] = $v;
 			}
 		}
@@ -401,8 +425,67 @@ class file
 		return $ret;
 	}
 
+	/*	Fonction de remplacement de dirname car l'original pose des problÃ¨mes sous windows
+		@param	string	$path	Le chemin
+	 */
+	function dirName($path) {
+		$path = dirname($path);			
+		$path = file::formatPath($path);
+		return $path;
+	}
+
+	/*	Test si un chemin est contenu dans un autre :
+		$base:	/var/www/test/toto
+		$path:	/var/www
+		return:	true
+
+		$base:	/var/www/test/toto
+		$path:	/var/www/pouf
+		return:	false
+	*/
+	function isInPath($base, $path, $oflow = false) {
+		$ret = true;
+
+		$tbase = explode('/', $base);
+		$tpath = explode('/', $path);
+
+		$sbase = sizeof($tbase);
+		$spath = sizeof($tpath);
+		$size = $oflow ? min($sbase, $spath) : sizeof($tpath);
+		for ($i = 0; $i < $size; $i++) {
+			if (!array_key_exists($i, $tbase)) {
+				$ret = false;
+				break;
+			}
+			if (!empty($tpath[$i]) && !empty($tbase[$i]) && $tpath[$i] != $tbase[$i]) {
+				$ret = false;
+				break;
+			}
+		}
+
+		return $ret;
+	}
+
+	/*	Renvoie une chaine propre pour windows
+	 */
+	function formatPath($path) {
+		if (system::osIsWin()) {
+			$path = str_replace('\\', '/', $path);
+		}
+		return $path;
+	}
+
+	/*	Renvoie une chaine propre pour windows
+	 */
+	function unFormatPath($path) {
+		if (system::osIsWin()) {
+			$path = str_replace('/', '\\', $path);
+		}
+		return $path;
+	}
+
 	/*	Renvoie true si le chemin canonique absolu ne descend pas en dessous de la base
-		@param string $base La base référence
+		@param string $base La base rÃ©fÃ©rence
 		@param string $path Le chemin symbolique ou autre
 		@param string $realpath Retourne le vrai chemin avec la base
 		@return boolean
@@ -413,31 +496,13 @@ class file
 
 		$rpath = file::realpath($path);
 		$rpath = file::realpath($base.$rpath, true);
-
+		
 		if ($rpath) {
 			$realpath = $rpath;
 			$ret = true;
 		}
 
 		return $ret;
-	}
-	
-	/*	Renvoie une chains propre pour windows
-	 */
-	function formatPath($path) {
-		if (substr(PHP_OS, 0, 3) == 'WIN') {
-			$path = str_replace('\\', '/', $path);
-		}
-		return $path;
-	}
-
-	/*	Renvoie une chains propre pour windows
-	 */
-	function unFormatPath($path) {
-		if (substr(PHP_OS, 0, 3) == 'WIN') {
-			$path = str_replace('/', '\\', $path);
-		}
-		return $path;
 	}
 }
 

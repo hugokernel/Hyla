@@ -1,0 +1,669 @@
+
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background: #FFF;
+	margin: 0;
+	padding: 0;
+	font-size: 80%;
+}
+
+a {
+	color: #00C;
+	font-style: normal;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #000;
+	font-style: normal;
+	text-decoration: none;
+}
+
+
+
+
+.header {
+	background: #EEE;
+}
+
+
+.ok {
+	font-size: 110%;
+	color: green;
+	font-weight: bold;
+}
+
+.no {
+	font-size: 110%;
+	color: red;
+	font-weight: bold;
+}
+
+
+/*	Affichage comme pour un listage de dossier du plugin Dir
+ */
+.line {
+	border-collapse: collapse;
+}
+
+.line td, .line th {
+	padding: 5px;
+	border: 0px;
+	border-bottom: 1px solid #CCC;
+}
+
+.line tr:hover {
+	background: #DDD;
+}
+
+.line a {
+	color: #00F;
+	font-style: normal;
+	text-decoration: none;
+	font-size: 100%;
+}
+
+.line a:hover {
+	color: #000;
+}
+
+table {
+	empty-cells: show;
+}
+
+
+/*	Affichage tableau avec contour
+ */
+.tab {
+	width: 100%;
+	border-collapse: collapse;
+	background: transparent;
+	border: 1px solid #CCC;
+}
+
+.tab tr:hover {
+	background: #DDD;
+}
+
+
+.tab td, .tab th {
+	padding: 5px;
+	border: 1px solid #BBB;
+}
+
+.tab a {
+	color: #00F;
+	font-style: normal;
+	text-decoration: none;
+	font-size: 100%;
+}
+
+.tab a:hover {
+	color: #000;
+}
+
+.tab .selected {
+	background: #C00;
+}
+
+.tab .selected:hover {
+	background: #F00;
+}
+
+
+
+.suggestion {
+	background: #FFC;
+	padding: 10px;
+
+	font-weight: normal;
+
+	margin: 10%;
+
+	-moz-border-radius: 10px;
+}
+
+
+
+.status {
+	background: #FFF;
+	padding: 5px;
+	margin: 5px;
+	-moz-border-radius: 10px;
+	border: 2px dashed #AAA;
+}
+
+.error {
+	color: red;
+	background: #FCC;
+	font-weight: bold;
+	padding: 10px;
+	margin: 10px;
+	-moz-border-radius: 10px;
+}
+
+
+hr {
+	border: 1px solid #CCC;
+}
+
+
+
+
+fieldset {
+	padding: 10px;
+	margin: 10px;
+	font-size: 90%;
+	background: #EEE;
+	border: 2px solid #999;
+	border-top: 2px solid #DDD;
+	border-left: 2px solid #DDD;
+
+	/*	IE */
+    position :              relative;
+    padding :               0 0.5em 1em 0.5em;
+}
+
+/*	Pour avoir un fieldset qui ressemble à quelque chose sous IE
+ */
+legend {
+    position :              relative;
+    top :                   -1.5em;
+    padding :               0.4em;
+}
+
+
+.copyright {
+	padding: 5px;
+	font-size: 80%;
+	text-align: left;
+}
+
+.sort {
+	padding: 2% 0 2% 0;
+	clear: both;
+}
+
+
+
+#toolbar {
+	margin: 0;
+	padding: 5px;
+	padding-bottom: 0;
+	background: #EEE;
+	border: 0;
+}
+
+#toolbar img {
+	width: 32px;
+	height: 32px;
+}
+
+#toolbar fieldset legend {
+	display: none;
+}
+
+#toolbar fieldset {
+	margin: 0;
+	background: #EEE;
+	border: 0;
+}
+
+#toolbar a {
+	margin-right: 5px;
+	float: left;
+
+	/*	Pour IE 6 */
+	border: 1px solid #EEE;
+	padding: 5px;
+}
+
+/* pour les autres navigateurs */
+* > #toolbar a {
+	border: 1px solid transparent;
+	padding: 5px;
+	padding-right: 10px;
+}
+
+/* pour IE 7 */
+*+html #toolbar a {
+	border: 1px solid transparent;
+	padding: 5px;
+}
+
+#toolbar a:hover {
+	background: #FFF;
+	border-bottom: 1px solid #999;
+	border-right: 1px solid #999;
+	border-top: 1px solid #FFF;
+	border-left: 1px solid #FFF;
+}
+
+#toolbar a:active {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	border-top: 1px solid #999;
+	border-left: 1px solid #999;
+}
+
+#toolbar #administration {
+	color: red;
+}
+
+#toolbar #username {
+	font-weight: bold;
+}
+
+#header-toolbar {
+	margin: 0;
+	padding: 0;
+
+	border-top: 2px solid #FFF;
+	border-bottom: 2px solid #999;
+	border-right: 2px solid #999;
+	border-left: 2px solid #FFF;
+}
+
+
+
+#current {
+	margin: 0px;
+	padding-top: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	background: #EEE;
+}
+
+#current h3 {
+	margin: 1px;
+	padding: 5px;
+	border: 1px solid #999;
+	background: #FFF;
+}
+
+
+h4.description {
+	padding: 10px;
+	margin: 10px;
+	font-size: 85%;
+	color: #000;
+	background: #EE0;
+	border: 1px solid #BB0;
+	-moz-border-radius: 15px;
+	clear: both;
+}
+
+
+
+
+
+
+ul#tabnav {
+    font: bold 11px verdana, arial, sans-serif;
+    list-style-type: none;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #6c6;
+    margin: 0;
+}
+
+ul#tabnav li {
+    float: left;
+    background-color: #cfc;
+    margin: 2px 2px 0 2px;
+    border: 1px solid #6c6;
+}
+
+ul#tabnav li.active {
+    border-bottom: 1px solid #fff;
+    background-color: #fff;
+}
+
+#tabnav a {
+    float: left;
+    display: block;
+    color: #666;
+    text-decoration: none;
+    padding: 4px;
+}
+
+#tabnav a:hover {
+    background: #fff;
+}
+
+
+
+.field {
+	padding: 10px;
+	margin: 10px;
+	font-size: 90%;
+	background: #EEE;
+	border: 2px solid #999;
+	border-top: 2px solid #DDD;
+	border-left: 2px solid #DDD;
+}
+
+
+
+
+
+
+
+
+/*	Les formulaires
+ */
+textarea{
+	width: 100%;
+	background: #FFE;
+
+	border-top: 1px solid #999;
+	border-right: 1px solid #DDD;
+	border-bottom: 1px solid #DDD;
+	border-left: 1px solid #999;
+}
+
+textarea:focus {
+	background: #FFF;
+}
+
+input {
+	padding: 3px;
+	background: #FFE;
+
+	border-top: 1px solid #999;
+	border-right: 1px solid #DDD;
+	border-bottom: 1px solid #DDD;
+	border-left: 1px solid #999;
+}
+
+input:focus {
+	background: #FFF;
+}
+
+input[type=submit] {
+	padding: 1px;
+	background: #CCC;
+
+	border-top: 1px solid #DDD;
+	border-right: 1px solid #999;
+	border-bottom: 1px solid #999;
+	border-left: 1px solid #DDD;
+}
+
+input[type=checkbox] {
+	padding: 1px;
+}
+
+input[type=submit]:hover {
+	background: #DDD;
+}
+
+select {
+	background: #FFE;
+	border-top: 1px solid #999;
+	border-right: 1px solid #DDD;
+	border-bottom: 1px solid #DDD;
+	border-left: 1px solid #999;
+} 
+
+select:focus {
+	background: #FFF;
+}
+
+
+legend {
+	font-size: 120%;
+	font-weight: bold;
+}
+
+
+#form_misc {
+	width: 100%;
+}
+
+
+
+
+.comment_info {
+	padding: 1px;
+}
+
+.comment_content {
+	padding: 10px;
+	background: #EEE;
+	-moz-border-radius: 10px;
+}
+
+.comment_nbr {
+	color: #990;
+	display: inline;
+}
+
+
+
+
+
+
+
+.option {
+	padding: 5px;
+	border: 1px solid #BBB;
+	background: #EEE;
+}
+
+
+
+
+.info {
+	background: #CCE;
+	border: 1px dashed #AAC;
+	padding: 5px;
+
+	font-weight: normal;
+	margin-left: 10%;
+	margin-right: 10%;
+}
+
+.help {
+	font-style: italic;
+	color: #668;
+}
+
+th {
+	background: #CCC;
+}
+
+
+.pagination {
+	width: 100%;
+	text-align: center;
+	font-size: 100%;
+	clear: both;
+	padding: 5px;
+}
+
+.pagination #current_page {
+	font-weight: bold;
+}
+
+.pagination #previous {
+	float: left;
+	width: 20%;
+	text-align: left;
+}
+
+.pagination #num_page {
+	width: 60%;
+	float: left;
+}
+
+.pagination #next {
+	float: right;
+	width: 20%;
+	text-align: right;
+}
+
+
+
+.action {
+	width: 100%;
+}
+
+#main {
+	width: 98%;
+
+	margin-left: 1%;
+	margin-right: 1%;
+}
+
+
+
+
+#sidebar {
+	padding: 1em;
+}
+
+#sidebar a {
+	margin-right: 5px;
+
+	/*	Pour IE 6 */
+	padding: 5px;
+	border: 1px solid #FFF;
+}
+
+/* pour les autres navigateurs */
+* > #sidebar a {
+	border: 1px solid transparent;
+	padding: 10px;
+}
+
+/* pour IE 7 */
+*+html #sidebar a {
+	border: 1px solid transparent;
+	padding: 10px;
+}
+
+#sidebar a:hover {
+	background: #EEE;
+	border-bottom: 1px solid #999;
+	border-right: 1px solid #999;
+	border-top: 1px solid #FFF;
+	border-left: 1px solid #FFF;
+}
+
+#sidebar fieldset a:active {
+	border-bottom: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	border-top: 1px solid #999;
+	border-left: 1px solid #999;
+}
+
+#sidebar ul {
+	list-style-type: none;
+	list-style-image: none;
+	margin: 0;
+	padding: 0;
+}
+
+#sidebar li {
+	margin: 0;
+	padding: 0;
+	display:inline;
+}
+
+
+
+img {
+	border: 0;
+	vertical-align: middle;
+}
+
+.icon {
+	width: 32px;
+	height: 32px;
+}
+
+#current img {
+	width: 32px;
+	height: 32px;
+}
+
+
+#content {
+	float: right;
+	width: 81%;
+	margin: 1%;
+}
+
+
+/*	L'arborescence
+ */
+#tree {
+	float: left;
+	overflow: auto;
+	width: 15%;
+	height: 50%;
+	clear: both;
+}
+
+#tree a {
+	color: blue;
+}
+
+#content-no-tree {
+	clear: both;
+}
+
+
+
+ul#arbre {
+	padding-left: 0;
+	margin-left: 0;
+	display: block;
+}
+
+ul#arbre span {
+	font-weight: normal;
+	padding: 0 0 0 20px;
+	margin: 0 0 0 -7px;
+
+	background-image: url(img/bullet.gif);
+	background-repeat: no-repeat;
+	background-position: 0;
+}
+
+ul#arbre span.arbre-plus {
+	background-image: url(img/plus.gif);
+	cursor: pointer;
+}
+
+ul#arbre span.arbre-minus {
+	background-image: url(img/minus.gif);
+	cursor: pointer;
+}
+
+ul#arbre ul {
+	padding: 0;
+	margin: 0;
+}
+
+ul#arbre li {
+	padding: 0;
+	margin: 0px;
+	list-style: none;
+}
+
+
+ul#arbre li li {
+	margin: 2px 0 0 16px;
+}
+
+ul#arbre li:last-child {
+	border-left: 0;
+}
+
+.hide {
+	display: none;
+}
+
+

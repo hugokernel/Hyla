@@ -1,9 +1,38 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <template>
 	<name>Default</name>
-	<description>Thème par défaut</description>
+	<description>Thème par défaut en xhtml</description>
 	<author>hugo</author>
 	<version>1</version>
+	<header>Content-Type: text/html; charset=UTF-8</header>
+	<img-src>/tpl/default/img</img-src>
+	<php-function>./tpl/default/function.php</php-function>
+	<stylesheets>
+		<stylesheet>
+			<type>text/css</type>
+			<media>screen,projection</media>
+			<title>Standard</title>
+			<href>default.css</href>
+		</stylesheet>
+		<stylesheet>
+			<type>text/css</type>
+			<media>screen,projection</media>
+			<title>Cacher l'arborescence</title>
+			<href>no-tree.css</href>
+		</stylesheet>
+		<stylesheet>
+			<type>text/css</type>
+			<media>screen,projection</media>
+			<title>Spirit</title>
+			<href>spirit.css</href>
+		</stylesheet>
+		<stylesheet>
+			<type>text/css</type>
+			<media>screen,projection</media>
+			<title>Spirit sans arborescence</title>
+			<href>spirit-no-tree.css</href>
+		</stylesheet>
+	</stylesheets>
 </template>
 

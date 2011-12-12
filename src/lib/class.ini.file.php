@@ -35,7 +35,7 @@ class iniFile
 		}
 	}
 	
-	/* édition d'une variable */
+	/* Ã©dition d'une variable */
 	function editVar($name,$value)
 	{
 		if ($this->file !== false)
@@ -54,7 +54,7 @@ class iniFile
 		}
 	}
 	
-	/* création d'un variable */
+	/* crÃ©ation d'un variable */
 	function createVar($name,$value,$comment='')
 	{
 		$match = sprintf($this->var_reg,preg_quote($name));
@@ -84,8 +84,8 @@ class iniFile
 		}
 	}
 	
-	/*	Renvoie un tableau avec le même format que parse_ini_file
-		Modifié par hugo, le 29 juin 2006
+	/*	Renvoie un tableau avec le mÃªme format que parse_ini_file
+		ModifiÃ© par hugo, le 29 juin 2006
 	 */
 	function read($file, $section = false)
 	{
@@ -101,10 +101,10 @@ class iniFile
 		foreach ($f as $line)
 		{
 			$line = trim($line);
-			if ($line{0} == ';' || $line == '')
+			if ($line == '' || $line{0} == ';')
 				continue;
 
-			if ($line{0} == '[') {
+			if ($line && $line{0} == '[') {
 				if ($section)
 					$sect = trim(substr($line, 1, strpos($line, ']') - 1));
 				continue;

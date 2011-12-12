@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -23,27 +23,22 @@
 class string
 {
 	/*	Coupe un mot ou une phrase et rajoute des '...'
-		@param	string	$str		Chaine à couper
+		@param	string	$str		Chaine Ã  couper
 	 	@param	int		$size		Taille de la coupe
 		@param	string	$end		Tronquer avec cette chaine
-		@param	bool	$entities	S'occuper des entités html
 	 */
-	function cut($str, $size = 25, $end = '...', $entities = true) {
-		if ($entities)
-			$str = html_entity_decode($str, ENT_QUOTES);
+	function cut($str, $size = 25, $end = '...') {
 
 		if (strlen($str) > $size)
 			$str = substr($str, 0, $size - strlen($end)).$end;
 
-		if ($entities)
-			$str = htmlentities($str, ENT_QUOTES);
 		return $str;
 	}
 
-	/*	Recherche une chaine de caractère dans un ensemble de caractères (strpbrk en php5)
-		@param	string	$str	La chaine à vérifier
-		@param	string	$list	Liste de caractère
-		@return	Retourne true si la chaine contient un des caractère passé en second paramètre
+	/*	Recherche une chaine de caractÃ¨re dans un ensemble de caractÃ¨res (strpbrk en php5)
+		@param	string	$str	La chaine Ã  vÃ©rifier
+		@param	string	$list	Liste de caractÃ¨re
+		@return	Retourne true si la chaine contient un des caractÃ¨re passÃ© en second paramÃ¨tre
 	 */
 	function test($str, $list) {
 		$ret = false;
@@ -58,15 +53,15 @@ class string
 	}
 
 	/*	Format une chaine comme il faut !
-		@param	string	$string	La chaine à formater
+		@param	string	$string	La chaine Ã  formater
 		@param	bool	$n		Accepter les retour chariot ou non
-		@param	bool	$url	"Déformater" les urls ou non
+		@param	bool	$url	"DÃ©formater" les urls ou non
 	 */
 	function format($string, $n = true, $url = false) {
 
-		$string = htmlentities($string, ENT_QUOTES);
+		$string = strip_tags($string);
 
-		// Le nl2br rajoute un retour chariot après le <br /> donc :
+		// Le nl2br rajoute un retour chariot aprÃ¨s le <br /> donc :
 		$string = ($n) ? eregi_replace("\r\n|\n", '<br />', $string) : eregi_replace("\r\n|\n", ' ', $string);
 
 		if ($url) {
@@ -78,10 +73,10 @@ class string
 		return $string;
 	}
 
-	/*	Opération inverse de formatString
-		@param	string	$string	La chaine à "déformater"
+	/*	OpÃ©ration inverse de formatString
+		@param	string	$string	La chaine Ã  "dÃ©formater"
 		@param	bool	$n		Convertir les <br> en saut
-		@param	bool	$url	"Déformater" les urls ou non
+		@param	bool	$url	"DÃ©formater" les urls ou non
 	 */
 	function unFormat($string) {
 		$string = eregi_replace("<br />|<br>", "\n", $string);

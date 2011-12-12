@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -24,18 +24,23 @@ if (!defined('PAGE_HOME'))
 
 $tpl->set_file('login', 'login.tpl');
 
+$tpl->l10n->setFile('login.php');
+
+// Le formulaire à été posté ?
 if (isset($_POST['lg_name'])) {
 	if (!empty($_POST['lg_name']) && !empty($_POST['lg_password'])) {
-		$usr = new users();
-		$res = $usr->auth($_POST['lg_name'], $_POST['lg_password']);
+
+		// Tentative d'authentification
+		$res = $auth->auth($_POST['lg_name'], $_POST['lg_password']);
 		if ($res) {
+			session_regenerate_id();
 			redirect('', (isset($_SESSION['sess_url']) ? $_SESSION['sess_url'] : url::getObj($cobj->file)), __('You are now authenticated !'));
 			$_SESSION['sess_url'] = null;
-			$_SESSION['sess_cuser'] = serialize($res);
-			$_SESSION['sess_clogin'] = $res->name;
+			$_SESSION['sess_cuser_id'] = $res->id;
 			system::end();
 		}
 		unset($usr, $res);
+
 		header('HTTP/1.x 401 Authorization Required');
 		$msg_error = __('Error during authentification');
 	} else
@@ -43,14 +48,19 @@ if (isset($_POST['lg_name'])) {
 }
 
 $tpl->set_var(array(
-		'PAGE_LOGIN'	=>	url::getCurrentObj('login'),
+		'STYLESHEET'	=>	get_css(),
+		'PAGE_LOGIN'	=>	url::getPage('login'),
 		'NAME'			=>	(isset($_POST['lg_name']) ? stripslashes(htmlentities($_POST['lg_name'])) : null),
 		'OBJECT'		=>	$cobj->file,
 		'ERROR'			=>	view_error($msg_error),
+		'SUGGESTION'	=>	get_suggest(array('Saisissez votre mot de passe à l\'abris des regards indiscret !')),
 		));
 
 $msg_error = null;
 
 $var_tpl = $tpl->parse('OutPut', 'login');
+
+print($var_tpl);
+system::end();
 
 ?>

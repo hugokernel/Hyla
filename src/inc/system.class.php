@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -19,7 +19,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 class system
 {
 	/*	Abstraction timestamp
@@ -31,17 +30,16 @@ class system
 	
 	/*	Abstraction pour l'heure
 	 	@param	string	$format	Format de l'heure
-	 	@param	int		$time		Le timestamp
+	 	@param	int		$time	Le timestamp
 	 */
 	function date($format, $time = 0) {
 		if ($time == 0)
 			$time = system::time();
-		
 		$date = date($format, $time);
 		return $date;
 	}
 
-	/*	Pour le chronométrage...
+	/*	Pour le chronomÃ©trage...
 	 */
 	function chrono() {
 		$mtime = microtime();
@@ -51,18 +49,23 @@ class system
 	}
 
 	/*	Couche pour l'envoie de mail
-	 	@param	string	$mail		L'adresse
+	 	@param	string	$to			L'adresse
 	 	@param	string	$subject	Le sujet
 	 	@param	string	$text		Le texte du mail
-	 	@param	string	$from		L'expéditeur
+	 	@param	string	$from		L'expÃ©diteur
 	 */
-	function mail($mail, $subject, $text, $from) {
-		$ret = mail($mail, $subject, $text, 'From: '.$from);
+	function mail($to, $subject, $text, $from) {
+		$header = "From: $from\r\n".
+			      "X-Mailer: Hyla\r\n".
+			      "MIME-Version: 1.0\r\n".
+			      "Content-Type: text/plain; charset=utf-8\r\n".
+			      "Content-Transfer-Encoding: 8bit\r\n";
+		$ret = mail($to, $subject, $text, $header);
 		return $ret;
 	}
 	
-	/*	Génération d'identifiant unique
-		@param	int	$size	Nombre de caractère de l'ID
+	/*	GÃ©nÃ©ration d'identifiant unique
+		@param	int	$size	Nombre de caractÃ¨re de l'ID
 	 */
 	function getUniqueID($size = 8) {
 		$ret = null;
@@ -74,21 +77,30 @@ class system
 		srand((double)microtime() * 1000000);
 		for ($i = 0; $i < $size; $i++)
 			$ret .= $tab[rand(0, $nbr_elem)];
-	
 		return $ret;
 	}
 	
-	/*	Retourne une chaine indiquant le système
+	/*	Retourne une chaine indiquant le systÃ¨me
 	 */
 	function getOS() {
-		return PHP_OS;
+		return strtolower(PHP_OS);
+	}
+
+	/*	Renvoie si on est sur Windows...
+	 */
+	function osIsWin() {
+		$ret = false;
+		if (substr(system::getOS(), 0, 3) == 'win')
+			$ret = true;
+		return $ret;
 	}
 
 	/*	Fonction affichant une erreur en cas de time out
 	 */
 	function timeOut() {
-		if (!defined('EXIT'))
-			exit(__('Time out !'));
+		if (!defined('EXIT')) {
+			exit('Fatal error : Time out !');
+		}
 	}
 
 	function end($msg = null) {

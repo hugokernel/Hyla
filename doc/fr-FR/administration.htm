@@ -1,0 +1,415 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+
+<head>
+	<title>Administration</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<link rel="shortcut icon" type="image/x-icon" href="img/icon.png" />
+	<link rel="icon" type="image/png" href="img/icon.png"/>
+
+	<link rel="stylesheet" type="text/css" media="screen,projection" title="Standard" href="default.css" />
+
+</head>
+
+<body>
+
+	<h1>Aide - L'administration</h1>
+
+	<p>
+		<a href="index.htm">Retourner à l'index</a>
+	</p>
+
+	<ul>
+		<li>
+			<a href="#conf">Configuration</a>
+			<ul>
+				<li><a href="#conf-affichage">Affichage</a></li>
+				<li><a href="#conf-ajout">Ajout de fichiers et dossiers</a></li>
+				<li><a href="#conf-listage">Listage de dossiers</a></li>
+				<li><a href="#conf-divers">Divers</a></li>
+			</ul>
+		</li>
+		<li>
+			<a href="#users">Utilisateurs</a>
+			<ul>
+				<li><a href="#users-liste">Liste des utilisateurs</a></li>
+				<li><a href="#users-ajout-modif">Ajout / Modification</a></li>
+				<li><a href="#users-suppression">Suppression</a></li>
+			</ul>
+		</li>
+		<li>
+			<a href="#groups">Groupes</a>
+			<ul>
+				<li><a href="#groups-liste">Liste des groupes</a></li>
+				<li><a href="#groups-ajout">Ajout</a></li>
+				<li><a href="#groups-modif">Modification</a></li>
+				<li><a href="#groups-suppression">Suppression</a></li>
+			</ul>
+		</li>
+		<li>
+			<a href="#rights">Droits</a>
+			<ul>
+				<li><a href="#rights-liste">Liste des droits</a></li>
+				<li><a href="#rights-ajout">Ajout d'un droit</a></li>
+				<li><a href="#rights-edition">Édition d'un droit</a></li>
+				<li><a href="#rights-suppression">Suppression d'un droit</a></li>
+			</ul>
+		</li>
+		<li><a href="#comments">Commentaires</a></li>
+		<li><a href="#anon-file">Fichiers anonymes</a></li>
+		<li>
+			<a href="#maintenance">Maintenance</a>
+			<ul>
+				<li><a href="#maintenance-purge-cache">Vider le cache</a></li>
+				<li><a href="#maintenance-sync">Lancer une synchronisation</a></li>
+			</ul>
+		</li>
+	</ul>
+
+	<hr />
+
+	<h2 id="conf">Configuration</h2>
+  
+	<p>
+		Hormis les informations de configuration contenues dans le fichier <span class="path">/conf/config.inc.php</span>,
+		Hyla stocke les informations restantes dans le fichier <span class="path">/conf/hyla.ini</span>.
+		<br />
+		Ce dernier est, comme son l'extension l'indique, un fichier au format de stockage
+		.ini, c'est à dire, qu'il est très facilement éditable grâce à un éditeur de texte,
+		ainsi, il vous sera possible de modifier la configuration de Hyla par le biais de
+		l'interface graphique de l'administration ou directement ou ouvrant ce fichier
+		avec votre éditeur de texte favoris.
+	</p>
+
+	<p class="remarque">
+		<u>Remarque :</u>
+		Si par mégarde, vous faisiez une erreur en éditant un des fichiers de configuration (<span class="path">/conf/config.inc.php</span> ou
+		<span class="path">/conf/hyla.ini</span>), sachez qu'il existe des versions de secours pour ces deux fichiers, il s'agit respectivement
+		de <span class="path">/conf/config.inc.default.php</span> et de <span class="path">/conf/hyla.default.ini</span>), il vous suffit de les copier et de les renommer.
+	</p>
+
+	<p>
+		L'interface de configuration de l'administration est divisé en quatre parties, nous allons
+		les aborder une par une ci-dessous en détaillant les options possibles.
+	</p>
+
+	<h3 id="conf-affichage">Affichage</h3>
+
+	<ul>
+		<li><strong>Titre navigateur :</strong> Il s'agit du texte mis entre les balises "title" qui apparaîtra sur la barre de titre du navigateur.</li>
+		<li>
+			<strong>Le modèle par défaut :</strong> Il s'agit du dossier dans (<span class="path">/tpl</span>) contenant le modèle définissant l'apparence.
+			<br />
+			Choisissez le style par défaut contenu dans le modèle voulu, ces derniers apparaissent en gras.
+		</li>
+		<li><strong>Faut-il toujours voir les actions ?</strong> Permet d'afficher les liens vers les actions de la barre d'outils même lorsque l'on n'est pas connecté.</li>
+		<li><strong>Faut-il afficher l'arborescence des dossiers ?</strong> Ceci permet d'afficher tous les dossiers sous forme d'arborescence.</li>
+		<li><strong>Faut-il afficher les fichiers cachés ?</strong> En autorisant l'affichage des fichiers cachés, vous afficherez les fichiers commençant par un "." .</li>
+	</ul>
+
+	<h3 id="conf-ajout">Ajout de fichiers et dossiers</h3>
+
+	<ul>
+		<li><strong>Droits à attribuer aux fichiers uploadés :</strong> Lors de l'ajout d'un fichier dans Hyla, il s'agit des droits qui lui seront attribué (prenez garde en modifiant cette option !).</li>
+		<li><strong>Droits à attribuer aux dossiers créés :</strong> Lorsqu'un dossier est créé, il s'agit des droits qui lui seront attribué (prenez garde en modifiant cette option !).</li>
+		<li><strong>Faut-il envoyer un courriel lors de l'envoi d'un fichier anonyme ?</strong> Pour chaque fichier anonyme envoyé, vous recevrez une notification par courriel.</li>
+	</ul>
+
+	<h3 id="conf-listage">Listage de dossiers</h3>
+
+	<ul>
+		<li><strong>Tri par défaut :</strong> Ce tri définit l'ordre d'affichage des fichiers et des dossiers.</li>
+		<li><strong>Faut-il mettre les dossiers en premier ?</strong> Affiche les dossiers en premier.</li>
+		<li><strong>Grouper par critère de tri :</strong> Si le tri courant est alphabétique, les fichiers commençant par la lettre A seront groupés ensemble, suivis des fichiers commençant par la lettre B, et ainsi de suite...et cela de manière dynamique, par rapport au critère de tri.</li>
+		<li><strong>Nombre d'objets par page :</strong> Pour afficher tous les fichiers et dossiers, indiquez 0 mais cela est FORTEMENT non recommandé pour des raisons de charge serveur dans le cas de génération de galeries, vous êtes prévenu !!!</li>
+		<li><strong>Plugin des dossiers par défaut :</strong> Spécifiez ici le plugin par défaut à utiliser, ainsi, si vous désirez générer uniquement des galeries photos avec le plugin zenphoto, choisissez "zenphoto".</li>
+	</ul>
+
+	<h3 id="conf-divers">Divers</h3>
+
+	<ul>
+		<li><strong>Courriel du webmestre :</strong> Les notifications (ajout de fichiers anonymes...) seront envoyées à cette adresse.</li>
+		<li><strong>Langue :</strong> Assurez-vous qu'un dossier contenant les fichiers adéquates se trouvent bien dans le dossier l10n/ .</li>
+		<li><strong>Faut-il activer le compteur de téléchargement ?</strong> Cette option vous permet de compter les téléchargements et non les visualisations.</li>
+		<li><strong>Le temps de redirection :</strong> Paramétrez ici le temps de redirection entre les pages exprimé en seconde, la valeur minimale est de 1 seconde.</li>
+		<li><strong>Faut-il autoriser le téléchargement de dossier ?</strong> Cette option vous permet de désactiver le téléchargement de dossier qui consiste à envoyer une archive contenant les fichiers de ce dernier.</li>
+		<li><strong>Le système de fichier est-il encodé en Utf8 ?</strong> Si lors d'opérations (renommage, création de dossier...) sur le système de fichiers par le biais de Hyla,
+					apparait des caractères bizarres dans le nom des fichiers ou dossiers, modifiez cette clef
+					de manière à ce qu'elle soit à Oui pour un système de fichiers en Utf8 ou à non pour les autres types (ISO...), si
+					vous êtes utilisateur de Windows, cette clef devrait être à Non.
+		</li>
+	</ul>
+
+	<h2 id="users">Utilisateurs</h2>
+
+	<p>
+		Pour plus d'informations concernant les utilisateurs dans Hyla, référez-vous à la documentation sur
+		<a href="users.htm">les utilisateurs et les groupes</a>
+	</p>
+
+	<p>
+		Hyla vous permet de gérer plusieurs utilisateurs, ainsi, il est
+		possible de restreindre l'accès à certain utilisateurs, ou encore
+		autoriser des utilisateurs à ajouter, éditer, supprimer...
+	</p>
+
+	<h3 id="users-liste">Liste des utilisateurs</h3>
+
+	<p>
+		Ce tableau vous permet de voir tous les utilisateurs du système,
+		leur id (identifiant unique) et leur type.
+	</p>
+
+	<p>
+		Trois types d'utilisateurs peuvent être créé :
+	</p>
+
+	<ul>
+		<li><strong>Utilisateur standard</strong> qui ne dispose d'aucun droit particulier.</li>
+		<li><strong>Superviseur</strong> qui dispose de tous les droits sauf celui d'accéder à l'administration.</li>
+		<li><strong>Administrateur</strong> possède tous les droits, prenez garde à qui vous attribuez ce type.</li>
+	</ul>
+
+
+	<p>
+		Vous pourrez remarquer la présence de 3 utilisateurs ayant un type
+		"Spécial" appelés aussi "méta-utilisateurs", ils appartiennent au système, pour cette raison, il est
+		impossible de les éditer ou des les supprimer ou d'en ajouter, voici leur rôle :
+	</p>
+
+	<ul>
+		<li><strong>Any</strong> correspond à n'importe quel utilisateur, connecté ou non.</li>
+		<li><strong>Anonymous</strong> correspond à toute personne non connectée (qui n'est pas authentifiée)</li>
+		<li><strong>Authenticated</strong> correspond à toute personne connectée (qui est donc authentifiée)</li>
+	</ul>
+
+	<h3 id="users-ajout-modif">Ajout / Modification</h3>
+
+	<p>
+		Pour ajouter un utilisateur dans la système, il vous suffit de cliquer
+		sur le lien adéquat et de remplir les champs suivants :
+	</p>
+
+ 	<dl>
+ 		<dt id="users_nom">Nom</dt>
+ 		<dd>
+			Le nom d'un utilisateur ne peut être constitué que de lettres de
+			l'alphabet, du trait d'union (-) et de le tiret bas (_),
+			attention tout de même, le nom doit commencer par une lettre et est
+			limité à 32 caractères.
+		</dd>
+
+ 		<dt id="users_password">Mot de passe</dt>
+ 		<dd>Le mot de passe de l'utilisateur ne peut pas être vide, il peut contenir n'importe quel caractère.</dd>
+	</dl>
+
+	<p>
+		Chaque utilisateur créé est par défaut un utilisateur "standard", pour changer sont type,
+		une fois créé, éditez son type.
+	</p>
+
+	<h3 id="users-suppression">Suppression</h3>
+
+	<p>
+		Dans la colonne "Actions", vous trouverez en face de chaque utilisateur,
+		sauf spéciaux et vous même, un lien permettant de supprimer l'utilisateur.
+	</p>
+
+	<h2 id="groups">Groupes</h2>
+
+	<p>
+		Pour plus d'informations concernant les groupes dans Hyla, référez-vous à la documentation sur
+		<a href="users.htm">les utilisateurs et les groupes</a>
+	</p>
+
+	<p>
+		Afin de rendre la gestion des utilisateurs plus simple, Hyla vous permet
+		de créer des groupes d'utilisateurs permettant ainsi une manipulation
+		des droits beaucoup plus simple.
+	</p>
+
+	<h3 id="groups-liste">Liste des groupes</h3>
+
+	<p>
+		Ce tableau vous permet de voir tous les groupes du système,
+		leur id (identifiant unique) et les utilisateurs leur appartenant.
+	</p>
+
+	<h3 id="groups-ajout">Ajout</h3>
+
+	<p>
+		Pour ajouter un groupe, il vous suffit de cliquer
+		sur le lien adéquat et de remplir le champ suivant :
+	</p>
+
+ 	<dl>
+ 		<dt id="groups_nom">Nom</dt>
+ 		<dd>
+			La règle de nommage des groupes est la même que pour les utilisateurs,
+			il ne peut être constitué que de lettres de l'alphabet, du trait d'union
+			( - ) et du tiret bas ( _ ), attention tout de même, le nom doit
+			commencer par une lettre et est limité à 32 caractères.
+		</dd>
+	</dl>
+
+	<h3 id="groups-modif">Modification</h3>
+
+	<p>
+		La modification d'un groupe se borne à l'ajout ou la suppression
+		d'utilisateur.
+	</p>
+
+	<p>
+		Lors de l'ajout, une liste vous propose de choisir les utilisateurs à ajouter.
+	</p>
+
+	<p>
+		Lors de la suppression d'un utilisateur, un tableau vous permet de sélectionne par le biais
+		de case à cocher les utilisateurs à supprimer.
+	</p>
+
+	<h3 id="groups-suppression">Suppression</h3>
+
+	<p>
+		Pour supprimer un groupe, cliquez simplement sur le lien prévu à cet effet.
+		<br />
+		Le groupe sera alors supprimé ainsi que toute ces références dans les droits.
+	</p>
+
+
+	<h2 id="rights">Droits</h2>
+
+	<p>
+		Pour plus d'informations concernant les droits dans Hyla, référez-vous à la
+		<a href="rights.htm">documentation consacrée aux droits</a>.
+	</p>
+
+
+	<h3 id="rights-liste">Liste des droits</h3>
+
+	<p>
+		Ce tableau vous permet de voir tous les droits du système en une seule vue.
+	</p>
+
+	<p>
+		Ce dernier est composé de quatre colonnes :
+	</p>
+
+	<ul>
+		<li><strong>Dossiers</strong> Affichage du nom du dossier possédant le droit courant.</li>
+		<li>
+			<strong>Utilisateurs / Groupes</strong> Cette colonne affiche les utilisateurs
+			ou groupes ayant des droits dans le dossier courant.
+		</li>
+		<li>
+			<strong>Droits</strong> La liste de droits disponible pour les utilisateurs
+			ou groupes du dossier courant.
+		</li>
+		<li>
+			<strong>Actions</strong> Dans cette colonne, vous disposez de l'action "Ajouter" permettant
+			d'ajouter des droits au dossier courant et le lien "Éditer"
+			permettant d'ajouter ou d'enlever des droits dans le dossier courant.
+		</li>
+		<li>
+			<strong>Sélection</strong> Cette colonne vous permet de sélectionner, par le biais de case
+			à cocher, des droits afin de les supprimer grâce au bouton adéquate.
+		</li>
+	</ul>
+
+
+	<h3 id="rights-ajout">Ajout d'un droit</h3>
+
+	<p>
+		Pour ajouter un droit, il vous suffit de cliquer
+		sur le lien adéquat, la création d'un droit se fait alors en deux étapes :
+	</p>
+
+	<ol>
+		<li>
+			<strong>Choix d'un dossier</strong> Dans cette première étape, un menu vous permet de choisir
+			le dossier sur lequel vous voulez ajouter un droit.
+		</li>
+		<li>
+			<strong>Choix d'utilisateur et attribution des droits</strong> Dans la deuxième étape,
+			vous pouvez alors choisi un oui plusieurs utilisateurs ou groupes et leur assigner les droits désirés.
+		</li>
+	</ol>
+
+	<p class="remarque">
+		<u>Remarque :</u>
+		Dans la deuxième étape, vous ne verrez afficher que les utilisateurs ou groupes ne faisant pas déjà parti des droits
+		du dossier édité.
+	</p>
+
+
+	<h3 id="rights-edition">Édition d'un droit</h3>
+
+	<p>
+		En cliquant sur le lien "Éditer" dans le tableau, vous pourrez ainsi modifier les droits de(s) utilisateur(s) / groupe(s) du dossier courant.
+	</p>
+
+	<p class="remarque">
+		<u>Remarque :</u>
+		N'oubliez pas que les droits que vous attribuez à un utilisateur ou un groupe se propagent dans les dossiers fils.
+		<br />
+		Pour plus d'informations à ce sujet, veuillez consulter <a href="rights.htm#propagation">la documentation consacré au droits</a>.
+	</p>
+
+
+	<h3 id="rights-suppression">Suppression d'un droit</h3>
+
+	<p>
+		En cliquant sur le lien "Supprimer" dans le tableau, vous supprimerez les droits de(s) utilisateur(s) / groupe(s) du dossier courant.
+	</p>
+
+	
+	<h2 id="comments">Commentaires</h2>
+
+	<p>
+		Il vous est possible de supprimer de voir tous les commentaires et de les supprimer un par un en cliquant sur la corbeille
+		ou par bloc en les sélectionnant grâce aux cases à cocher puis en cliquant sur le bouton "Supprimer la sélection".
+	</p>
+
+
+	<h2 id="anon-file">Fichiers anonymes</h2>
+
+	<p>
+		Le tableau affiche tous les fichiers anonymes qui ont été envoyés et qui sont en attente d'une validation.
+	</p>
+
+	<p>
+		Si vous souhaitez accepter le fichier, il vous suffit de cliquer sur le lien adéquate, le fichier sera alors déplacé vers sa destination.
+	</p>
+
+
+	<h2 id="maintenance">Maintenance</h2>
+
+	<p>
+		Cette partie rassemble toutes les actions utiles pour le bon fonctionnement de Hyla.
+	</p>
+
+
+	<h3 id="maintenance-purge-cache">Vider le cache</h3>
+
+	<p>
+		Cette action vous permet de supprimer tous les fichiers et dossiers cache (<span class="path">/sys/cache</span>), ce qui peut
+		être utile si des erreurs de lecture de contenu d'archives se produisent.
+	</p>
+
+
+	<h3 id="maintenance-sync">Lancer une synchronisation</h3>
+
+	<p>
+		Si vous supprimez des fichiers ou des dossiers sans passer par l'interface de Hyla (ftp...),
+		il peut être utile d'effectuer une synchronisation de la base de données avec le système de fichiers.
+	</p>
+
+	<hr />
+
+	<a href="#">Remonter</a>
+
+</body>
+
+</html>

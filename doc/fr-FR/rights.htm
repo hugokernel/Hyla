@@ -1,0 +1,462 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<title>Les droits</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<link rel="shortcut icon" type="image/x-icon" href="img/icon.png" />
+	<link rel="icon" type="image/png" href="img/icon.png"/>
+
+	<link rel="stylesheet" type="text/css" media="screen,projection" title="Standard" href="default.css" />
+
+</head>
+
+<body>
+
+	<h1>Droits</h1>
+
+	<p>
+		<a href="index.htm">Retourner à l'index</a>
+	</p>
+
+	<ul>
+		<li><a href="#intro">Introduction</a></li>
+		<li>
+			<a href="#caract">Caractéristiques</a>
+			<ul>
+				<li><a href="#types">Types</a></li>
+				<li><a href="#assignation">Assignation</a></li>
+				<li><a href="#priorité">Priorité</a></li>
+				<li><a href="#propagation">Propagation ou héritage</a></li>
+			</ul>
+		</li>
+		<li>
+			<a href="#recap">Récapitulatif pour décideurs pressés</a>
+		</li>
+	</ul>
+
+	<hr />
+
+	<h2 id="intro">Introduction</h2>
+	<p>
+		Hyla possède un système de droits permettant d'assigner des droits différents par utilisateurs ou groupe d'utilisateurs et
+		par dossier, ainsi, vous pourrez très simplement, désigner des utilisateurs ayant le droit d'ajouter des fichiers dans tel dossier, d'autres pouvant
+		supprimer, renommer partout...
+	</p>
+
+	<p>
+		Néanmoins, les droits sont à utiliser avec précautions car il ne faut pas attribuer n'importe quel droits à n'importe qui, il est donc essentiel de bien
+		connaitre le fonctionnement des droits dans Hyla...
+	</p>
+
+	<h2 id="caract">Caractéristiques</h2>
+
+	<h3 id="types">Types</h3>
+
+	<p>
+		Vous trouverez dans le tableau ci dessous les différents type de droits qu'il est possible de trouver dans Hyla.
+	</p>
+
+	<table summary="Liste des droits applicables à un dossier">
+		<tr>
+			<th colspan="2">Divers</th>
+		</tr>
+		<tr>
+			<td>-</td>
+			<td>Pas de droit, personne ne peut lire le contenu du dossier sauf l'administrateur.</td>
+		</tr>
+		<tr>
+			<td>Visualisation</td>
+			<td>
+				L'utilisateur peut visualiser le contenu du dossier.
+				<br />
+				Important : <a href="#remarque-droit-visu">Voir la remarque 1</a>
+			</td>
+		</tr>
+		<tr>
+			<td>Ajout de commentaire</td>
+			<td>L'utilisateur pourra ajouter des commentaires sur les fichiers présents dans le dossier.</td>
+		</tr>
+		<tr>
+			<th colspan="2">Édition</th>
+		</tr>
+		<tr>
+			<td>Édition des descriptions</td>
+			<td>L'utilisateur peur éditer les descriptions.</td>
+		</tr>
+		<tr>
+			<td>Édition des plugins</td>
+			<td>L'utilisateur peut éditer les plugins des dossiers.</td>
+		</tr>
+		<tr>
+			<td>Édition des icones</td>
+			<td>L'utilisateur peut éditer les icones des dossiers.</td>
+		</tr>
+		<tr>
+			<th colspan="2">Ajout</th>
+		</tr>
+		<tr>
+			<td>Ajout de fichiers</td>
+			<td>L'ajout de fichier est autorisé.</td>
+		</tr>
+		<tr>
+			<td>Création de dossier</td>
+			<td>La création de dossier est possible pour l'utilisateur.</td>
+		</tr>
+		<tr>
+			<th colspan="2">Actions diverses</th>
+		</tr>
+		<tr>
+			<td>Copie</td>
+			<td>L'utilisateur peut copier.</td>
+		</tr>
+		<tr>
+			<td>Déplacement</td>
+			<td>L'utilisateur peut déplacer.</td>
+		</tr>
+		<tr>
+			<td>Rennomage</td>
+			<td>L'utilisateur peut renommer.</td>
+		</tr>
+		<tr>
+			<th colspan="2">Suppression</th>
+		</tr>
+		<tr>
+			<td>Suppression de fichiers</td>
+			<td>L'utilisateur peut supprimer des fichiers.</td>
+		</tr>
+		<tr>
+			<td>Suppression de dossiers</td>
+			<td>L'utilisateur peut supprimer des dossiers.</td>
+		</tr>
+	</table>
+
+	<p class="remarque" id="remarque-droit-visu">
+		<u>Remarque 1 :</u>
+		Si le droit de Visualisation n'est pas présent, aucun autre droit ne peut être mis et le dossier sera invisible.
+	</p>
+
+
+	<h3 id="assignation">Assignation</h3>
+
+	<p>
+		Les droits peuvent uniquement être appliqués à des dossiers, en aucun cas à des fichiers.
+	</p>
+
+	<p>
+		Les droits peuvent restreindre l'accès ou les actions à un ou plusieurs <a href="users.htm">utilisateurs</a>,
+		<a href="users.htm#groupes">groupe d'utilisateurs</a> ou <a href="users.htm#meta-user">méta-utilisateurs</a> (Any, Authenticated, Anonymous).
+	</p>
+
+	<h3 id="priorité">Priorité</h3>
+
+	<p>
+		Un utilisateur peut avoir plusieurs droits le concernant dans un seul dossier, par exemple, si le méta-utilisateur 'Any' désignant
+		n'importe quel utilisateur possède un droit, il sera d'une priorité inférieur à un droit désignant un utilisateur nommé.
+	</p>
+
+	<p>
+		Voici, ci-dessous, classé, de la priorité la plus importante à la plus faible les différents utilisateurs et méta-utilisateurs :
+	</p>
+
+	<ol>
+		<li>Un utilisateur simple</li>
+		<li>Un utilisateur dans un groupe</li>
+		<li>Les méta-utilisateurs Authenticated, Anonymous</li>
+		<li>Le méta-utilisateur Any</li>
+	</ol>
+
+	<p>
+		<u>Exemple :</u>
+	</p>
+
+	<p>
+		Dans cette exemple, l'utilisateur Any (qui représente n'importe quel utilisateur) à les droits de Visualisation et d'Édition.
+	</p>
+
+	<table summary="Exemple de la priorité dans les droits">
+		<tr>
+			<th>Utilisateurs</th>
+			<th>Droits</th>
+		</tr>
+		<tr>
+			<td>Any</td>
+			<td>Visualisation, Édition</td>
+		</tr>
+	</table>
+
+	<p>
+		<b>Résultat :</b> N'importe quel utilisateur possèdera les droits de Visualisation et d'Édition.
+	</p>
+
+	<p>
+		Maintenant, nous ajoutons l'utilisateur Toto :
+	</p>
+
+	<table summary="Exemple de la priorité dans les droits">
+		<tr>
+			<th>Utilisateurs</th>
+			<th>Droits</th>
+		</tr>
+		<tr>
+			<td>Any</td>
+			<td>Visualisation, Édition</td>
+		</tr>
+		<tr>
+			<td>Toto</td>
+			<td>Visualisation</td>
+		</tr>
+	</table>
+
+	<p>
+		<b>Résultat :</b> N'importe quel utilisateur possèdera les droits de Visualisation et d'Édition
+		<strong>SAUF</strong> Toto qui possède uniquement le droit de Visualisation.
+		<br />
+		C'est logique car Toto qui est un utilisateur simple, possède un droit et il a donc, une priorité supérieure à Any.
+	</p>
+
+	<h3 id="propagation">Propagation ou héritage</h3>
+
+	<p>
+		Dans Hyla, les droits se propagent automatiquement dans l'arborescence, c'est à dire qu'un dossier ne possédant pas de droits
+		va hériter des droits de son parent, ainsi, si vous éditez les droits de la racine,	ses droits se répercuteront automatiquement
+		dans tous les dossiers fils sauf si un droit est assigné dans un de ceux là.
+	</p>
+
+	<p>
+		Attention tout de même, il est impossible d'accéder à un dossier possédant le droit de visualisation
+		si un parent ou plusieurs de ces parents n'ont pas ce droit car, ces derniers sont alors invisbles (voir <a href="#exemple2">l'exemple 2</a>)
+	</p>
+
+	<p>
+		<u>Exemple 1 :</u>
+	</p>
+
+	<p>
+		1. Imaginons l'arborescence de dossiers suivante triée par ordre alphabétique :
+	</p>
+
+	<table summary="Exemple d'aborecence de droits">
+		<tr>
+			<th width="25%">Dossiers</th>
+			<th>Droits</th>
+		</tr>
+		<tr>
+			<td><span class="path">/</span></td>
+			<td>-</td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo</span></td>
+			<td>-</td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo/bar</span></td>
+			<td>-</td>
+		</tr>
+		<tr>
+			<td><span class="path">/toto</span></td>
+			<td>-</td>
+		</tr>
+		<tr>
+			<td><span class="path">/toto/titi</span></td>
+			<td>-</td>
+		</tr>
+	</table>
+
+	<p class="remarque">
+		<u>Remarque :</u>
+		Dans une tel arborescence sans droit, seul un administrateur ou un superviseur peut se connecter.
+	</p>
+
+	<p>
+		2. Si j'édite la racine ( <span class="path">/</span> ) et que je lui donne le droit d'édition, le résultat -virtuel- sera le suivant :
+	</p>
+
+	<table summary="Exemple d'arborescence de droits">
+		<tr>
+			<th width="25%">Dossiers</th>
+			<th>Droits</th>
+		</tr>
+		<tr>
+			<td><span class="path">/</span></td>
+			<td><b>Visualisation, Édition</b></td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo</span></td>
+			<td><em>Visualisation, Édition (héritage de <span class="path">/</span> )</em> </td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo/bar</span></td>
+			<td><em>Visualisation, Édition (héritage de <span class="path">/</span> )</em></td>
+		</tr>
+		<tr>
+			<td><span class="path">/toto</span></td>
+			<td><em>Visualisation, Édition (héritage de <span class="path">/</span> )</em></td>
+		</tr>
+		<tr>
+			<td><span class="path">/toto/titi</span></td>
+			<td><em>Visualisation, Édition (héritage de <span class="path">/</span> )</em></td>
+		</tr>
+	</table>
+
+	<p class="remarque">
+		<u>Remarque :</u>
+		En gras, nous apercevons les droits que nous avons assignés directement, et en italique,
+		nous voyons les droits hérités du dossier parent.
+	</p>
+
+	<p>
+		3. Maintenant, si j'édite le dossier <span class="path">/toto</span> et lui assigne le droit d'ajout de commentaire, voilà le résultat sur l'arborescence :
+	</p>
+
+	<table summary="Exemple d'aborescence de droits">
+		<tr>
+			<th width="25%">Dossiers</th>
+			<th>Droits</th>
+		</tr>
+		<tr>
+			<td><span class="path">/</span></td>
+			<td><b>Visualisation, Édition</b></td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo</span></td>
+			<td><em>Visualisation, Édition (héritage de <span class="path">/</span> )</em></td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo/bar</span></td>
+			<td><em>Visualisation, Édition (héritage de <span class="path">/</span> )</em></td>
+		</tr>
+		<tr>
+			<td><span class="path">/toto</span></td>
+			<td><b>Visualisation, Ajout de commentaire</b></td>
+		</tr>
+		<tr>
+			<td><span class="path">/toto/titi</span></td>
+			<td><em>Visualisation, Ajout de commentaire (héritage de <span class="path">/toto</span> )</em></td>
+		</tr>
+	</table>
+
+	<p class="remarque">
+		<u>Remarque :</u>
+		Comme vous le voyez, les droits se propagent partout sauf lorsque l'on créé des nouveaux droits, dans ce cas là, la propagation est arrêté et on se retrouve sans droits.
+	</p>
+
+	<p>
+		<b>Conclusion :</b> Un dossier ne possédant pas de droit va hériter des droits de son premier dossier parent en comportant.
+	</p>
+
+	<p id="exemple2">
+		<u>Exemple 2 :</u>
+	</p>
+
+	<p>
+		1. Dans le cas ci-dessous, nous voyons une arborescence de dossiers, tous les dossiers sont accessibles car
+		le droit de visualisation à été donné à la racine, les dossiers enfants en héritent.
+	</p>
+
+	<table summary="Exemple d'aborescence de droits">
+		<tr>
+			<th width="25%">Dossiers</th>
+			<th>Droits</th>
+		</tr>
+		<tr>
+			<td><span class="path">/</span></td>
+			<td><b>Visualisation</b></td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo</span></td>
+			<td><em>Visualisation (héritage de <span class="path">/</span>)</em></td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo/bar</span></td>
+			<td><em>Visualisation (héritage de <span class="path">/</span>)</em></td>
+		</tr>
+	</table>
+
+	<p>
+		2. Maintenant, j'édite le dossier foo afin qu'il ne soit plus accessible à l'utilisateur courant, ce qui donne la vue ci dessous.
+	</p>
+
+	<table summary="Exemple d'aborescence de droits">
+		<tr>
+			<th width="25%">Dossiers</th>
+			<th>Droits</th>
+		</tr>
+		<tr>
+			<td><span class="path">/</span></td>
+			<td><b>Visualisation</b></td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo</span></td>
+			<td><b>-</b></td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo/bar</span></td>
+			<td><em>- (héritage de <span class="path">/foo</span>)</em></td>
+		</tr>
+	</table>
+
+	<p>
+		<b>Résultat :</b> Dans cette configuration, l'accès à la racine est bien sûr, toujours possible mais pas l'accès au dossier foo,
+		ni à <span class="path">/foo/bar</span>, notons que foo sera invisible lors de la lecture de la racine.
+	</p>
+
+	<p>
+		3. J'édite maintenant le dossier <span class="path">/foo/bar</span> afin qu'il est le droit de Visualisation :
+	</p>
+
+	<table summary="Exemple de droits">
+		<tr>
+			<th width="25%">Dossiers</th>
+			<th>Droits</th>
+		</tr>
+		<tr>
+			<td><span class="path">/</span></td>
+			<td><b>Visualisation</b></td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo</span></td>
+			<td><b>-</b></td>
+		</tr>
+		<tr>
+			<td><span class="path">/foo/bar</span></td>
+			<td><s><b>Visualisation</b></s> Interdit car il n'est pas possible de traverser foo</td>
+		</tr>
+	</table>
+
+	<p>
+		<b>Résultat :</b> Dans ce cas, il sera strictement impossible d'accèder à <span class="path">/foo/bar</span>
+		malgré son droit car le dossier foo n'est pas visible, il est donc interdit de le traverser.
+	</p>
+
+	<p class="remarque">
+		<u>Remarque :</u>
+		Hyla détecte ce genre de problème et vous propose, dans l'interface d'aministration, dans la section droits,
+		un lien permettant de réparer les droits.
+	</p>
+
+	<p>
+		<b>Conclusion :</b> Il est interdit de "traverser" un dossier ne possédant pas le droits de Visualisation.
+	</p>
+
+	<h2 id="recap">Récapitulatif pour décideurs préssés</h2>
+
+	<p>
+		Voici ce qu'il faut retenir des droits dans Hyla :
+	</p>
+
+	<ul>
+		<li>Les droits s'appliquent uniquement aux dossiers.</li>
+		<li>Un dossier ne possédant pas de droit va hériter des droits de son premier dossier parent en comportant.</li>
+		<li>Il est interdit de "traverser" un dossier ne possédant pas le droit de Visualisation, sauf, l'exception qui confirme la règle, la racine.</li>
+	</ul>
+
+	<hr />
+
+	<a href="#">Remonter</a>
+
+</body>
+
+</html>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
-
-<plugin target="file" ext="php,php3,php4,php5">
-	<name>Php</name>
-	<description>Affichage et coloration des sources php</description>
-	<author>hugo</author>
-	<version>1</version>
-</plugin>
-

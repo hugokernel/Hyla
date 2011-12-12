@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
-
-<plugin target="experimental">
-	<name>SlideShow</name>
-	<description>Affichage d'images en plein écran</description>
-	<author>hugo</author>
-	<version>1</version>
-</plugin>

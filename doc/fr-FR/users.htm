@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<title>Les utilisateurs et les groupes</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<link rel="shortcut icon" type="image/x-icon" href="img/icon.png" />
+	<link rel="icon" type="image/png" href="img/icon.png"/>
+
+	<link rel="stylesheet" type="text/css" media="screen,projection" title="Standard" href="default.css" />
+
+</head>
+
+<body>
+
+	<h1>Les utilisateurs et les groupes</h1>
+
+	<p>
+		<a href="index.htm">Retourner à l'index</a>
+	</p>
+
+	<ul>
+		<li><a href="#intro">Introduction</a></li>
+		<li><a href="#nommage">Convention de nommage</a></li>
+		<li><a href="#meta-user">Les utilisateurs spéciaux ou méta-utilisateurs</a></li>
+		<li><a href="#differents-types">Les différents types d'utilisateurs</a></li>
+		<li><a href="#groupes">Les groupes</a></li>
+	</ul>
+
+	<hr />
+
+	<h2 id="intro">Introduction</h2>
+
+	<p>
+		Hyla possède un système de gestion des utilisateurs, qui couplé au système de droits
+		permet de définir des restrictions par dossier.
+	</p>
+
+	<p>
+		Il vous sera également possible de définir des groupes d'utilisateurs dans lesquelles, vous pourrez
+		rassemblez des utilisateurs, simplifiant alors grandement l'attribution de droits.
+	</p>
+
+
+	<h2 id="nommage">Convention de nommage</h2>
+
+	<p>
+		Un nom d'utilisateur ou un nom de groupe peut contenir n'importe quel lettre de l'alphabet, des chiffres, le trait d'union
+		( - ) et le tiret bas ( _ ) dans la limite de 32 caractères et le nom doit impérativement commencer par une lettre.
+	</p>
+
+	<p>
+		Enfin, Hyla convertira le nom entièrement en minuscule.
+	</p>
+
+
+	<h2 id="meta-user">Les utilisateurs spéciaux ou méta-utilisateurs</h2>
+
+	<p>
+		Par défaut, il existe trois utilisateurs spéciaux, aussi appelé méta-utilisateurs, ces derniers
+		permettent de sélectionner des utilisateurs, parfois, selon leur statuts de connection.
+	</p>
+
+	<ul>
+		<li><strong>Any</strong> qui définit n'importe quel utilisateur sans distinction.</li>
+		<li><strong>Authenticated</strong> qui définit tous les utilisateurs ayant un statut connecté, c'est à dire authentifié.</li>
+		<li><strong>Anonymous</strong> qui définit tous les utilisateurs anonymes.</li>
+	</ul>
+
+	<p class="remarque">
+		Ces utilisateurs ne peuvent pas être supprimés.
+	</p>
+
+	<h2 id="differents-types">Les différents types d'utilisateurs</h2>
+
+	<p>
+		Un utilisateur peut être défini à sa création en trois types :
+	</p>
+
+	<ul>
+		<li><strong>Standard</strong> : Aucun droit particulier</li>
+		<li>
+			<strong>Superviseur</strong> : Un superviseur possède tous les droits sauf celui d'accéder à
+			l'administration et d'éditer les droits, il peut également accéder à tous les dossiers, qu'il soit protégés par des droits ou non.
+		</li>
+		<li><strong>Administrateur</strong> : L'administrateur, possède, bien sûr, tous les droits.</li>
+	</ul>
+
+	<h2 id="groupes">Les groupes</h2>
+
+	<p>
+		Un groupe peut contenir n'importe quel utilisateur, sauf, <a href="#meta-user">les méta-utilisateurs</a>.
+	</p>
+
+	<p>
+		La convention de nommage pour les groupes est la même que pour les utilisateurs.
+	</p>
+
+	<p class="remarque">
+		Un groupe est réprésenté entre crochet (exemple: [Test]).
+	</p>
+
+	<hr />
+
+	<a href="#">Remonter</a>
+
+</body>
+
+</html>

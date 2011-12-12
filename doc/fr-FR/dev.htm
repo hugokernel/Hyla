@@ -1,0 +1,571 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+
+<head>
+	<title>Développement</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<link rel="shortcut icon" type="image/x-icon" href="img/icon.png" />
+	<link rel="icon" type="image/png" href="img/icon.png"/>
+
+	<link rel="stylesheet" type="text/css" media="screen,projection" title="Standard" href="default.css" />
+
+</head>
+
+<body>
+
+	<h1>Développement</h1>
+
+	<p>
+		<a href="index.htm">Retourner à l'index</a>
+	</p>
+
+	<ul>
+		<li><a href="#introduction">Introduction</a></li>
+		<li>
+			<a href="#arbo">L'arborescence</a>
+		</li>
+		<li>
+			<a href="#tpl">Les modèles</a>
+			<ul>
+				<li><a href="#structure-tpl">Structure d'un modèle</a></li>
+				<li><a href="#new-tpl">Créer un nouveau modèle</a></li>
+			</ul>
+		</li>
+		<li>
+			<a href="#plugins">Les plugins</a>
+			<ul>
+				<li>
+					<a href="#plugins-obj">Les plugins d'objets</a>
+					<ul>
+						<li><a href="#hello-world">Hello World !</a></li>
+					</ul>
+				</li>
+				<li><a href="#plugins-auth">Les plugins d'authentification</a></li>
+			</ul>
+		</li>
+	</ul>
+
+	<hr />
+
+	<h2 id="introduction">Introduction</h2>
+
+	<p>
+		Hyla étant un logiciel libre, vous avez bien sûr accès au code source, il vous est ainsi possible de
+		modifier Hyla librement et ensuite de redistribuer vos modifications, et cela, dans le cadre
+		défini par la license fourni avec Hyla (fichier COPYING à la racine de Hyla).
+	</p>
+
+	<h2 id="arbo">L'arborescence</h2>
+
+	<p>
+		Ci-dessous, un tableau montrant l'arborescence des fichiers de Hyla.
+	</p>
+
+	<table summary="Les dossiers de Hyla">
+		<tr>
+			<th>Nom</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><span class="path">/</span></td>
+			<td>La racine</td>
+		</tr>
+		<tr>
+			<td><span class="path">/conf</span></td>
+			<td>Dossier comportant tous les fichiers de configuration.</td>
+		</tr>
+		<tr>
+			<td><span class="path">/doc</span></td>
+			<td>La documentation classée par langue</td>
+		</tr>
+		<tr>
+			<td><span class="path">/img</span></td>
+			<td>Les images (mimetypes, perso)</td>
+		</tr>
+		<tr>
+			<td><span class="path">/l10n</span></td>
+			<td>Dans ce dossier se trouve les fichiers de traduction classés par langue.</td>
+		</tr>
+		<tr>
+			<td><span class="path">/src</span></td>
+			<td>La racine de ce dossier contient les fichiers sources divers, notamment, ceux qui génère les pages grâce aux modèles (template).</td>
+		</tr>
+		<tr>
+			<td><span class="path">/src/db</span></td>
+			<td>Ici, est placé, la classe d'abstraction de la base de données SQL.</td>
+		</tr>
+		<tr>
+			<td><span class="path">/src/inc</span></td>
+			<td>Dans ce dossier sont logés les classes et fonctions.</td>
+		</tr>
+		<tr>
+			<td><span class="path">/src/lib</span></td>
+			<td>Toutes les librairies externes à Hyla sont placées ici.</td>
+		</tr>
+		<tr>
+			<td><span class="path">/src/plugin</span></td>
+			<td>Dossier racine des plugins</td>
+		</tr>
+		<tr>
+			<td><span class="path">/src/plugin/auth</span></td>
+			<td>Les plugins d'authentification</td>
+		</tr>
+		<tr>
+			<td><span class="path">/src/plugin/obj</span></td>
+			<td>Les plugins des objets (fichiers et dossiers)</td>
+		</tr>
+		<tr>
+			<td><span class="path">/sys</span></td>
+			<td>Le dossier système</td>
+		</tr>
+		<tr>
+			<td><span class="path">/sys/anon</span></td>
+			<td>Les fichiers anonymes envoyés par Hyla sont placés ici.</td>
+		</tr>
+		<tr>
+			<td><span class="path">/sys/cache</span></td>
+			<td>Le dossier de cache.</td>
+		</tr>
+		<tr>
+			<td><span class="path">/tpl</span></td>
+			<td>Racine des dossiers comportant les modèles (template).</td>
+		</tr>
+	</table>
+
+	<p class="remarque">
+		<u>Remarque :</u> Les dossiers <span class="path">/sys</span>, <span class="path">/sys/cache</span> et <span class="path">/sys/anon</span> doivent être rendu inaccessible (par exemple, avec Apache,
+		en mettant un fichier .htaccess contenant "deny from all")
+	</p>
+
+	<h2 id="tpl">Les modèles</h2>
+
+	<p>
+		Un modèle est un ensemble de fichiers, de gabarits qui servent pour la réprésentation visuelle de Hyla,
+		un fichier modèle (.tpl) ne comporte pas de code source, ainsi, il est très simple à éditer
+		pour quelqu'un chargé uniquement de l'apparence d'un site.
+	</p>
+
+	<p>
+		Dans Hyla, les modèles sont "rangés" dans le dossier <span class="path">/tpl</span> situé à la racine de Hyla, chaque dossier
+		contenu dans ce dernier est un modèle différent, ainsi, vous pourrez trouver un dossier nommé
+		default ou encore rss.
+	</p>
+
+	<h3 id="structure-tpl">Structure d'un modèle</h3>
+
+	<p>
+		Si nous ouvrons le dossier <span class="path">/tpl/default</span>, voici les fichiers et dossiers que nous découvrons :
+	</p>
+
+	<ul>
+		<li><b>img/</b> Dossier contenant les images du modèles</li>
+		<li><b>*.css</b> Les différentes feuilles de styles</li>
+		<li><b>*.js</b> Les scripts javascript</li>
+		<li><b>*.tpl</b> Les fichiers modèles</li>
+		<li>
+			<b>function.php</b> Ce fichier source est le seul contenant à la fois du code php et du html,
+			il en est ainsi pour des raisons de performances.
+		</li>
+		<li><b>info.xml</b> Fichier permettant d'informer sur le contenu du modèle</li>
+	</ul>
+
+	<p>
+		Revenons sur le fichier info.xml qui à une grande importance, il permet de définir le nom du modèle, l'auteur,
+		le dossier image et de déclarer les feuilles de style, voici le contenu d'un tel fichier :
+	</p>
+
+	<pre>
+		&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+		&lt;template&gt;
+			&lt;name&gt;Default&lt;/name&gt;
+			&lt;description&gt;Thème par défaut en xhtml&lt;/description&gt;
+			&lt;author&gt;hugo&lt;/author&gt;
+			&lt;version&gt;1&lt;/version&gt;
+			&lt;header&gt;Content-Type: text/html; charset=UTF-8&lt;/header&gt;
+			&lt;img-src&gt;/tpl/default/img&lt;/img-src&gt;
+			&lt;php-function&gt;./tpl/default/function.php&lt;/php-function&gt;
+			&lt;stylesheets&gt;
+				&lt;stylesheet&gt;
+					&lt;type&gt;text/css&lt;/type&gt;
+					&lt;media&gt;screen,projection&lt;/media&gt;
+					&lt;title&gt;Standard&lt;/title&gt;
+					&lt;href&gt;default.css&lt;/href&gt;
+				&lt;/stylesheet&gt;
+		[...]
+	</pre>
+
+	<p>
+		Revenons dans le tableau ci-dessous sur le contenu de ce fichier :
+	</p>
+
+	<table summary="Description du contenu du fichier info.xml">
+		<tr>
+			<th width="25%">Chemin XPath</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td>/template/name</td>
+			<td>Le nom du modèle</td>
+		</tr>
+		<tr>
+			<td>/template/description</td>
+			<td>La description du modèle</td>
+		</tr>
+		<tr>
+			<td>/template/author</td>
+			<td>L'auteur de ce modèle</td>
+		</tr>
+		<tr>
+			<td>/template/version</td>
+			<td>La version du modèle</td>
+		</tr>
+		<tr>
+			<td>/template/header</td>
+			<td>L'entête spécifiant le type de contenu à envoyer au navigateur</td>
+		</tr>
+		<tr>
+			<td>/template/img-src</td>
+			<td>Le dossier oû sont rangées les images</td>
+		</tr>
+		<tr>
+			<td>/template/php-function</td>
+			<td>Le fichier source contenant les fonctions php</td>
+		</tr>
+		<tr>
+			<td>/template/stylesheets/stylesheet/type</td>
+			<td>Le type</td>
+		</tr>
+		<tr>
+			<td>/template/stylesheets/stylesheet/media</td>
+			<td>Le média concerné par la feuille de style</td>
+		</tr>
+		<tr>
+			<td>/template/stylesheets/stylesheet/title</td>
+			<td>Le titre de la feuille de style</td>
+		</tr>
+		<tr>
+			<td>/template/stylesheets/stylesheet/href</td>
+			<td>Le nom de la feuille de style</td>
+		</tr>
+	</table>
+
+	<h3 id="new-tpl">Créer un nouveau modèle</h3>
+
+	<p>
+		La création d'un nouveau modèle est relativement simple, nous allons prendre un exemple concret :
+		la création d'un nouveau modèle identique à default mais qui aurait la barre des actions en haut au lieu d'en bas.
+	</p>
+
+	<ol>
+		<li>Création d'un nouveau dossier dans <span class="path">/tpl/</span>, nous allons l'appeler <span class="path">/tpl/test/</span></li>
+		<li>
+			Nous allons copier tous les fichiers js et la feuille de style default.css du dossier <span class="path">/tpl/default/</span>
+			dans <span class="path">/tpl/test/</span> afin de reprendre tous les codes javascript et d'avoir la feuille de style par défaut.
+		</li>
+		<li>
+			Maintenant, copions le fichier info.xml du dossier <span class="path">/tpl/default/</span> dans <span class="path">/tpl/test/</span> puis éditons-le afin
+			qu'il ressemble à ceci :
+			<pre>
+			&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+			&lt;template&gt;
+				&lt;name&gt;<strong>test</strong>&lt;/name&gt;
+				&lt;description&gt;<strong>Modèle avec la barre d'action en haut</strong>&lt;/description&gt;
+				&lt;author&gt;<strong>VotreNom</strong>&lt;/author&gt;
+				&lt;version&gt;1&lt;/version&gt;
+				&lt;header&gt;Content-Type: text/html; charset=UTF-8&lt;/header&gt;
+				&lt;img-src&gt;/tpl/default/img&lt;/img-src&gt;
+				&lt;php-function&gt;./tpl/default/function.php&lt;/php-function&gt;
+				&lt;stylesheets&gt;
+					&lt;stylesheet&gt;
+						&lt;type&gt;text/css&lt;/type&gt;
+						&lt;media&gt;screen,projection&lt;/media&gt;
+						&lt;title&gt;Standard&lt;/title&gt;
+						&lt;href&gt;default.css&lt;/href&gt;
+					&lt;/stylesheet&gt;
+				&lt;/stylesheets&gt;
+			&lt;/template&gt;
+			</pre>
+		Vous remarquerez que j'ai supprimé les déclarations des feuilles de style qui ne nous intéressaient pas pour garder
+		uniquement default.css.
+		</li>
+		<li>
+			Voilà, notre modèle est prêt, il n'y a plus qu'à passé au principal, c'est à dire, copier le fichier
+			<span class="path">/tpl/default/index.tpl</span> dans <span class="path">/tpl/test/</span>, ouvrez maintenant ce fichier
+			(<span class="path">/tpl/test/index.tpl</span>) et modifiez le code html de cette manière :
+			<pre>
+				[...]
+				&lt;div id="main"&gt;
+				    {CONTENT}
+				&lt;/div&gt;
+
+				{TOOLBAR}
+
+				&lt;div class="copyright"&gt;
+				[...]
+			</pre>
+
+			afin que cela ressemble à ceci :
+
+			<pre>
+				[...]
+				<strong>{TOOLBAR}</strong>
+
+				&lt;div id="main"&gt;
+				    {CONTENT}
+				&lt;/div&gt;
+
+				&lt;div class="copyright" <strong>style="clear:both"&gt;</strong>
+				[...]
+			</pre>
+		</li>
+		<li>
+			Maintenant, allez dans l'administration, vous remarquerez que Hyla à pris en compte le nouveau modèle,
+			spécifiez que vous désirez utiliser ce nouveau modèle et c'est tout !
+		</li>
+	</ol>
+
+	<p>
+		Dans cette exemple, nous n'avons copié que le fichier index.tpl et aucun autre dans notre nouveau dossier de modèle
+		(tpl/test/), Hyla va aller chercher les autres fichiers modèles dans le dossier default si ils ne sont pas présent
+		dans le modèle courant...
+	</p>
+
+	<h2 id="plugins">Les plugins</h2>
+
+	<p>
+		Sur Hyla, un plugin est une classe qui est instanciée à la volée.
+		<br />
+		Dans Hyla, il existe 2 types de plugins :
+	</p>
+
+	<ul>
+		<li><a href="#plugins-obj">Les plugins d'objets</a> qui permettent de lire les dossiers, de créer des galeries photos...etc...</li>
+		<li><a href="#plugins-auth">Les plugins d'authentification</a> qui permettent d'authentifier un utilisateur qui saisi sont mot de passe.</li>
+	</ul>
+
+	<h3 id="plugins-obj">Les plugins d'objets</h3>
+
+	<p>
+		Pour Hyla, un objet est un fichier, un dossier ou encore un fichier au sein d'une archive (zip, tar.gz...), un plugin d'objet est
+		donc suceptible de lire des dossiers ou encore des fichiers...
+	</p>
+
+	<p>
+		Pour illustrer le fonctionnement des plugins d'objets,voici, ci-dessous, le contenu du dossier d'un plugin très simple, le plugin Text qui
+		permet d'afficher le contenu d'un fichier txt :
+	</p>
+
+	<table summary="Contenu du dossier d'un plugin simple">
+		<tr>
+			<th>Fichier</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><span class="path">/src/plugins/obj/text/index.php</span></td>
+			<td>Le plugin en lui même</td>
+		</tr>
+		<tr>
+			<td><span class="path">/src/plugins/obj/text/info.xml</span></td>
+			<td>Fichier de description contenant les informations sur le plugin.</td>
+		</tr>
+		<tr>
+			<td><span class="path">/src/plugins/obj/text/text.tpl</span></td>
+			<td>Le fichier modèle</td>
+		</tr>
+	</table>
+
+	<p>
+		Ci dessous, le contenu du fichier info.xml
+	</p>
+
+	<pre>
+		&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+		&lt;plugin target="file" ext="txt,c,h"&gt;
+			&lt;name&gt;Text&lt;/name&gt;
+			&lt;description&gt;Affichage du contenu du fichier&lt;/description&gt;
+			&lt;author&gt;hugo&lt;/author&gt;
+			&lt;version&gt;1&lt;/version&gt;
+		&lt;/plugin&gt; 
+	</pre>
+
+	<p>
+		Vous percevez dans la balise plugin, l'attribut target qui permet de spécifier à quel type de fichiers, par le biais
+		de l'extension, s'adresse le plugin, en l'occurence, ici, les fichiers dont l'extension est txt, c et h.
+	</p>
+
+	<p>
+		Voici, le contenu du fichier <span class="path">/src/plugins/obj/text/index.php</span> suivi des explications :
+	</p>
+
+	<pre>
+	&lt;?php
+
+	class plugin_obj_text extends plugin_obj {
+
+		function plugin_obj_text($cobj) {
+			parent::plugin_obj($cobj);
+
+			$this->tpl->set_root($this->plugin_dir.'text');
+			$this->tpl->set_file('text', 'text.tpl');
+		}
+		
+		function aff() {
+
+			$content = file::getContent($this->_real_file);
+			$content = htmlentities($content, ENT_QUOTES);
+
+			$this->tpl->set_var('CONTENT', $content);
+
+			return $this->tpl->parse('OutPut', 'text');
+		}
+	}
+
+	?&gt;</pre>
+
+	<p>
+		Comme mentionné plus haut, un plugin est bel et bien une classe qui est nommée d'une manière défini, en l'occurence : "plugin_obj_" + le nom du plugin.
+	</p>
+
+	<p>
+		La première ligne dans le constructeur ( parent::plugin_obj($cobj) ) est obligatoire, elle permet d'initialiser des valeurs, ensuite,
+		sur les lignes suivantes, nous trouvons l'initialisation du modèle (template) et la déclaration du fichier test.tpl.
+	</p>
+
+	<p>
+		Vous aurez remarqué la méthode nommée aff() qui est appelée automatiquement par Hyla lors du chargement d'un fichier text, une fois l'objet créé,
+		cette fonction peut prendre un paramètre (paramètre envoyé au plugin) et doit renvoyer le contenu généré par le plugin.
+		<br />
+		Au sein de cette fonction, vous remarquerez l'utilisation de la variable membre <strong>$this->_real_file</strong> qui permet de renvoyer le chemin
+		vers l'objet courant, si l'objet courant est un fichier contenu dans une archive, cette variable vous renverra alors, entièrement automatiquement,
+		le chemin vers le fichier extrait dans le cache.
+	</p>
+
+	<p class="remarque">
+		<u>Remarque :</u> A aucun moment, un plugin ne doit afficher le contenu de la variable <strong>$this->_real_file</strong> car le visiteur n'a pas
+		à savoir dans quel dossier se fait la lecture des objets...
+	</p>
+
+	<h4 id="hello-world">Hello World !</h3>
+
+	<p>
+		Nous allons réaliser un plugin qui affiche "Hello World" à la rencontre d'un fichier portant l'extension ".coucou".
+	</p>
+
+	<p>
+		Tout d'abord, créons un nouveau dossier que l'on nommera "hello" dans <span class="path">/src/plugin/obj</span>, puis, créons à l'intérieur
+		de ce dernier un fichier info.xml qui contiendra ceci :
+	</p>
+
+	<pre>
+		&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+		&lt;plugin target="file" ext="coucou"&gt;
+			&lt;name&gt;Hello&lt;/name&gt;
+			&lt;description&gt;Hello World pour fichier .coucou&lt;/description&gt;
+			&lt;author&gt;votre nom&lt;/author&gt;
+			&lt;version&gt;1&lt;/version&gt;
+		&lt;/plugin&gt; 
+	</pre>
+
+	<p>
+		Ce fichier créé, il nous reste à créer le plugin proprement dit, pour cela, créons un fichier index.php dans le dossier
+		que nous avons créé plus haut et éditons le afin qu'il ressemble à cela :
+	</p>
+
+	<pre>
+	&lt;?php
+
+	class plugin_obj_hello extends plugin_obj {
+
+		function plugin_obj_hello($cobj) {
+			parent::plugin_obj($cobj);
+		}
+		
+		function aff() {
+			return 'Hello World !';
+		}
+	}
+
+	?&gt;</pre>
+
+	<p>
+		Voilà, c'est tout, maintenant, à l'ouverture d'un fichier comportant une extension .coucou, Hyla affichera Hello World, totalement inutile,
+		totalement indispensable...
+	</p>
+	
+
+	<h3 id="plugins-auth">Les plugins d'authentification</h3>
+
+	<p>
+		Ces derniers permettent d'authentifier un utilisateur ayant saisi son login et son mot de passe en interrogeant une base de données
+		<acronym title="Structured Query Language">SQL</acronym> ou encore un serveur <acronym title="Lightweight Directory Access Protocol">LDAP</acronym>,
+		le choix du type d'authentification se fait par le biais du fichier de configuration <span class="path">/conf/hyla.ini</span> :
+	</p>
+
+	<pre>
+	[...]
+
+	; La méthode d'authentification
+	; - default : méthode standard
+	; - ldap : Authentification grâce à un annuaire LDAP (bêta)
+	auth_method = default
+
+	[...]</pre>
+
+	<p>
+		Les plugins d'authentification se situe dans l'arborescence suivante : <span class="path">/src/plugins/auth</span>, examinons le fonctionnement du plugin d'authentification
+		&laquo; default &raquo; en éditant le fichier <span class="path">/src/plugins/auth/default/index.php</span> :
+	</p>
+
+	<pre>
+	&lt;?php
+	
+	class plugin_auth_default {
+
+		/*	Initialisations
+		 */
+		function plugin_auth_default() {
+
+		}
+
+		/*	Phase d'authentification
+			@param	$name		Le nom de l'utilisateur
+			@param	$password	Le mot de passe associé
+		 */
+		function auth($name, $password) {
+			$usr = new users();
+			return $usr->auth($name, $password);		
+		}
+	}
+
+	?&gt;</pre>
+
+	<p>
+		Comme vous le voyez, un plugin d'authentification est en fait une classe qui est nommé d'une manière défini ( "plugin_auth_" + le nom du plugin )
+	</p>
+
+	<p>
+		La classe doit impérativement contenir une méthode nommée auth qui accepte comme paramètre le nom et le mot de passe que l'utilisateur à saisi dans Hyla,
+		cette dernière doit retourner null en cas d'erreur ou une structure de type tUser correctement renseignée en cas de succès :
+	</p>
+
+	<pre>
+	class tUser {
+		var $id;		// Id
+		var $name;		// Nom
+		var $type;		// Type
+	}
+	</pre>
+
+	<hr />
+
+	<a href="#">Remonter</a>
+
+</body>
+
+</html>

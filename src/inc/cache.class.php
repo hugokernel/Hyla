@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -19,15 +19,30 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 class cache {
 
+	/*	Vide le cache
+	 */
+	function free() {
+		$i = 0;
+		$hdl = dir(DIR_ROOT.DIR_CACHE);
+		if ($hdl) {
+			while (false !== ($occ = $hdl->read())) {
+				if ($occ{0} == '.')
+					continue;
+				if (file::rmDirs(DIR_ROOT.DIR_CACHE.$occ))
+					$i++;
+			}
+		}
+		return $i;
+	}
+
 	/*	Supprime les infos en cache d'un fichier
-		@param	string	$file	Le fichier concerné
+		@param	string	$file	Le fichier concernÃ©
 	 */
 	function del($file) {
 
-		// Suppression du cache d'un répertoire
+		// Suppression du cache d'un rÃ©pertoire
 		if (is_dir(FOLDER_ROOT.$file)) {
 			cache::getArchivePath($file, $out);
 			if (is_file(DIR_ROOT.$out))
@@ -38,15 +53,15 @@ class cache {
 			if (is_dir($out)) {
 				$file =  array();
 
-				// Récupération des miniatures pour suppression
+				// RÃ©cupÃ©ration des miniatures pour suppression
 				$hdl = dir($out);
 				if ($hdl) {
 					while (false !== ($_occ = $hdl->read())) {
 						if ($_occ == '.' || $_occ == '..')
 							continue;
-						$fmd5 = md5(dirname(DIR_ROOT.$out.'/'.$_occ));
+						$fmd5 = md5(file::dirName(DIR_ROOT.$out.'/'.$_occ));
 						$file[] = '#'.preg_quote($fmd5).'.[0-9]*x[0-9]*.'.preg_quote($_occ).'#s';
-						$dir = dirname($fmd5{0}.'/'.$fmd5);
+						$dir = file::dirName($fmd5{0}.'/'.$fmd5);
 					}
 				}
 				$hdl->close();
@@ -80,18 +95,18 @@ class cache {
 		}
 	}
 
-	/*	Renvoie le chemin et le nom vers l'image "cachée" en tenant compte de la taille de l'image
+	/*	Renvoie le chemin et le nom vers l'image "cachÃ©e" en tenant compte de la taille de l'image
 
-		On obtient un résultat proche de celui ci :
+		On obtient un rÃ©sultat proche de celui ci :
 		- cache/6/6676cd76f96956469e7be39d750cc7d8.320x240.name.jpg
 
-		@param	string	$file	Le fichier concerné
+		@param	string	$file	Le fichier concernÃ©
 		@param	int		$sizex	La taille x
 		@param	int		$sizey	La taille y
 	 */
 	function getImagePath($file, $sizex, $sizey, &$out) {
 
-		$fmd5 = md5(dirname($file));
+		$fmd5 = md5(file::dirName($file));
 
 		if (!is_dir(DIR_CACHE.$fmd5{0}))
 			mkdir(DIR_CACHE.$fmd5{0});
@@ -101,18 +116,18 @@ class cache {
 		return (bool)file_exists($out);
 	}
 
-	/*	Renvoie le chemin et le nom du fichier à cacher
+	/*	Renvoie le chemin et le nom du fichier Ã  cacher
 
-		On obtient un résultat proche de celui ci :
+		On obtient un rÃ©sultat proche de celui ci :
 		- cache/6/6676cd76f96956469e7be39d750cc7d8.jpg
 
-		@param	string	$file	Le fichier concerné
-		@param	&string	$out	Le buffer oû écrire le résultat
-		@return Renvoie true si le fichier existe déjà dans le cache
+		@param	string	$file	Le fichier concernÃ©
+		@param	&string	$out	Le buffer oÃ» Ã©crire le rÃ©sultat
+		@return Renvoie true si le fichier existe dÃ©jÃ  dans le cache
 	 */
 	function getFilePath($file, &$out) {
 
-		$fmd5 = md5(dirname($file));
+		$fmd5 = md5(file::dirName($file));
 
 		if (!is_dir(DIR_CACHE.$fmd5{0}))
 			mkdir(DIR_CACHE.$fmd5{0});
@@ -122,19 +137,19 @@ class cache {
 		return (bool)file_exists($out);
 	}
 
-	/*	Renvoie le chemin et le nom de l'archive à cacher
+	/*	Renvoie le chemin et le nom de l'archive Ã  cacher
 
-		On obtient un résultat proche de celui ci :
+		On obtient un rÃ©sultat proche de celui ci :
 		- IN	:	/gal/LICENSE.txt.zip
 		- OUT	:	cache/1/17be6e1c87b44864d301d499d68eec5d/LICENSE.txt.zip
 
-		@param	string	$file	Le fichier concerné
-		@param	&string	$out	Le buffer oû écrire le résultat
-		@return Renvoie true si le fichier existe déjà dans le cache
+		@param	string	$file	Le fichier concernÃ©
+		@param	&string	$out	Le buffer oÃ» Ã©crire le rÃ©sultat
+		@return Renvoie true si le fichier existe dÃ©jÃ  dans le cache
 	 */
 	function getArchivePath($file, &$out) {
 
-		$fmd5 = md5(dirname($file));
+		$fmd5 = md5(file::dirName($file));
 
 		if (!is_dir(DIR_CACHE.$fmd5{0}))
 			mkdir(DIR_CACHE.$fmd5{0});

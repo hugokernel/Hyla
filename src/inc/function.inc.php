@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -27,15 +27,16 @@ function DBUG($var) {
 }
 
 /*	On formate la date correctement !
-	@param string $date Date ‡ formater
+	@param string $date Date √† formater
 	@param int $type Type de formatage -> 0: que la date; 1: date et heure; 2: que l'heure; 3: affiche la date si $date2 > $date; 4: affiche la date textuellement
  */
 function format_date($date, $type = 0, $date2 = null)
 {
 	// Si c'est un time stamp, on converti !
-	// CompatiblitÈ ancienne version...‡ terme, tout en timestamp !
-	if (is_numeric($date))
+	// Compatiblit√© ancienne version...√† terme, tout en timestamp !
+//	if (is_numeric($date)) {
 		$date = system::date('Y-m-d H:i:s', $date);
+//	}
 	
 	list($annee, $mois, $jour) = explode('-', substr($date, 0, 10));
 	$ret = $jour.'/'.$mois.'/'.$annee;
@@ -66,65 +67,111 @@ function format_date($date, $type = 0, $date2 = null)
 	return 	$ret;
 }
 
-/*	CrÈÈr un message d'erreur
+/*	Cr√©√©r un message d'erreur
 	@param	string	$msg	Le message d'erreur
  */
 function view_error($msg) {
+	global $tpl;
 	if ($msg) {
-		$tpl = new Template(DIR_TEMPLATE);
-		$tpl->set_file('misc', 'misc.tpl');
-		$tpl->set_block('misc', array(
-				'error'			=>	'Hdlerror',
-				'status'		=>	'Hdlstatus',
-				'sort'			=>	'Hdlsort',
-				'toolbar'		=>	'Hdltoolbar'
-				));
-		$tpl->set_var('ERROR', $msg);
-		$tpl->parse('Hdlerror', 'error', true);
-		return $tpl->parse('Output', 'misc');
+		if (!$tpl) {
+			$tpl = new Template(DIR_TEMPLATE);
+			$tpl->set_file('misc', 'misc.tpl');
+			$tpl->set_block('misc', array(
+					'error'			=>	'Hdlerror',
+					'status'		=>	'Hdlstatus',
+					'suggestion'	=>	'Hdlsuggestion',
+					'sort'			=>	'Hdlsort',
+					'toolbar'		=>	'Hdltoolbar'
+					));
+		}
+
+		$tpl->set_var('VIEW_ERROR', $msg);
+		$out = $tpl->parse('Hdlerror', 'error', true);
+		$tpl->set_var('Hdlerror');
+		return $out;
+//		return $tpl->parse('Output', 'misc');
 	}
 }
 
-/*	CrÈÈr un message de status
+/*	Cr√©√©r un message de status
 	@param	string	$msg	Le message de status
  */
 function view_status($msg) {
+	global $tpl;
 	if ($msg) {
-		$tpl = new Template(DIR_TEMPLATE);
-		$tpl->set_file('misc', 'misc.tpl');
-		$tpl->set_block('misc', array(
-				'error'			=>	'Hdlerror',
-				'status'		=>	'Hdlstatus',
-				'sort'			=>	'Hdlsort',
-				'toolbar'		=>	'Hdltoolbar'
-				));
-		$tpl->set_var('STATUS', $msg);
-		$tpl->parse('Hdlstatus', 'status', true);
-		return $tpl->parse('Output', 'misc');
+		if (!$tpl) {
+			$tpl = new Template(DIR_TEMPLATE);
+			$tpl->set_file('misc', 'misc.tpl');
+			$tpl->set_block('misc', array(
+					'error'			=>	'Hdlerror',
+					'status'		=>	'Hdlstatus',
+					'suggestion'	=>	'Hdlsuggestion',
+					'sort'			=>	'Hdlsort',
+					'toolbar'		=>	'Hdltoolbar'
+					));
+		}
+
+		$tpl->set_var('VIEW_STATUS', $msg);
+		$out = $tpl->parse('Hdlstatus', 'status', true);
+		$tpl->set_var('Hdlstatus');
+		return $out;
 	}
 }
 
-
-/*	Redirection d'une page ‡ une autre
-	@param	string	$title Titre fenÍtre
-	@param	string	$page Page de redirection
-	@param	string	$msg Message
-	@param	int		$attente Temps d'attente (secondes)
-	@param	bool	$rnow Afficher le lien pour rediriger tout de suite ou non !
+/*	Cr√©√©r un message de suggestion
+	@param	string	$msg	Le message de la suggestion
  */
-function redirect($title, $page, $msg, $attente = 5, $rnow = true) {
-	global $conf;
+function view_suggestion($msg) {
+	global $tpl;
+	if ($msg) {
+		if (!$tpl) {
+			$tpl = new Template(DIR_TEMPLATE);
+			$tpl->set_file('misc', 'misc.tpl');
+			$tpl->set_block('misc', array(
+					'error'			=>	'Hdlerror',
+					'status'		=>	'Hdlstatus',
+					'suggestion'	=>	'Hdlsuggestion',
+					'sort'			=>	'Hdlsort',
+					'toolbar'		=>	'Hdltoolbar'
+					));
+		}
+
+		$tpl->set_var('SUGGESTION', $msg);
+		$out = $tpl->parse('Hdlsuggestion', 'suggestion', true);
+		$tpl->set_var('Hdlsuggestion');
+		return $out;
+	}
+}
+
+/*	Redirection d'une page √† une autre
+	@param	string	$title		Titre fen√™tre
+	@param	string	$page		Page de redirection
+	@param	string	$msg		Message
+	@param	int		$attente 	Temps d'attente (secondes)
+	@param	bool	$rnow		Afficher le lien pour rediriger tout de suite ou non !
+ */
+function redirect($title, $page, $msg, $attente = 0, $rnow = true) {
+	global $conf, $tpl;
+
+	if (!$attente) {
+		$attente = $conf['time_of_redirection'];
+	}
+
 	// Le template...
-//	include_once('src/lib/template.class.php');
 	$tpl = new Template(DIR_TEMPLATE);
 	$tpl->set_file('redirect', 'redirect.tpl');
 	$tpl->set_block('redirect', 'AffichRedirectNow', 'HdlAffichRedirectNow');
 
+	include('l10n/'.$conf['lng'].'/suggestions.php');
+
 	$tpl->set_var(array(
+			'STYLESHEET'	=>	get_css(),
 			'TITLE'			=>	$title.' '.$conf['title'],
 			'ATTENTE'		=>	$attente,
 			'PAGE'			=>	$page,
-			'MESSAGE'		=>	$msg));
+			'MESSAGE'		=>	$msg,
+			'SUGGESTION'	=>	get_suggest($suggest['redirect']),
+			));
 
 	if ($rnow)
 		$tpl->parse('HdlAffichRedirectNow', 'AffichRedirectNow', true);
@@ -134,10 +181,10 @@ function redirect($title, $page, $msg, $attente = 5, $rnow = true) {
 	unset($tpl);
 }
 
-/*	Test de 'empty' multiple renvoyant le message associÈ si un champs est vide...
-	@param	array	$tab_empty	Tableau contenant les string et leurs message ‡ renvoyÈ si vide
-	@param	&		$msg		RÈfÈrence de la chaine qui doit contenir le message de retour
-	@return	BoolÈen ‡ false si au moins un champs Ètait vide
+/*	Test de 'empty' multiple renvoyant le message associ√© si un champs est vide...
+	@param	array	$tab_empty	Tableau contenant les string et leurs message √† renvoy√© si vide
+	@param	&		$msg		R√©f√©rence de la chaine qui doit contenir le message de retour
+	@return	Bool√©en √† false si au moins un champs √©tait vide
  */
 function verif_value($tab_empty, &$msg) {
 	$bool = true;
@@ -151,7 +198,37 @@ function verif_value($tab_empty, &$msg) {
 	return $bool;
 }
 
-/*	Charge le tableau $conf ‡ partir du fichier de configuration
+/*	Ajout d'une feuille de style
+	@param	string	$href	le lien vers la feuille de style en partant de la racine de Hyla
+	@param	string	$title	Le titre
+	@param	string	$type	Le type (ex: text/css)
+	@param	string	$media	Le media (ex: screen/projection)
+ */
+function add_stylesheet($href, $title, $type = 'text/css', $media = 'screen/projection') {
+	global $styles;
+	$styles[] = array(	'href'	=>	$href,
+						'title'	=>	$title,
+						'type'	=>	$type,
+						'media'	=>	$media,
+						);
+}
+
+/*	Ajout d'une feuille de style d'un plugin
+	@param	string	$href	le lien vers la feuille de style en partant de la racine de Hyla
+	@param	string	$title	Le titre
+	@param	string	$type	Le type (ex: text/css)
+	@param	string	$media	Le media (ex: screen/projection)
+ */
+function add_stylesheet_plugin($href, $title, $type = 'text/css', $media = 'screen/projection') {
+	global $styles_plugin;
+	$styles_plugin[] = array(	'href'	=>	$href,
+								'title'	=>	$title,
+								'type'	=>	$type,
+								'media'	=>	$media,
+						);
+}
+
+/*	Charge le tableau $conf √† partir du fichier de configuration
  */
 function load_config() {
 
@@ -160,14 +237,16 @@ function load_config() {
 
 	$tab = (function_exists('parse_ini_file')) ? parse_ini_file(FILE_INI) : iniFile::read(FILE_INI, true);
 
-	$conf['webmaster_mail']	= $tab['webmaster_mail'];
+	$conf['webmaster_mail']		= $tab['webmaster_mail'];
 	$conf['name_template']		= $tab['template'] ? $tab['template'] : 'default';
-	$conf['lng']				= $tab['lng'] ? $tab['lng'] : 'fr_FR';
+
+	$conf['style']				= $tab['style'] ? $tab['style'] : 'default';
+
+	$conf['lng']				= $tab['lng'] ? $tab['lng'] : DEFAULT_LNG;
 	$conf['title']				= $tab['title'];
 
-	$conf['file_chmod']		= octdec($tab['file_chmod']);
+	$conf['file_chmod']			= octdec($tab['file_chmod']);
 	$conf['dir_chmod']			= octdec($tab['dir_chmod']);
-	$conf['anonymous_add_file'] = $tab['anonymous_add_file'];
 	$conf['send_mail']			= $tab['send_mail'];
 
 
@@ -178,7 +257,7 @@ function load_config() {
 	$conf['view_hidden_file']	= $tab['view_hidden_file'];
 	$conf['download_counter']	= $tab['download_counter'];
 
-	$conf['dir_default_plugin']	= $tab['default_plugin'] ? strtolower($tab['default_plugin']) : 'dir';
+	$conf['dir_default_plugin']	= $tab['dir_default_plugin'] ? strtolower($tab['dir_default_plugin']) : 'dir';
 
 	$conf['view_toolbar']		= $tab['view_toolbar'];
 
@@ -186,14 +265,29 @@ function load_config() {
 
 	$conf['url_scan']			= $tab['url_scan'];
 
+	$conf['time_of_redirection']		= $tab['time_of_redirection'];
+	if ($conf['time_of_redirection'] < 1)
+		$conf['time_of_redirection'] = 1;
+
+	$conf['download_dir']		= $tab['download_dir'];
+
+	$conf['url_encode']			= $tab['url_encode'];
+
+	$conf['auth_method']		= $tab['auth_method'];
+
+	$conf['rss_nbr_obj']		= $tab['rss_nbr_obj'];
+	$conf['rss_nbr_comment']	= $tab['rss_nbr_comment'];
+
+	$conf['fs_charset_is_utf8']	= $tab['fs_charset_is_utf8'];
+
 	$sort_tab = array(
 			0 => SORT_DEFAULT,
-			1 => SORT_ALPHA,
-			2 => SORT_ALPHA_R,
-			3 => SORT_ALPHA_EXT,
-			4 => SORT_ALPHA_EXT_R,
-			5 => SORT_ALPHA_CAT,
-			6 => SORT_ALPHA_CAT_R,
+			1 => SORT_NAME_ALPHA,
+			2 => SORT_NAME_ALPHA_R,
+			3 => SORT_EXT_ALPHA,
+			4 => SORT_EXT_ALPHA_R,
+			5 => SORT_CAT_ALPHA,
+			6 => SORT_CAT_ALPHA_R,
 			7 => SORT_SIZE,
 			8 => SORT_SIZE_R,
 			);
@@ -205,7 +299,7 @@ function load_config() {
 	unset($tab, $sort_tab);
 }
 
-/*	Ouvre le fichier de liaison extensions / icones et charge en mÈmoire les relations
+/*	Ouvre le fichier de liaison extensions / icones et charge en m√©moire les relations
  */
 function load_icon_info() {
 	global $tab_icon;
@@ -222,22 +316,22 @@ function load_icon_info() {
  */
 function get_icon($ext) {
 	global $tab_icon;
-	$ret = (!array_key_exists($ext, $tab_icon)) ? $tab_icon['?']['icon'] : $tab_icon[$ext]['icon'];
+	$ret = (!array_key_exists($ext, $tab_icon)) ? $tab_icon['?']['icon'] : (isset($tab_icon[$ext]['icon']) ? $tab_icon[$ext]['icon'] : $tab_icon['?']['icon']);
 	$dir = (!array_key_exists('dir', $tab_icon)) ? $tab_icon['?']['dir'] : $tab_icon[$ext]['dir'];
 	return $dir.$ret;
 }
 
-/*	Renvoie la catÈgorie du fichier selon l'extension
+/*	Renvoie la cat√©gorie du fichier selon l'extension
  */
 function get_cat($ext) {
 	global $tab_icon;
-	$cat = (!array_key_exists($ext, $tab_icon)) ? $tab_icon['?']['cat'] : (array_key_exists('cat', $tab_icon[$ext]) ? $tab_icon[$ext]['cat'] : $tab_icon['?']['cat']);
+	$cat = (!array_key_exists($ext, $tab_icon)) ? __($tab_icon['?']['cat']) : (array_key_exists('cat', $tab_icon[$ext]) ? __($tab_icon[$ext]['cat']) : __($tab_icon['?']['cat']));
 	return $cat;
 }
 
-/*	Retourne la taille d'un fichier de maniËre comprÈhensible (original trouvÈe sur www.php.net)
+/*	Retourne la taille d'un fichier de mani√®re compr√©hensible (original trouv√©e sur www.php.net)
 	@param int $size Taille en octets
-	@param int $rnd La prÈcision de l'arrondi !
+	@param int $rnd La pr√©cision de l'arrondi !
  */
 function get_human_size_reading($size, $rnd = 2){
 	$iec = array('o', 'Ko', 'Mo', 'Go', 'To', 'Po', 'Eo', 'Zo', 'Yo');
@@ -247,134 +341,127 @@ function get_human_size_reading($size, $rnd = 2){
 	return round($size, $rnd).' '.$iec[$i];
 }
 
-/*	Renvoie le texte associÈ
-	@param	string	$str	Chaine voulue
-	@param	...
- */
-function __($str)
-{
-	global $l10n;
-	$ret = (array_key_exists($str, $l10n)) ? $l10n[$str] : $str;
-	if (func_num_args() > 1) {
-		$tab = func_get_args();
-		$tab[0] = $ret;
-		$ret = call_user_func_array('sprintf', $tab);
-	}
-	return $ret;
+
+function get_suggest($tab) {
+
+	$str = null;
+
+	$tab[] = null;
+	shuffle($tab);
+//	$val = rand(0, sizeof($tab[$context]) - 1);
+	$str = $tab[0];
+
+	return view_suggestion($str);
 }
 
-function format($_url, $current = true) {
-
-//	if (!$current) {
-		global $cobj;
-		$obj = &$cobj;
-//	}
-
-	$tab = explode('/', $_url);
-
-	$ret = null;
-
-	if ($current) {
-		$ret = '<a href="'.url::getObj('/').'" title="Revenir ‡ la racine"><img src="'.DIR_TEMPLATE.'/img/home.png" width="32" height="32" border="0" align="middle" alt="Revenir ‡ la racine" /></a>';
-	}
-
-	if ($current && $obj->file != null && $obj->file != '/')
-		$ret .= ' <img src="'.$obj->icon.'" width="32" height="32" border="0" align="middle" alt="Icone" />';
-
-	$_url = null;
-	$size = sizeof($tab);
-	for ($i = 0; $i < $size; $i++) {
-		if ($tab[$i]) {
-			$_url .= '/'.$tab[$i];
-			// On met un '/' uniquement si il s'agit d'un dossier
-			$value = ($current) ? (($obj->type == TYPE_DIR) ? 1 : 0) : (is_dir(FOLDER_ROOT.$_url));
-			$ret .= ' / <a href="'.url::getObj($_url).(($i < $size - 1 || $value) ? '/' : '').'" class="object">'.$tab[$i].'</a>';
-		}		
-	}
-
-	if ($current && isset($obj->target))
-		$ret .= ' ! '.$obj->target;
-
-	return $ret;
+/*	Renvoie l'√©l√©ment encod√© en UTF8, les √©l√©ments venant du syst√®me de fichiers doivent
+	obligatoirement passer par cette fonction avant affichage
+	@param	string	$str	La chaine √† encoder
+ */
+function get_utf8($str) {
+	global $conf;
+	return ($conf['fs_charset_is_utf8'] ? $str : utf8_encode($str));
 }
 
-/*	GÈnËre l'arborescence du rÈpertoire
+/*	Renvoie l'√©l√©ment en ISO
+	@param	string	$str	La chaine
  */
-function get_tree() {
+function get_iso($str) {
+	global $conf;
+	return ($conf['fs_charset_is_utf8'] ? utf8_decode($str) : $str);
+}
 
-	global $conf, $obj, $cobj;
+/*	Renvoie l'√©l√©ment encod√©s de la m√™me mani√®re que le syst√®me de fichiers
+	@param	string	$str	La chaine
+ */
+function get_2_fs_charset($str) {
+	global $conf;
+	return ($conf['fs_charset_is_utf8'] ? $str : utf8_decode($str));
+}
 
-	$tab = file::scanDir(FOLDER_ROOT, $conf['view_hidden_file']);
+/*	Renvoie l'objet correctement format√©...
+	@param	string	$str	La chaine
+ */
+function view_obj($str) {
+	$str = get_iso($str);
+	$str = htmlentities($str);
 
-	$tab = $obj->getDirContent('/', null, 0, -1, $tab, false);
+	// Le moteur de template peut squizzer les { et }...
+	$str = str_replace(array('{', '}'), array('&#123;', '&#125;'), $str);
+	$str = get_utf8($str);
 
-	$var = "<ul>\n\t\t<li>\n\t\t\t<a href=\"".url::getObj('/').'" title="Revenir ‡ la racine"><img src="'.DIR_TEMPLATE.'/img/home.png" width="32" height="32" border="0" align="middle" alt="Revenir ‡ la racine" /></a>'."</li>\n";
+	return $str;
+}
 
-	foreach ($tab as $occ) {
+/*	Test les droits
+	@param	...	ACL_xxx, ACL_xxx...
+ */
+function acl_test() {
+	global $cobj, $cuser, $url;
+	$ret = false;
 
-		$current = false;
-
-		if ($occ->path == $cobj->path)
-			$current = true;
-
-		$tst = explode('/', $occ->path);
-		$num = sizeof($tst) - 1;
-
-		if ($num > $last)
-			$var .= "<li><ul>\n\t";
-
-		if ($num < $last) {
-			for ($i = 0; $i < ($last - $num); $i++)
-				$var .= "</ul></li>\n";
-		}
-
-		$var .= "\t<li>\n";
-
-		if ($current) {
-			$var .= "\t\t\t<b><a href=\"".url::getObj($occ->file).'"><img src="'.$occ->icon.'" alt="" />'.$tst[$num - 1]."</a></b>\n";
+	$args = func_get_args();
+	$r = call_user_func_array(array('acl', 'ok'), $args);
+	if (!$r) {
+		if ($cuser->id == ANONYMOUS_ID) {
+			$_SESSION['sess_url'] = $_SERVER['REQUEST_URI'];
+			redirect(__('Error'), url::getPage('login'), __('Thank you for authenticate you'));
+			system::end();
+			break;
 		} else {
-			$var .= "\t\t\t<a href=\"".url::getObj($occ->file).'"><img src="'.$occ->icon.'" alt="" />'.$tst[$num - 1]."</a>\n";
+			redirect(__('Error'), url::getCurrentObj(), __('You cannot use this functionality !'));
+			system::end();
+			break;
 		}
+	} else
+		$ret = true;
 
-		$var .= "\t\t</li>\n";
-		$last = $num;
-	}
-	$var .= "</ul></li>\n\t";
-	$var .= "\n</ul>\n";
-
-	return $var;
+	return $ret;
 }
+
+
+/*	Renvoie le chemin r√©el vers le fichier (si c'est une archive, renvoie le chemin vers le cache)
+ */
+function get_real_directory() {
+	global $cobj;
+	cache::getFilePath($cobj->file, $file);
+	return ($cobj->type == TYPE_ARCHIVED) ? DIR_ROOT.$file.'/'.$cobj->target : $cobj->realpath;
+}
+
+
+/*	Les fonctions qui peuvent ne pas ex√©cuter selon l'OS ou la version de PHP
+ */
 
 if (!function_exists('fnmatch')) {
 	function fnmatch($pattern, $string) {
-		for ($op = 0, $npattern = '', $n = 0, $l = strlen($pattern); $n < $l; $n++) {
-			switch ($c = $pattern[$n]) {
-				case '\\':
-					$npattern .= '\\' . @$pattern[++$n];
-					break;
-				case '.': case '+': case '^': case '$': case '(': case ')': case '{': case '}': case '=': case '!': case '<': case '>': case '|':
-					$npattern .= '\\' . $c;
-					break;
-				case '?': case '*':
-					$npattern .= '.' . $c;
-					break;
-				case '[': case ']': default:
-					$npattern .= $c;
-					if ($c == '[')
-						$op++;
-					else if ($c == ']') {
-						if ($op == 0)
-							return false;
-						$op--;
-					}
-					break;
-			}
-		}
+		return preg_match('/^'.strtr(addcslashes($pattern, '/\\.+^$(){}=!<>|'), array('*' => '.*', '?' => '.?')).'$/i', $string);
+	}
+}
 
-		if ($op != 0)
+
+if (!function_exists('array_walk_recursive')) {
+
+
+	function array_walk_recursive(&$input, $funcname, $userdata = null) {
+
+		if (!is_callable($funcname))
 			return false;
 
-		return preg_match('/' . $npattern . '/i', $string);
+		if (!is_array($input))
+			return false;
+
+		foreach ($input as $key => $value) {
+			if (is_array($input[$key])) {
+				array_walk_recursive($input[$key], $funcname, $userdata);
+			} else {
+				if (!empty($userdata)) {
+					$input[$key] = $funcname($value, $userdata);
+				} else {
+					$input[$key] = $funcname($value);
+				}
+			}
+		}
+		return true;
 	}
 }
 

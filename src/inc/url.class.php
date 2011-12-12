@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -43,6 +43,34 @@ class tUrl {
 
 class url {
 
+	var	$abs;
+
+	var $current;
+
+	/*	Initialisation
+	 	@param	bool	$abs	Créer des url absolue ou non ?
+	 */
+	function url($abs = false) {
+		$this->abs = $abs;
+		$this->current = new tUrl;
+	}
+
+	/*	Renvoie l'url correspondante pour les rss
+		@param	string	$obj	L'objet
+		@param	string	$type	Type !
+		@access	static
+	 */
+	function getRss($obj, $type = null) {
+		$s = REAL_ROOT_URL;
+		$s .= '/rss.php';
+		$s .='?p=obj,'.url::_encode($obj);
+		$s .= ($type) ? '&amp;type='.$type : null;
+		return $s;
+	}
+
+	/*	Renvoie l'url correspondante pour la visualisation d'une page (admin...)
+		@access	static
+	 */
 	function getPage($aff, $object = null, $act = null, $pact = null, $paff = null) {
 		$tab = array('page');
 		if (is_array($aff))
@@ -52,10 +80,16 @@ class url {
 		return url::_get($object, $tab, $act, $pact, $paff, false);
 	}
 
+	/*	Renvoie l'url correspondante pour la visualisation d'un objet
+		@access	static
+	 */
 	function getObj($object, $aff = null, $act = null, $pact = null, $paff = null) {
 		return url::_get($object, $aff, $act, $pact, $paff, true);
 	}
 
+	/*	Renvoie l'url correspondante pour la visualisation de l'objet courant
+		@access	static
+	 */
 	function getCurrentObj($aff = null, $act = null, $pact = null, $paff = null) {
 		global $cobj;
 		$s = (isset($cobj->target) ? $cobj->file.'!'.$cobj->target : $cobj->file);
@@ -64,18 +98,20 @@ class url {
 		return $s;
 	}
 
-	/*	Renvoie une url correctement constitu�e
+	/*	Renvoie une url correctement constituée
 		@param	string	$object	L'objet en question
 		@param	int		$aff	L'affichage : download, info, edit, mini...
 		@param	int		$act	L'action : addcomment
-		@param	string	$pact	Les param�tres action � passer
-		@param	string	$paff	Les param�tres affichage � passer
-		@param	bool	$b		Permet de forcer la g�n�ration d'un 'obj'
+		@param	string	$pact	Les paramètres action à passer
+		@param	string	$paff	Les paramètres affichage à passer
+		@param	bool	$b		Permet de forcer la génération d'un 'obj'
+		@access	static
 	 */
 	function _get($object, $aff = '', $act = null, $pact = null, $paff = null, $b = true) {
 
-		global $conf;
-		$s = ROOT_URL;
+		global $conf, $url;
+
+		$s = ($url->abs) ? url::getHost().REAL_ROOT_URL.'/index.php' : REAL_ROOT_URL.'/index.php';
 
 		if ($conf['url_scan'] == 'QUERY_STRING') {
 
@@ -86,16 +122,16 @@ class url {
 				foreach ($aff as $a) {
 					$s .= $a.'-';
 				}
-				$s = substr($s, 0, strlen($s) - 1);	// On enl�ve le - de fin
+				$s = substr($s, 0, strlen($s) - 1);	// On enlève le - de fin
 			} else {
 				$s .= $aff ? '-'.$aff : null;
 			}
 
 			$sep = ',';
 
-			if (is_string($object))
-				$s .= $sep.$object;
-//				$s .= $sep.urlencode($object);
+			if (is_string($object)) {
+				$s .= $sep.url::_encode($object);
+			}
 
 			if ($act) {
 				if (is_array($act)) {
@@ -119,50 +155,125 @@ class url {
 		return $s;
 	}
 
+	/*	Encode l'objet
+	 */
+	function _encode($obj) {
+		global $conf;
+		$ret = null;
+
+		if ($conf['url_encode']) {
+			$a = array();			
+			$ret = explode('/', $obj);
+			foreach ($ret as $occ) {
+				$a[] = urlencode($occ);
+			}
+			$ret = implode('/', $a);
+		} else
+			$ret = $obj;
+		return $ret;
+	}
+
+	/*	Renvoie l'adresse complète (basé sur le code de DotClear d'Olivier Meunier)
+		@access	static
+	 */
+	function getHost() {
+		$server_name = $_SERVER['HTTP_HOST'];
+		if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+			$scheme = 'https';
+			$port = ($_SERVER['SERVER_PORT'] == '443') ? null : ':'.$_SERVER['SERVER_PORT'];
+		} else {
+			$scheme = 'http';
+			$port = ($_SERVER['SERVER_PORT'] == '80') ? null : ':'.$_SERVER['SERVER_PORT'];
+		}
+		return $scheme.'://'.htmlspecialchars($server_name).$port;
+	}
+
+
+	/*
+	 *	Scan de l'url et accès aux valeurs scannées
+	 */
+
+
 	/*	Scan l'url et affecte les variables $aff, $act et renvoie le tableau d'infos de l'objet
 	 */
 	function scan() {
 
 		global $conf;
 
-		$url = new tUrl;
-
 		if ($conf['url_scan'] == 'QUERY_STRING') {
 
 			if (array_key_exists('p', $_REQUEST)) {
-				@list($url->aff, $url->obj) = explode(',', $_REQUEST['p'], 2);
+				@list($this->current->aff, $this->current->obj) = explode(',', $_REQUEST['p'], 2);
 			}
 
 			if (array_key_exists('act', $_REQUEST)) {
-				$url->act = $_REQUEST['act'];
+				$this->current->act = $_REQUEST['act'];
 			}
 
-			$url->act = explode('-', $url->act);
-			$url->aff = explode('-', $url->aff);
+			$this->current->act = explode('-', $this->current->act);
+			$this->current->aff = explode('-', $this->current->aff);
 
-			$url->paff = isset($_REQUEST['paff']) ? $_REQUEST['paff'] : null;
-			$url->pact = isset($_REQUEST['pact']) ? $_REQUEST['pact'] : null;
+			$this->current->paff = isset($_REQUEST['paff']) ? $_REQUEST['paff'] : null;
+			$this->current->pact = isset($_REQUEST['pact']) ? $_REQUEST['pact'] : null;
 		}
-
-		return $url;
 	}
 
-	/*	Renvoie l'�l�ment demand�
+	/*	Renvoie l'élément demandé
+		@access	static
 	 */
-	function getAct($num) {
-		global $curl;
-		return isset($curl->act[$num]) ? $curl->act[$num] : null;
+	function getQueryAct($num) {
+		global $url;
+		return isset($url->current->act[$num]) ? $url->current->act[$num] : null;
 	}
 
-	function getAff($num) {
-		global $curl;
-		return isset($curl->aff[$num]) ? $curl->aff[$num] : null;
+	/*	Renvoie l'élément demandé
+		@access	static
+	 */
+	function getQueryAff($num) {
+		global $url;
+		return isset($url->current->aff[$num]) ? $url->current->aff[$num] : null;
 	}
 
-	function setAff($num, $val) {
-		global $curl;
-		$curl->aff[$num] = $val;
-		return $curl->aff[$num];
+	/*	Renvoie l'élément demandé
+		@access	static
+	 */
+	function getQueryPact() {
+		global $url;
+		return isset($url->current->pact) ? $url->current->pact : null;
+	}
+
+	/*	Renvoie l'élément demandé
+		@access	static
+	 */
+	function getQueryPaff() {
+		global $url;
+		return isset($url->current->paff) ? $url->current->paff : null;
+	}
+
+	/*	Renvoie l'élément demandé
+		@access	static
+	 */
+	function getQueryObj() {
+		global $url;
+		return isset($url->current->obj) ? $url->current->obj : null;
+	}
+
+	/*	Set l'élément demandé
+		@access	static
+	 */
+	function setQueryObj($obj) {
+		global $url;
+		$url->current->obj = $obj;
+		return $url->current->obj;
+	}
+
+	/*	Set l'élément demandé
+		@access	static
+	 */
+	function setQueryAff($num, $val) {
+		global $url;
+		$url->current->aff[$num] = $val;
+		return $url->current->aff[$num];
 	}
 }
 

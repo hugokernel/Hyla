@@ -1,53 +1,58 @@
 
 <fieldset>
-	<legend><img src="{DIR_TEMPLATE}/img/Find-Files1.png" align="middle" width="32" height="32" alt="Disque dûr" /> Recherche dans &laquo; {OBJECT} &raquo;  </legend>
+	<legend><img src="{DIR_IMAGE}/find.png" align="middle" width="32" height="32" alt="Recherche" /> {LANG:Search in &laquo; %s &raquo;}</legend>
 
 	<form method="post" name="form_upload" action="{FORM_SEARCH}">
 		<p>
-			<label for="sc_id_content">Saisissez le terme recherché :</label> 
+			<label for="sc_id_content">{LANG:Keyword search}</label> 
 			<input type="text" name="word" size="40" value="{WORD}" id="sc_id_content" />
 		</p>
 		<p>
 			<input type="checkbox" name="scandir" {SCANDIR_CHECKED} id="sc_id_scandir" />
-			<label for="sc_id_scandir">Chercher dans le nom des dossiers</label>
+			<label for="sc_id_scandir">{LANG:Search in dir name}</label>
 		</p>
 		<p>
 			<input type="checkbox" name="recurs" {RECURS_CHECKED} id="sc_id_recurs" />
-			<label for="sc_id_recurs">De manière récursive</label>
+			<label for="sc_id_recurs">{LANG:In a recursive way}</label>
 		</p>
-		<input type="submit" name="Submit" value="Rechercher" />
+		<input type="submit" name="Submit" value="{LANG:Searching}" />
+
 		<p>
-			<a href="#comment" name="comment" onclick="swap_couche('1');"><img src="{DIR_TEMPLATE}/img/FAQ.png" width="32" height="32" alt="Voir / Cacher l'info" /> Info</a>
+			<a href="#info" name="comment" onclick="swap_layer('layer_info');" title="{LANG:View / Hide}"><img src="{DIR_IMAGE}/help.png" width="32" height="32" alt="Help" /> {LANG:Information}</a>
 		</p>
-		<blockquote id="Layer1" style="display: none;" class="info">
-			<p>Quelques exemples d'utilisation :</p>
-			<ul>
-				<li>Pour effectuer une recherche de tous les fichiers jpg, vous pouvez taper ceci : <strong>*.jpg</strong></li>
-				<li>Chercher les fichiers mp3 finissant par "libres" ou "libre" : <strong>*libre[s].mp3</strong></li>
-			</ul>
+		<blockquote id="layer_info" class="jhidden">
+			<div class="info">
+				<p>{LANG:Examples of use :}</p>
+				<ul>
+					<li>{LANG:For searching all jpg, enter *.jpg}</li>
+					<li>{LANG:For searching all file with gray or grey in name, enter *gr[ae]y}</li>
+				</ul>
+			</div>
 		</blockquote>
 	</form>
 	{ERROR}
 	<!-- BEGIN result -->
 	<hr />
-	
+
 	<p>
-		Voici le(s) résultat(s) de la recherche sur le terme &laquo; <b>{WORD}</b> &raquo; :
+		{LANG:Search results for &laquo; %s &raquo; :}
 	</p>
 	
-	<div class="table">
-		<table width="100%">
-		<!-- BEGIN line -->
-			<tr class="line">
-				<td width="2%"><a href="{PATH_INFO}"><img src="{FILE_ICON}" width="24" height="24" border="0" align="middle" alt="Infos" /></a></td>
-				<td width="30%"><a href="{PATH_INFO}">{PATH_FORMAT}</a></td>
-				<td width="52%" align="right" class="description">{FILE_DESCRIPTION}</td>
-				<td width="16%" align="right">{FILE_SIZE}</td>
-			</tr>
-		<!-- END line -->
-		</table>
-	</div>
+	<table width="100%" class="line" summary="Liste des rÃ©sultats de la recherche">
+		<tr>
+			<th>Objet</th>
+			<th>Description</th>
+			<th>Taille</th>
+		</tr>
+	<!-- BEGIN line -->
+		<tr>
+			<td><img src="{FILE_ICON}" class="icon" alt="Infos" /> {PATH_FORMAT}</td>
+			<td class="description">{FILE_DESCRIPTION}</td>
+			<td align="right">{FILE_SIZE}</td>
+		</tr>
+	<!-- END line -->
+	</table>
 	<br />
 	<!-- END result -->
-	
+
 </fieldset>
