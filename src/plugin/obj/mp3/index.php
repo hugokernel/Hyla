@@ -23,12 +23,11 @@ class plugin_obj_mp3 extends plugin_obj {
 
     function plugin_obj_mp3($cobj) {
         parent::plugin_obj($cobj);
-        $this->tpl->set_root($this->plugin_dir.'mp3');
+
         $this->tpl->set_file('mp3', 'mp3.tpl');
     }
 
     function aff() {
-        global $cobj;
 
         $auto_play = $this->getConfVar('auto_play');
         $loop = $this->getConfVar('loop');
@@ -38,7 +37,7 @@ class plugin_obj_mp3 extends plugin_obj {
         $param .= ($loop ? 'loop=1' : 'loop=0');
 
         $this->tpl->set_var(array(
-                'SIZE'              =>  get_human_size_reading($cobj->size),
+                'SIZE'              =>  get_human_size_reading($this->cobj->size),
                 'PATH_2_PLUGIN'     =>  $this->_url_2_plugin,
                 'OBJECT_PARAM'      =>  $param,
                 'OBJECT_DOWNLOAD'   =>  $this->url->linkToCurrentObj('download'),

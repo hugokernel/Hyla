@@ -19,8 +19,8 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
  */
 
-require 'src/plugin/auth/ldap/config.inc.php';
-require 'src/db/ldap.class.php';
+require 'src/plugin/auth/ldap/config.inc.php';  // Todo, remove this and place in contruct
+require 'src/plugin/auth/ldap/ldap.class.php';
 
 class plugin_auth_ldap extends plugin_auth {
 

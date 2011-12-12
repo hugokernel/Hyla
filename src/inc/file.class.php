@@ -266,7 +266,7 @@ class file
             }
         }
 
-        return file::formatPath($ret);
+        return file::format($ret);
     }
 
     /*  Retourne le nom du fichier
@@ -281,7 +281,7 @@ class file
                 $ret = file::baseName($file);
             }
         }
-        return file::formatPath($ret);
+        return file::format($ret);
     }
 
     /*  Envoie un fichier avec le bon type mime
@@ -394,7 +394,7 @@ class file
     function realpath($path, $exist = false) {
 
         $ret = null;
-        $path = file::formatPath($path);
+        $path = file::format($path);
 
         if ($exist && $path == '.') {
             return file::dirName($_SERVER['PATH_TRANSLATED']);
@@ -443,7 +443,7 @@ class file
             $ret = $p;
         }
 
-        $ret = file::unFormatPath($ret);
+        $ret = file::unFormat($ret);
         if ($exist && is_dir($ret) && $ret{strlen($ret) - 1} != '/') {
             $ret .= '/';
         }
@@ -456,7 +456,7 @@ class file
      */
     function dirName($path) {
         $path = dirname($path);
-        $path = file::formatPath($path);
+        $path = file::format($path);
         return $path;
     }
 
@@ -543,18 +543,23 @@ class file
         return $result;
     }
 
-    /*  Renvoie une chaine propre pour windows
+    /**
+     *  Get a clean path
+     *  @param  string  $path   Path
      */
-    function formatPath($path) {
+    function format($path) {
         if (system::osIsWin()) {
             $path = str_replace('\\', '/', $path);
         }
-        return $path;
+
+        return preg_replace('#\/\/+#', '/', $path);
     }
 
-    /*  Renvoie une chaine propre pour windows
+    /**
+     *  Get a clean path
+     *  @param  string  $path   Path
      */
-    function unFormatPath($path) {
+    function unFormat($path) {
         if (system::osIsWin()) {
             $path = str_replace('/', '\\', $path);
         }

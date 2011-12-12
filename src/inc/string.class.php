@@ -28,10 +28,9 @@ class string
         @param  string  $end        Tronquer avec cette chaine
      */
     function cut($str, $size = 25, $end = '...') {
-
-        if (strlen($str) > $size)
+        if (strlen($str) > $size) {
             $str = substr($str, 0, $size - strlen($end)).$end;
-
+        }
         return $str;
     }
 

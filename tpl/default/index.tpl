@@ -3,48 +3,41 @@
 
 <head>
 
-<title>{OBJECT_TITLE} {TITLE}</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="robots" content="index,follow" />
+    <title>{OBJECT_TITLE} {TITLE}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="robots" content="index,follow" />
 
-{HEADER}
+    {HEADER}
 
-{STYLESHEET_PLUGIN}
+    {STYLESHEET_PLUGIN}
 
-{STYLESHEET}
+    {STYLESHEET}
 
-<link rel="icon" type="image/png" href="{DIR_ROOT}img/icon.png" />
-<link rel="shortcut icon" href="{DIR_ROOT}img/icon.ico"/>
+    <link rel="icon" type="image/png" href="{DIR_ROOT}img/icon.png" />
+    <link rel="shortcut icon" href="{DIR_ROOT}img/icon.ico"/>
 
-<!-- BEGIN rss_obj -->
-<link rel="alternate" type="application/rss+xml" title="Fil rss de l'objet courant" href="{URL_RSS}" />
-<!-- END rss_obj -->
-<!-- BEGIN rss_comment -->
-<link rel="alternate" type="application/rss+xml" title="Fil rss des commentaires" href="{URL_RSS_COMMENT}" />
-<!-- END rss_comment -->
+    <!-- BEGIN rss_obj -->
+    <link rel="alternate" type="application/rss+xml" title="Fil rss de l'objet courant" href="{URL_RSS}" />
+    <!-- END rss_obj -->
+    <!-- BEGIN rss_comment -->
+    <link rel="alternate" type="application/rss+xml" title="Fil rss des commentaires" href="{URL_RSS_COMMENT}" />
+    <!-- END rss_comment -->
 
-<script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/jquery.js"></script>
-<script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/jquery.tablesorter.js"></script>
-<script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/styleswitcher.js"></script>
-<script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/tree.js"></script>
-<script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/lib.js"></script>
+    <script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/jquery.tablesorter.js"></script>
+    <script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/styleswitcher.js"></script>
+    <script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/tree.js"></script>
+    <script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/lib.js"></script>
 
 </head>
 
 <body>
 
-<div id="current">
-    <h3>
-        {OBJECT_URL}
-    </h3>
-    <span id="download">{DOWNLOAD_COUNT}</span>
-</div>
+{TOOLBAR}
 
 <div id="main">
     {CONTENT}
 </div>
-
-{TOOLBAR}
 
 <div class="copyright">
     <p>

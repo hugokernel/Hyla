@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2007 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -20,35 +20,19 @@
  */
 
 
-/*	+----------------------------------------------------+
- 	| Répertoire contenant vos fichiers à lister         |
- 	| /!\ ATTENTION, pas de slash ou anti slash de fin ! |
- 	+----------------------------------------------------+
- */
-define('FOLDER_ROOT', '/var/www');
-
-
-/*	L'emplacement de Hyla après le nom de domaine (sans slash de fin !)
-	Ex: http://ifile.free.fr/				-> mettez ''
-	Ex: http://ifile.free.fr/hyla/			-> mettez '/hyla'
-	Ex: http://ifile.free.fr/data/hyla		-> mettez '/data/hyla'
-
-	Si ce champs est vide, la valeur de $_SERVER['PHP_SELF'] sera utilisée
-    Laissez tel quel par défaut
- */
-//define('ROOT_URL', '');
-
-
-
 /*	+---------------------------------+
 	| Connection à la base de données |
 	+---------------------------------+
 	Dans SQL_HOST, il est possible de spécifier un port différent
 	de la manière suivante : 'server:3300'
  */
+define('DSN',   'mysql://username:password@host/basename');
+
+/*
 define('SQL_HOST',	'');
 define('SQL_BASE',	'');
 define('SQL_USER',	'');
 define('SQL_PASS',	'');
+*/
 
 ?>

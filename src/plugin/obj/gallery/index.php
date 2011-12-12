@@ -44,7 +44,7 @@ class plugin_obj_gallery extends plugin_obj { // implements _plugin {
         $this->addStyleSheet('default.css');
 
         $img_per_line = $this->getConfVar('img_per_line');
-        $img_width = $this->getConfVar('img_width', null, THUMB_SIZE_X);
+        $img_width = $this->getConfVar('img_width');
         $img_height = $this->getConfVar('img_height');
 
         $sort = isset($_SESSION['sess_sort']) ? $_SESSION['sess_sort'] : (SORT_NAME_ALPHA | SORT_FOLDER_FIRST);
@@ -69,7 +69,6 @@ class plugin_obj_gallery extends plugin_obj { // implements _plugin {
                 $this->tpl->set_var('Hdlgallery_comment');
                 $this->tpl->set_var('Hdlgallery_colspan');
 
-                $this->tpl->set_var('ACTION',   (is_file(FOLDER_ROOT.'/'.$tab[$i]->path)) ? 'dl' : 'list');
                 $this->tpl->set_var(array(
                         'FILE_NAME'         =>  view_obj($tab[$i]->name),
 

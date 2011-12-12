@@ -19,34 +19,45 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-if (!defined('PAGE_HOME'))
+if (!defined('HYLA_HOME'))
     header('location: ../index.php');
 
-require 'src/inc/image.class.php';
+require_once HYLA_ROOT_PATH.'src/lib/template.class.php';
+require HYLA_ROOT_PATH.'src/inc/image.class.php';
+
+require HYLA_ROOT_PATH.'src/run_obj.class.php';
+
+
 
 // Template...
-$tpl = new Template(DIR_TEMPLATE);
+//$tpl = new Template(DIR_TEMPLATE, HYLA_ROOT_PATH, DIR_TPL);
+$tpl = new Template(DIR_TPL, array( HYLA_RUN_PATH,
+                                    HYLA_ROOT_PATH), $conf->get('template_name'));
+
 $tpl->set_file(array(
-        'index'     =>  'index.tpl',
+//        'index'     =>  'index.tpl',
         'misc'      =>  'misc.tpl',
-        'comment'   =>  'comment.tpl',
-        'obj'       =>  'obj.tpl',
-        'toolbar'   =>  'toolbar.tpl',
-        'export'    =>  'export.tpl',
+//        'comment'   =>  'comment.tpl',
+//        'obj'       =>  'obj.tpl',
+//        'toolbar'   =>  'toolbar.tpl',
+//        'export'    =>  'export.tpl',
+
+//        'obj_n'     =>  'obj_n.tpl',
+        'page'      =>  'page.tpl',
         ));
 
+/*
 $tpl->set_block('index', array(
         'rss_obj'           =>  'Hdlrss_obj',
         'rss_comment'       =>  'Hdlrss_comment',
         ));
-
+*/
 $tpl->set_block('misc', array(
         'error'             =>  'Hdlerror',
         'status'            =>  'Hdlstatus',
         'suggestion'        =>  'Hdlsuggestion',
-        'sort'              =>  'Hdlsort',
-
-        'action_rename'     =>  'Hdlaction_rename',
+//        'sort'              =>  'Hdlsort',
+/*
         'action_mkdir'      =>  'Hdlaction_mkdir',
         'action_del'        =>  'Hdlaction_del',
         'action_addfile'    =>  'Hdlaction_addfile',
@@ -62,42 +73,29 @@ $tpl->set_block('misc', array(
         'aff_logout'        =>  'Hdlaff_logout',
         'aff_user'          =>  'Hdlaff_user',
         'aff_admin'         =>  'Hdlaff_admin',
+*/
+//        'toolbar_plugin_info' =>  'Hdltoolbar_plugin_info',
+        'toolbar_plugin_action' =>  'Hdltoolbar_plugin_action',
+        'toolbar_plugin_page'   =>  'Hdltoolbar_plugin_page',
 
         'toolbar'           =>  'Hdltoolbar',
         ));
-
+/*
 $tpl->set_block('comment', array(
         'comment_line'      =>  'Hdlcomment_line',
         'add_comment'       =>  'Hdladd_comment',
         'current_comment'   =>  'Hdlcurrent_comment',
-        'last_comment_line' =>  'Hdllast_comment_line',
-        'last_comment'      =>  'Hdllast_comment'
         ));
-
-$tpl->set_block('obj', array(
-        'dir_previous_page' =>  'Hdldir_previous_page',
-
-        'dir_page_num_cur'  =>  'Hdldir_page_num_cur',
-        'dir_page_num'      =>  'Hdldir_page_num',
-        'dir_page'          =>  'Hdldir_page',
-
-        'dir_next_page'     =>  'Hdldir_next_page',
-        'dir_pagination'    =>  'Hdldir_pagination',
-        'previous_page'     =>  'Hdlprevious_page',
-        'next_page'         =>  'Hdlnext_page',
-        'description'       =>  'Hdldescription',
-        'pagination'        =>  'Hdlpagination',
-        'with_tree'         =>  'Hdlwith_tree',
-        'no_tree'           =>  'Hdlno_tree'
-        ));
-
+*/
+/*
 $tpl->set_block('export', array(
         'export_body'           =>  'Hdlexport_body',
         ));
-
+*/
 $l10n->setFile('general.php');
 $l10n->setFile('aff.php');
 
+/*
 $var_tpl = null;
 $start = null;
 $title = null;
@@ -108,48 +106,358 @@ $aff = ($url->getParam('aff') == 'obj') ? $url->getParam('aff', 1) : $url->getPa
 if ($url->getParam('aff', 1) != 'login') {
     $_SESSION['sess_url'] = null;
 }
+*/
+
+/*
+dlog($cuser, L_WARNING);
+echo (int)acl::compare(AUTHENTICATED_ID);
+echo '<hr>';
+system::end();
+*/
+
+switch ($url->getParam('aff')) {
+
+    case 'page':
+
+        $url->setContext(null);
+
+        // Load page
+        $gui = plugins::get(PLUGIN_TYPE_GUI, $url->getParam('aff', 1));
+        $var_tpl = $gui->run();
+        if (system::isError($var_tpl)) {
+            system::end($var_tpl->msg);
+        }
+
+        $dir = plugins::getDirFromType(PLUGIN_TYPE_GUI);
+        $ret = plugin::getManifest(PLUGIN_TYPE_GUI, $url->getParam('aff', 1));
+        if (@$ret['menu'] == 'navigate') {
+
+            // Load plugin
+            $plugins = plugin_gui::getPlugin('page');
+            foreach ($plugins as $name => $manifest) {
+                $tpl->set_var(  array(
+                                    'URL_PLUGIN'            =>  $url->linkToPage($name),
+                                    'PLUGIN_NAME'           =>  __($manifest->name),
+                                    'PLUGIN_DESCRIPTION'    =>  __($manifest->description),
+                                    'PLUGIN_ICON'           =>  HYLA_ROOT_URL.$dir.$name.'/icon.png',
+                                ));
+                $tpl->parse('Hdltoolbar_plugin_page', 'toolbar_plugin_page', true);
+            }
+
+            $tpl->parse('Hdltoolbar', 'toolbar', true);
+
+            $out = $tpl->parse('OutPut', 'misc');
+//            $out = $tpl->finish($out);
+
+            $var_tpl = $out.$var_tpl;
+        } else {
+        //    $tpl->pparse('OutPut', 'page');
+        }
+
+
+        $tpl->set_var(array(
+                'CONTENT'           =>  $var_tpl,
+                'STYLESHEET'        =>  get_css(),
+                'STYLESHEET_PLUGIN' =>  get_css_plugin(),
+        ));
+
+
+        $tpl->pparse('OutPut', 'page');
+
+        break;
+
+    //  Search
+/*
+    case 'search':
+    case 'rename':
+    case 'user':
+    case 'lastcomment':
+        $gui = plugins::get(PLUGIN_TYPE_GUI, $aff);
+        $var_tpl = $gui->run();
+        break;
+*/
+
+    case 'obj':
+    default:
+
+/*
+echo $url->linkToCurrentObj('copy');
+echo '<hr>';
+echo $url->linkToObj('/nautilus-debug-log.txt', 'copy');
+echo '<hr>';
+exit;
+*/
+/*        if ($url->getParam('aff', 1)) {
+
+                $gui = plugins::get(PLUGIN_TYPE_GUI, $url->getParam('aff', 1));
+                $out = $gui->run();
+
+                $tpl->set_var(array(
+                        'CONTENT'           =>  $out,
+                        'STYLESHEET'        =>  get_css(),
+                        'STYLESHEET_PLUGIN' =>  get_css_plugin(),
+                ));
+
+                $tpl->pparse('OutPut', 'page');
+
+        } else {
+*/
+
+                $p = new run_obj();
+                $p->viewTree($conf->get('view_tree'));
+
+                $p->setAction(array(
+                        'add'       =>  __('Add to current basket'),
+                        'addnew'    =>  __('Add to new basket')
+                ));
+
+if ($url->getParam('aff', 1)) {
+    $p->viewTree(false);
+    $gui = plugins::get(PLUGIN_TYPE_GUI, $url->getParam('aff', 1));
+
+    $out = $gui->run();
+    $p->setContent($out);
+}
+
+                $param = null;
+                if (isset($_GET['act']) && $_GET['act'] == 'force-plugin' && isset($_GET['plugin'])) {
+                    $param = $_GET['plugin'];
+                }
+
+                $out = $p->run($param);
+/*
+    2 modes de fonctionnement pour run_obj :
+    * Affichage du contenu d'un plugin obj
+    * Affichage du contenu d'un plugin gui, bien sûr, avec les barres d'action autour, etc...
+ */
+
+                $tpl->set_var('CONTENT', $out);
+                //$tpl->parse('Hdl', 'toolbar_plugin', true);
+
+                $cobj = $obj->getCurrentObj();
+
+                $tpl->set_var(array(
+                        'OBJECT'            =>  $cobj->file,
+                        'STYLESHEET'        =>  get_css(),
+                        'STYLESHEET_PLUGIN' =>  get_css_plugin(),
+                ));
+                /*
+                $tpl->parse('Hdlhtml_header', 'html_header', true);
+                $tpl->parse('Hdlhtml_footer', 'html_footer', true);
+*/
+                $tpl->pparse('OutPut', 'page');
+
+//                echo $tpl->finish();
+
+                break;
+//        }
+}
+
+
+
+dlog(__('Executed in %s seconds with %s sql query', round((system::chrono() - START_TIME), 4), $bdd->getQueryCount()));
+
+return; // Do not remove, to go at end
+
+
+/**
+ *  Run obj plugin
+ *  @param  bool    $header     With header ?
+ *  @param  bool    $tree       With tree ?
+ *  @param  bool    $comment    With comment ?
+ */
+/*
+function get_tpl_plugin_obj($object, $header, $tree, $comment) {
+
+    global $tpl, $url;
+
+    $out = null;
+
+    $url->setParam('aff', 0, 'obj');
+
+    $force_plugin = ($url->getParam('act') == 'force') ? $url->getParam('act', 1) : null;
+
+    if (!is_readable($object->realpath)) {
+        return view_error(__('Object not readable !'));
+    }
+
+    // Load plugin object
+    $plugin = plugins::get(PLUGIN_TYPE_OBJ, $force_plugin);
+    $out = plugin_obj::load($plugin);
+
+    // Affichage ou non de l'arborescence
+    if ($tree) {
+        $tpl->set_var('TREE_ELEM', get_tree());
+        $tpl->parse('Hdlwith_tree', 'with_tree', true);
+    } else {
+        $tpl->parse('Hdlno_tree', 'no_tree', true);
+    }
+
+    get_tpl_pagination();
+
+    if ($comment) {
+        $out .= get_tpl_comment($object);
+    }
+
+    return $out;
+}
+*/
+
+/**
+ *  Get pagination
+ */
+/*
+function get_tpl_pagination() {
+
+    global $obj, $tpl, $url, $conf, $aff, $start, $cobj;
+
+    $var_tpl_pagination = null;
+
+    if ($cobj->type == TYPE_FILE || $cobj->type == TYPE_ARCHIVED) {
+
+        if ($cobj->prev) {
+            $tpl->parse('Hdlprevious_page', 'previous_page', true);
+        }
+
+        if ($cobj->next) {
+            $tpl->parse('Hdlnext_page', 'next_page', true);
+        }
+
+        $tpl->set_var(array(
+                'OBJ_PREV'          =>  view_obj(($cobj->type == TYPE_ARCHIVED) ? $cobj->prev->target : $cobj->prev->name),
+                'OBJ_NEXT'          =>  view_obj(($cobj->type == TYPE_ARCHIVED) ? $cobj->next->target : $cobj->next->name),
+
+                'PREV_PATH'         =>  $url->linkToObj(($cobj->type == TYPE_ARCHIVED) ? array($cobj->prev->file, $cobj->prev->target) : $cobj->prev->file),
+                'NEXT_PATH'         =>  $url->linkToObj(($cobj->type == TYPE_ARCHIVED) ? array($cobj->next->file, $cobj->next->target) : $cobj->next->file),
+                'PREV_FILE_ICON'    =>  $cobj->prev->icon,
+                'NEXT_FILE_ICON'    =>  $cobj->next->icon
+                ));
+
+        $var_tpl_pagination = $tpl->parse('Hdlpagination', 'pagination', true);
+
+    } else if ($cobj->type == TYPE_DIR && $aff != 'search') {
+
+        $nbr_obj = $obj->getNbrObject();
+        if ($conf['nbr_obj'] > 0 && $nbr_obj > $conf['nbr_obj']) {
+
+            if ($start) {
+                $start = ($start >= $nbr_obj) ? (($nbr_obj - $conf['nbr_obj'] < 0) ? 0 : $nbr_obj - $conf['nbr_obj']) : $start;
+            }
+
+            // Page précédente
+            if ($start > 0) {
+                $tpl->parse('Hdldir_previous_page', 'dir_previous_page', true);
+                $page = ($start <= $conf['nbr_obj']) ? 0 : $start - $conf['nbr_obj'];
+                $tpl->set_var('PREV_PATH', $url->linkToObj($cobj->path, array('start', $page)));
+            }
+
+            // Liste des pages
+            $nbr_page = ($nbr_obj / $conf['nbr_obj']);
+            if ($nbr_page) {
+                for ($i = 0; $i < $nbr_page; $i++) {
+                    $page = $i * $conf['nbr_obj'];
+                    $tpl->set_var(array(
+                            'Hdldir_page_num_cur'   => null,
+                            'PAGE_NUM'  =>  $i + 1,
+                            'PAGE_URL'  =>  $url->linkToObj($cobj->path, array('start', $page)),
+                            ));
+
+                    if ($start == $page) {
+                        $tpl->parse('Hdldir_page_num_cur', 'dir_page_num_cur', true);
+                    }
+
+                    $tpl->parse('Hdldir_page_num', 'dir_page_num', true);
+                }
+                $tpl->parse('Hdldir_page', 'dir_page', true);
+            }
+
+            // Page suivante
+            if ($start < ($nbr_obj - $conf['nbr_obj'])) {
+                $tpl->parse('Hdldir_next_page', 'dir_next_page', true);
+                $tpl->set_var('NEXT_PATH' , $url->linkToObj($cobj->path, array('start', $start + $conf['nbr_obj'])));
+            }
+
+            $var_tpl_pagination = $tpl->parse('Hdldir_pagination', 'dir_pagination');
+        }
+    }
+
+    return $var_tpl_pagination;
+}
+*/
+
+/**
+ *  Get comment
+ */
+function get_tpl_comment($object) {
+
+    global $tpl, $url, $cuser;
+
+    $out = null;
+
+    // Les commentaires sont uniquement pour les fichiers ou les dossiers
+    if ($object->type == TYPE_FILE || $object->type == TYPE_DIR) {
+
+        if ($object->info->nbr_comment) {
+            for ($i = 0; $i < $object->info->nbr_comment; $i++) {
+                $tpl->set_var(array(
+                        'ID'        =>  $object->info->comment[$i]->id,
+                        'COMMENT'   =>  $object->info->comment[$i]->content,
+                        'AUTHOR'    =>  $object->info->comment[$i]->author,
+                        'EMAIL'     =>  $object->info->comment[$i]->mail,
+                        'URL'       =>  ($object->info->comment[$i]->url ? $object->info->comment[$i]->url : null),
+                        'DATE'      =>  format_date($object->info->comment[$i]->date, 1))
+                );
+                $tpl->parse('Hdlcomment_line', 'comment_line', true);
+            }
+
+            if ($object->info->nbr_comment > 1) {
+                $tpl->set_var('MSG', __('Comments posted from oldest to most recent.'));
+            }
+        } else {
+            $tpl->set_var('MSG', __('There are no comments !'));
+        }
+
+        if (acl::ok(AC_ADD_COMMENT)) {
+            // Pour éviter que ça apparaisse dans les champs du formulaire d'envoie
+            $tpl->set_var(array(
+                    'COMMENT'   =>  null,
+                    'AUTHOR'    =>  $cuser->id != ANONYMOUS_ID ? $cuser->name : (string::format(@$_POST['cm_author'], false)),
+                    'EMAIL'     =>  null,
+                    'URL'       =>  null,
+                    'DATE'      =>  null)
+            );
+            $tpl->parse('Hdladd_comment', 'add_comment', true);
+        }
+
+        if (acl::ok(AC_ADD_COMMENT) || $object->info->nbr_comment) {
+            $tpl->parse('Hdlcurrent_comment', 'current_comment', true);
+
+            $tpl->set_var(array(
+                    'OBJECT'            =>  view_obj($object->file),
+
+                    'FORM_ADD_COMMENT'  =>  $url->linkToCurrentObj('', 'addcomment'),
+                    'AUTHOR'            =>  $cuser->id != ANONYMOUS_ID ? $cuser->name : @$_POST['cm_author'],
+                    'EMAIL'             =>  stripslashes(strip_tags(@$_POST['cm_mail'], ENT_QUOTES)),
+                    'SITE'              =>  stripslashes(strip_tags(@$_POST['cm_site'] ? $_POST['cm_site'] : 'http://', ENT_QUOTES)),
+                    'CONTENT'           =>  stripslashes(strip_tags(@$_POST['cm_content'])),
+//                    'ERROR'             =>  view_error($msg_error),
+                    'COMMENT_NBR'       =>  $object->info->nbr_comment,
+                    ));
+            $out = $tpl->parse('OutPut', 'comment');
+        }
+    }
+
+    return $out;
+}
+
 
 switch ($aff) {
 
     //  Cas spécial : Ne nécessite pas l'affichage de l'objet courant et de ces actions courante
+/*
     case 'page':
 
         switch ($url->getParam('aff', 1)) {
-            //  Affichage des derniers commentaires
-            case 'lastcomment':
-
-                acl_test(AC_VIEW);
-
-                $tab = $obj->getLastComment();
-                $size = sizeof($tab);
-                for ($i = 0; $i < $size; $i++) {
-                    $tpl->set_var(array(
-                            'PATH_FORMAT'   =>  format($tab[$i]->object, false),
-                            'FILE_ICON'     =>  $tab[$i]->icon,
-                            'PATH_INFO'     =>  $url->linkToObj($tab[$i]->object),
-                            'COMMENT'       =>  $tab[$i]->content,
-                            'AUTHOR'        =>  $tab[$i]->author,
-                            'EMAIL'         =>  $tab[$i]->mail,
-                            'URL'           =>  ($tab[$i]->url ? $tab[$i]->url : null),
-                            'DATE'          =>  format_date($tab[$i]->date, 1),
-                            'ID'            =>  $tab[$i]->id,
-                            ));
-                    $tpl->parse('Hdllast_comment_line', 'last_comment_line', true);
-                }
-
-                $tpl->set_var('MSG', (!$size) ? __('There are no comments !') : (($size > 1) ? __('Comments from most recent to oldest.') : null));
-
-                $tpl->parse('Hdllast_comment', 'last_comment', true);
-                $var_tpl .= $tpl->parse('OutPut', 'comment');
-                $title = __('Last comment');
-                break;
-
-            //  User
-            case 'user':
-                include('src/user.php');
-                $title = __('Profile');
-                break;
-
             //  Administration
             case 'admin':
                 acl_test(ADMINISTRATOR_ONLY);
@@ -168,9 +476,9 @@ switch ($aff) {
                 include('src/register.php');
                 $title = __('Register');
                 break;
-                
+
             default:
-                system::end('Fatal error !');
+                system::end('Fatal error : No "page" found !');
         }
 
         break;
@@ -186,11 +494,18 @@ switch ($aff) {
         include('src/action.php');
         break;
 
-    //  Renommer
+
+    //  Search
+    case 'search':
     case 'rename':
-        acl_test(AC_RENAME);
-        include('src/action.php');
+    case 'admin':
+    case 'user':
+    case 'lastcomment':
+        $gui = plugins::get(PLUGIN_TYPE_GUI, $aff);
+        $var_tpl = $gui->run();
         break;
+*/
+
 
     //  Déplacer
     case 'move':
@@ -210,10 +525,10 @@ switch ($aff) {
         break;
 
     //  La page de recherche
-    case 'search':
+/*    case 'search':
         include('src/search.php');
         break;
-
+*/
     //  Donne des infos sur l'objet
     case 'info':
         include('src/info.php');
@@ -231,7 +546,7 @@ switch ($aff) {
                 $type = $url->getParam('aff', 3);
             }
         }
-        
+
         switch ($cobj->type) {
 
            //  On extrait le fichier et on l'envoie
@@ -249,7 +564,7 @@ switch ($aff) {
                     redirect(__('Error'), $url->linkToObj($cobj->file), __('Object not found !'));
                     system::end();
                 }
-                
+
                 $file .= '/'.$cobj->target;
                 // Break not present intentionally
 
@@ -270,16 +585,16 @@ switch ($aff) {
                 }
 
                 file::sendFile($file);
-                $status = true;                
+                $status = true;
                 break;
 
             //  On archive le dossier et on l'envoie
             case TYPE_DIR:
 
                 // Si la configuration l'autorise
-                if ($conf['download_dir']) {
+                if ($conf->get('download_dir')) {
                     $file = null;
-                    if (!cache::getArchivePath($cobj->file, $file, $type)) {        
+                    if (!cache::getArchivePath($cobj->file, $file, $type)) {
                         $file = file::dirName($_SERVER['SCRIPT_FILENAME']).'/'.$file;
                         $out = archive::createFromDir($file, $cobj->realpath, $type);
                         if (!$out) {
@@ -287,9 +602,9 @@ switch ($aff) {
                             break;
                         }
                     }
-                    
+
                     file::sendFile($file);
-                    if ($conf['download_dir_max_filesize'] && $conf['download_dir_max_filesize'] < filesize($file)) {
+                    if ($conf->get('download_dir_max_filesize') && $conf->get('download_dir_max_filesize') < filesize($file)) {
                         unlink($file);
                     }
 
@@ -300,7 +615,7 @@ switch ($aff) {
                 break;
         }
 
-        if ($conf['download_counter'] && $status) {
+        if ($conf->get('download_counter') && $status) {
             $obj->addDownload();
         }
 
@@ -309,7 +624,7 @@ switch ($aff) {
 
     //  Affichage d'une image en miniature
     case 'mini':
-    
+
         if ($cobj->type == TYPE_ARCHIVED) {
             $file = null;
             if (!cache::getFilePath($cobj->file, $file)) {
@@ -335,7 +650,7 @@ switch ($aff) {
             header('Content-Length: '.filesize(get_real_directory()));
             header('Expires: '.gmdate('D, d M Y H:i:s', time() + 1296000).' GMT');  // Expire dans 15 jours
 
-            readfile(DIR_ROOT.$cache_path);
+            readfile(HYLA_RUN_PATH.$cache_path);
         } else {
             image::resize(get_real_directory(), $sizex, $sizey, $cache_path);
             /*
@@ -358,42 +673,41 @@ switch ($aff) {
         include('src/edit.php');
         break;
 
-
     // Rss feed
     case 'rss':
 
         header('Content-Type: text/html; charset=UTF-8');
-        
+
         error_reporting(E_ERROR);
 
         $tpl = new Template(DIR_TPL.'rss');
 
         $tpl->set_var(array(
-                'TITLE'         =>  $cobj->file.' '.$conf['title'],
+                'TITLE'         =>  $cobj->file.' '.$conf->get('title'),
                 'DESCRIPTION'   =>  $cobj->info->description,
                 'URL'           =>  $url->linkToObj($cobj->file),
-                'LANG'          =>  $conf['lng'],
-                'COPYRIGHT'     =>  $conf['webmaster_mail'],
+                'LANG'          =>  $conf->get('lng'),
+                'COPYRIGHT'     =>  $conf->get('webmaster_mail'),
                 'DATE'          =>  format_date(system::time(), 1),
-                'AUTHOR'        =>  $conf['webmaster_mail'],
+                'AUTHOR'        =>  $conf->get('webmaster_mail'),
                 ));
-        
+
         // Listage des commentaires
         if ($url->getParam('aff', 2) == 'comment') {
-        
-            $tpl->set_var('TITLE', $cobj->file.' - '.__('Last comment').' '.$conf['title']);
-        
+
+            $tpl->set_var('TITLE', $cobj->file.' - '.__('Last comment').' '.$conf->get('title'));
+
             $tpl->set_file('comment', 'comment.xml');
             $tpl->set_block('comment', 'item', 'Hdlitem');
-    
-            $tab = $obj->getCommentDir($cobj->file, $conf['rss_nbr_comment']);
-        
+
+            $tab = $obj->getCommentDir($cobj->file, $conf->get('rss_nbr_comment'));
+
             foreach ($tab as $cmt) {
                 $tz = date('O', $cmt->date);
                 $tz = date('O', time());
                 $tz = substr($tz, 0, -2).':'.substr($tz, -2);
                 $date = date('Y-m-d\\TH:i:s', $cmt->date).$tz;
-        
+
                 $tpl->set_var(array(
                         'OBJ_TITLE'         =>  htmlentities(get_iso($cmt->object)),
                         'OBJ_DESCRIPTION'   =>  htmlentities($cmt->content, ENT_QUOTES),
@@ -403,14 +717,14 @@ switch ($aff) {
                         'OBJ_DATE'          =>  $date,
                         'OBJ_CONTENT'       =>  '<![CDATA['.$cmt->content.']]>',
                         ));
-        
+
                 $tpl->parse('Hdlitem', 'item', true);
             }
-        
+
             $tpl->pparse('OutPut', 'comment');
-        
+
         } else {
-        
+
             $tpl->set_file('obj', 'obj.xml');
             $tpl->set_block('obj', array(
                     'media_img' =>  'Hdlmedia_img',
@@ -418,12 +732,12 @@ switch ($aff) {
                     ));
 
             // Listage du dossier
-            $tab = $obj->getDirContent($cobj->file, SORT_DATE, 0, $conf['rss_nbr_obj'], -1, array('=', 'type', TYPE_FILE));
+            $tab = $obj->getDirContent($cobj->file, SORT_DATE, 0, $conf->get('rss_nbr_obj'), -1, array('=', 'type', TYPE_FILE));
 
             foreach ($tab as $cobj) {
-        
+
                 $tpl->set_var('Hdlmedia_img');
-                
+
                 $plugin = plugins::get(PLUGIN_TYPE_OBJ);
                 $var_tpl = plugin_obj::load($plugin);
 
@@ -431,14 +745,14 @@ switch ($aff) {
                         'STYLESHEET_PLUGIN' =>  get_css_plugin(),
                         'OBJ_CONTENT'       =>  ($cobj->info->description ? $cobj->info->description.'<hr />' : null).$var_tpl,
                         ));
-        
+
                 // Si le dernier accès enregistré en base n'est pas dispo, on lit l'accès physique !
                 $t = ($cobj->info->date_last_update) ? $cobj->info->date_last_update : filectime($cobj->realpath);
-        
+
                 $tz = date('O', time());
                 $tz = substr($tz, 0, -2).':'.substr($tz, -2);
                 $date = date('Y-m-d\\TH:i:s', $t).$tz;
-        
+
                 $tpl->set_var(array(
                         'OBJ_TITLE'         =>  view_obj($cobj->name),
                         'OBJ_DESCRIPTION'   =>  htmlentities($cobj->info->description, ENT_QUOTES),
@@ -446,15 +760,15 @@ switch ($aff) {
                         'OBJ_AUTHOR'        =>  null,
                         'OBJ_DATE'          =>  $date,
                         'OBJ_COPYRIGHT'     =>  null,
-        
+
                         'OBJ_SIZE'          =>  $cobj->size,
                         'OBJ_MIME'          =>  function_exists('mime_content_type') ? mime_content_type($cobj->realpath) : null,
                         'OBJ_URL'           =>  $url->linkToObj($cobj->file, 'download'),
                         ));
-        
+
                 $tpl->parse('Hdlitem', 'item', true);
             }
-        
+
             $tpl->pparse('OutPut', 'obj');
         }
 
@@ -482,7 +796,7 @@ switch ($aff) {
 
         // ToDo: factor this line with other in obj case
         $force_plugin = ($url->getParam('act') == 'force') ? $url->getParam('act', 1) : null;
-        
+
         $plugin = plugins::get(PLUGIN_TYPE_OBJ, $force_plugin);
 
         $export_type = $url->getParam('aff', 2);
@@ -494,7 +808,7 @@ switch ($aff) {
             $format = format($cobj->file);
             $pagination = get_pagination();
         } else if ($cobj->type == TYPE_DIR) {
-            $pagination = get_pagination();           
+            $pagination = get_pagination();
         }
 
         $css = get_css_plugin();
@@ -635,24 +949,24 @@ function get_pagination() {
     } else if ($cobj->type == TYPE_DIR && $aff != 'search') {
 
         $nbr_obj = $obj->getNbrObject();
-        if ($conf['nbr_obj'] > 0 && $nbr_obj > $conf['nbr_obj']) {
+        if ($conf->get('nbr_obj') > 0 && $nbr_obj > $conf->get('nbr_obj')) {
 
             if ($start) {
-                $start = ($start >= $nbr_obj) ? (($nbr_obj - $conf['nbr_obj'] < 0) ? 0 : $nbr_obj - $conf['nbr_obj']) : $start;
+                $start = ($start >= $nbr_obj) ? (($nbr_obj - $conf->get('nbr_obj') < 0) ? 0 : $nbr_obj - $conf->get('nbr_obj')) : $start;
             }
 
             // Page précédente
             if ($start > 0) {
                 $tpl->parse('Hdldir_previous_page', 'dir_previous_page', true);
-                $page = ($start <= $conf['nbr_obj']) ? 0 : $start - $conf['nbr_obj'];
+                $page = ($start <= $conf->get('nbr_obj')) ? 0 : $start - $conf->get('nbr_obj');
                 $tpl->set_var('PREV_PATH', $url->linkToObj($cobj->path, array('start', $page)));
             }
 
             // Liste des pages
-            $nbr_page = ($nbr_obj / $conf['nbr_obj']);
+            $nbr_page = ($nbr_obj / $conf->get('nbr_obj'));
             if ($nbr_page) {
                 for ($i = 0; $i < $nbr_page; $i++) {
-                    $page = $i * $conf['nbr_obj'];
+                    $page = $i * $conf->get('nbr_obj');
                     $tpl->set_var(array(
                             'Hdldir_page_num_cur'   => null,
                             'PAGE_NUM'  =>  $i + 1,
@@ -667,9 +981,9 @@ function get_pagination() {
             }
 
             // Page suivante
-            if ($start < ($nbr_obj - $conf['nbr_obj'])) {
+            if ($start < ($nbr_obj - $conf->get('nbr_obj'))) {
                 $tpl->parse('Hdldir_next_page', 'dir_next_page', true);
-                $tpl->set_var('NEXT_PATH' , $url->linkToObj($cobj->path, array('start', $start + $conf['nbr_obj'])));
+                $tpl->set_var('NEXT_PATH' , $url->linkToObj($cobj->path, array('start', $start + $conf->get('nbr_obj'))));
             }
 
             $var_tpl_pagination = $tpl->finish($tpl->parse('Hdldir_pagination', 'dir_pagination', true));
@@ -685,20 +999,20 @@ $var_tpl_pagination = get_pagination();
  */
 $tpl->set_var(array(
         'URL_MKDIR'     =>  $url->linkToObj($cobj->path, 'mkdir'),
-        'URL_SEARCH'    =>  $url->linkToObj($cobj->path, 'search'),
+//        'URL_SEARCH'    =>  $url->linkToObj($cobj->path, 'search'),
         'URL_UPLOAD'    =>  $url->linkToObj($cobj->path, 'upload'),
         'URL_INFO'      =>  $url->linkToCurrentObj('info'),
         'URL_DOWNLOAD'  =>  $url->linkToCurrentObj('download'),
         'URL_EDIT'      =>  $url->linkToCurrentObj('edit'),
         'URL_COPY'      =>  $url->linkToCurrentObj('copy'),
         'URL_MOVE'      =>  $url->linkToCurrentObj('move'),
-        'URL_RENAME'    =>  $url->linkToCurrentObj('rename'),
+//        'URL_RENAME'    =>  $url->linkToCurrentObj('rename'),
         'URL_DEL'       =>  $url->linkToCurrentObj('', 'del'),
         'URL_LOGIN'     =>  $url->linkToPage('login'),
         'URL_LOGOUT'    =>  $url->linkToCurrentObj('', 'logout'),
-        'URL_USER'      =>  $url->linkToPage('user'),
-        'URL_ADMIN'     =>  $url->linkToPage('admin'),
-        'URL_COMMENT'   =>  $url->linkToPage('lastcomment'),
+//        'URL_USER'      =>  $url->linkToPage('user'),
+//        'URL_ADMIN'     =>  $url->linkToPage('admin'),
+//        'URL_COMMENT'   =>  $url->linkToPage('lastcomment'),
         ));
 
 if ($cuser->id == ANONYMOUS_ID) {
@@ -707,22 +1021,61 @@ if ($cuser->id == ANONYMOUS_ID) {
 
 if ($url->getParam('aff') != 'page') {
     $tpl->parse('Hdlaff_info', 'aff_info', true);
-    if ($conf['view_toolbar'] || acl::ok(AC_ADD_FILE))
+    if ($conf->get('view_toolbar') || acl::ok(AC_ADD_FILE))
         $tpl->parse('Hdlaction_addfile', 'action_addfile', true);
-    if (($conf['view_toolbar'] || acl::ok(AC_EDIT_DESCRIPTION, AC_EDIT_PLUGIN)) && $cobj->type != TYPE_ARCHIVED)
+    if (($conf->get('view_toolbar') || acl::ok(AC_EDIT_DESCRIPTION, AC_EDIT_PLUGIN)) && $cobj->type != TYPE_ARCHIVED)
         $tpl->parse('Hdlaction_edit', 'action_edit', true);
-    if ($conf['view_toolbar'] || acl::ok(AC_CREATE_DIR))
+    if ($conf->get('view_toolbar') || acl::ok(AC_CREATE_DIR))
         $tpl->parse('Hdlaction_mkdir', 'action_mkdir', true);
+
+    // Load plugin
+    plugins::get(PLUGIN_TYPE_GUI);
+    $plugins = plugin_gui::getPlugin('action');
+
+    // Aff all plugin
+    $dir = plugins::getDirFromType(PLUGIN_TYPE_GUI);
+    foreach ($plugins as $name => $manifest) {
+        $tpl->set_var(  array(
+                            'URL_PLUGIN'            =>  $url->linkToCurrentObj($name),
+                            'PLUGIN_NAME'           =>  __($manifest['name']),
+                            'PLUGIN_DESCRIPTION'    =>  __($manifest['description']),
+                            'PLUGIN_ICON'           =>  HYLA_ROOT_URL.$dir.$name.'/icon.png',
+                        ));
+        $tpl->parse('Hdltoolbar_plugin', 'toolbar_plugin', true);
+    }
+
+
+
+    // Load plugin
+    plugins::get(PLUGIN_TYPE_GUI);
+    $plugins = plugin_gui::getPlugin('page');
+
+    // Aff all plugin
+    $dir = plugins::getDirFromType(PLUGIN_TYPE_GUI);
+    foreach ($plugins as $name => $manifest) {
+        $tpl->set_var(  array(
+                            'URL_PLUGIN'            =>  $url->linkToCurrentObj($name),
+                            'PLUGIN_NAME'           =>  __($manifest['name']),
+                            'PLUGIN_DESCRIPTION'    =>  __($manifest['description']),
+                            'PLUGIN_ICON'           =>  HYLA_ROOT_URL.$dir.$name.'/icon.png',
+                        ));
+        $tpl->parse('Hdltoolbar_plugin_page', 'toolbar_plugin_page', true);
+    }
+
+
+
+
 
     // On ne peut pas déplacer ou supprimer la racine !
     if ($cobj->file != '/') {
-        if (($conf['view_toolbar'] || acl::ok(AC_RENAME)) && $cobj->type != TYPE_ARCHIVED)
+/*        if (($conf->get('view_toolbar') || acl::ok(AC_RENAME)) && $cobj->type != TYPE_ARCHIVED)
             $tpl->parse('Hdlaction_rename', 'action_rename', true);
-        if (($conf['view_toolbar'] || acl::ok(AC_MOVE)) && $cobj->type != TYPE_ARCHIVED)
+ */
+        if (($conf->get('view_toolbar') || acl::ok(AC_MOVE)) && $cobj->type != TYPE_ARCHIVED)
             $tpl->parse('Hdlaction_move', 'action_move', true);
-        if ($conf['view_toolbar'] || acl::ok(AC_COPY))
+        if ($conf->get('view_toolbar') || acl::ok(AC_COPY))
             $tpl->parse('Hdlaction_copy', 'action_copy', true);
-        if (($conf['view_toolbar'] || acl::ok(($cobj->type == TYPE_DIR) ? AC_DEL_DIR : AC_DEL_FILE)) && $cobj->type != TYPE_ARCHIVED)
+        if (($conf->get('view_toolbar') || acl::ok(($cobj->type == TYPE_DIR) ? AC_DEL_DIR : AC_DEL_FILE)) && $cobj->type != TYPE_ARCHIVED)
             $tpl->parse('Hdlaction_del', 'action_del', true);
     }
 
@@ -733,7 +1086,7 @@ if ($url->getParam('aff') != 'page') {
     }
 
     // Affichage du lien pour télécharger
-    if ($cobj->type != TYPE_DIR || ($cobj->type == TYPE_DIR && $conf['download_dir'])) {
+    if ($cobj->type != TYPE_DIR || ($cobj->type == TYPE_DIR && $conf->get('download_dir'))) {
         $tpl->parse('Hdlaff_download', 'aff_download', true);
     }
 }
@@ -804,11 +1157,11 @@ if ($url->getParam('aff', 0) == 'obj') {
         if ($grp == 1) {
             $tpl->set_var('GRP_CHECKED', ' checked="checked"');
         }
-        
+
         if ($sort & SORT_FOLDER_FIRST) {
             $tpl->set_var('FFIRST_CHECKED', ' checked="checked"');
         }
-        
+
         $tpl->set_var('OBJECT', $url->linkToObj($cobj->file));
 
         // Ajout du plugin
@@ -837,7 +1190,7 @@ if ($url->getParam('aff', 0) == 'obj') {
         $tpl->set_var('CONTENT', $var_tpl);
 
         // Affichage ou non de l'arborescence
-        if ($conf['view_tree'] >= 1) {
+        if ($conf->get('view_tree') >= 1) {
             $tpl->set_var('TREE_ELEM', get_tree());
             $tpl->parse('Hdlwith_tree', 'with_tree', true);
         } else {
@@ -858,7 +1211,7 @@ if ($url->getParam('aff', 0) == 'obj') {
 
         $tpl->set_var('CONTENT', $var_tpl);
 
-        if ($conf['view_tree'] == 2) {
+        if ($conf->get('view_tree') == 2) {
             $tpl->set_var('TREE_ELEM', get_tree());
             $tpl->parse('Hdlwith_tree', 'with_tree', true);
         } else {
@@ -870,10 +1223,6 @@ if ($url->getParam('aff', 0) == 'obj') {
 
     $var_tpl = $tpl->parse('Hdlobj', 'obj', true);
 }
-
-
-$endtime = system::chrono();
-$totaltime = ($endtime - $starttime);
 
 
 /*  Affichage de la description
@@ -897,9 +1246,9 @@ $tpl->set_var(array(
         'TOOLBAR'           =>  $var_tpl_toolbar,
         'OBJECT_TITLE'      =>  view_obj(($cobj->type == TYPE_ARCHIVED) ? $cobj->file.'!'.$cobj->target : $cobj->file),
         'CONTENT'           =>  $var_tpl,
-        'TITLE'             =>  $title.' '.$conf['title'],
+        'TITLE'             =>  $title.' '.$conf->get('title'),
         'HYLA_VERSION'      =>  HYLA_VERSION,
-        'DEBUG'             =>  __('Page executed in %s seconds with %s sql query', round($totaltime, 4), $bdd->getNbrQuery()),
+        'DEBUG'             =>  __('Page executed in %s seconds with %s sql query', round((system::chrono() - START_TIME), 4), $bdd->getQueryCount()),
         ));
 
 /*  Les rss

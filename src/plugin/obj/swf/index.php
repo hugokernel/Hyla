@@ -24,15 +24,12 @@ class plugin_obj_swf extends plugin_obj {
     function plugin_obj_swf($cobj) {
         parent::plugin_obj($cobj);
 
-        $this->tpl->set_root($this->plugin_dir.'swf');
         $this->tpl->set_file('swf', 'swf.tpl');
     }
 
     function aff() {
-        global $cobj;
-
         $this->tpl->set_var(array(
-                'SIZE'              =>  get_human_size_reading($cobj->size),
+                'SIZE'              =>  get_human_size_reading($this->cobj->size),
                 'OBJECT_DOWNLOAD'   =>  $this->url->linkToCurrentObj('download'),
                 ));
 

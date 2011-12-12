@@ -23,15 +23,13 @@ class plugin_obj_video extends plugin_obj {
 
     function plugin_obj_video($cobj) {
         parent::plugin_obj($cobj);
-        $this->tpl->set_root($this->plugin_dir.'video');
+
         $this->tpl->set_file('video', 'video.tpl');
     }
 
     function aff() {
-        global $cobj;
-
         $this->tpl->set_var(array(
-                'SIZE'              =>  get_human_size_reading($cobj->size),
+                'SIZE'              =>  get_human_size_reading($this->cobj->size),
                 'OBJECT_DOWNLOAD'   =>  $this->url->linkToCurrentObj('download')
                 ));
 

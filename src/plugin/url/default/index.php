@@ -43,9 +43,14 @@ class plugin_url_default extends plugin_url {
         if (array_key_exists('act', $url)) {
             $ret->act = explode('-', $url['act']);
         }
-
-        $ret->paff = isset($url['paff']) ? $url['paff'] : null;
-        $ret->pact = isset($url['pact']) ? $url['pact'] : null;
+        
+        // Load arg
+        foreach ($_GET as $key => $value) {
+            if ($key == 'p') {
+                continue;
+            }
+            $ret->arg[$key] = $value;
+        }
         
         return $ret;
     }
@@ -54,12 +59,10 @@ class plugin_url_default extends plugin_url {
         @param  mixed   $object Object
         @param  array   $aff    Page
         @param  array   $act    Action
-        @param  string  @pact   Plugin action
-        @param  string  @paff   Plugin aff
         @return Url
      */
-    function get($object, $aff = null, $act = null, $pact = null, $paff = null) {
-                
+    function get($object, $aff = null, $act = null, $args = null) {
+
         $url = null;
         
         if ($this->absolute) {
@@ -81,15 +84,13 @@ class plugin_url_default extends plugin_url {
         if ($act) {
             $url .= '&amp;act='.implode('-', $act);
         }
-
-        // Plugin act
-        if ($pact) {
-            $url .= '&amp;pact='.$pact;
-        }
-
-        // Plugin aff
-        if ($paff) {
-            $url .= '&amp;paff='.$paff;
+        
+        // Arg
+        if ($args) {
+            foreach ($args as $key => $value) {
+                $url .= '&amp;'.$key.'='.$value;
+            }
+//            $url .= implode('&amp;', $arr);
         }
 
         return $url;

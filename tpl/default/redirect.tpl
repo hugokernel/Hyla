@@ -21,9 +21,13 @@
 
 <div style="margin: 5% 10% 0 10%" align="center">
 
-    <p>
-        {MESSAGE}
-    </p>
+    <!-- BEGIN message -->
+    <p>{MESSAGE}</p>
+    <!-- END message -->
+
+    <!-- BEGIN destination -->
+        <a href="REDIRECT_URL">{REDIRECT_MSG}</a>
+    <!-- END destination -->
 
     <img src="{DIR_IMAGE}/loading.gif" />
 

@@ -20,10 +20,42 @@
  */
 
 
-function DBUG($var) {
-    echo '<pre>';
-    print_r($var);
-    echo '</pre>';
+/**
+ *  Debug function
+ *  @param  mixed   $var    Variable
+ */
+function dbug($var) {
+    log::add(L_DEBUG, $var);
+}
+
+/**
+ *  Log function
+ *  @param  mixed   $msg    Message
+ */
+function dlog($msg, $type = L_INFO) {
+    log::add($type, $msg);
+}
+
+/**
+ *  Abstraction layer for echo
+ *  @param  string  $msg    Message to send
+ *  @param  int     $status Status code (0 for good)
+ */
+function out($msg, $status = 0) {
+    global $context;
+    switch ($context) {
+        case 'json':
+            $arr = array('status' => $status, 'content' => $msg);
+//            $msg = print_r($arr, true);
+            $msg = json_encode($arr);
+            break;
+        case 'default':
+        default:
+            $msg .= "\n";
+            break;
+    }
+
+    echo $msg;
 }
 
 /*  On formate la date correctement !
@@ -57,11 +89,13 @@ function format_date($date, $type = 0, $date2 = null)
             else
                 $ret = substr($date, 10, strlen($date));
             break;
+        /*
         case 4:
             $ret = system::date('w j m');
             list ($day, $num, $month) = explode(' ', $ret);
             $ret = traduct('datetime', 'day', $day).' '.$num.' '.traduct('datetime', 'month', $month);
             break;
+        */
     }
 
     return  $ret;
@@ -74,7 +108,9 @@ function view_error($msg) {
     global $tpl;
     if ($msg) {
         if (!$tpl) {
-            $tpl = new Template(DIR_TEMPLATE);
+//            $tpl = new Template(DIR_TEMPLATE, HYLA_ROOT_PATH, DIR_TPL);
+            $tpl = new Template(DIR_TPL, array( HYLA_RUN_PATH,
+                                                HYLA_ROOT_PATH), $conf->get('template_name'));
             $tpl->set_file('misc', 'misc.tpl');
             $tpl->set_block('misc', array(
                     'error'         =>  'Hdlerror',
@@ -100,7 +136,9 @@ function view_status($msg) {
     global $tpl;
     if ($msg) {
         if (!$tpl) {
-            $tpl = new Template(DIR_TEMPLATE);
+//            $tpl = new Template(DIR_TEMPLATE, HYLA_ROOT_PATH, DIR_TPL);
+            $tpl = new Template(DIR_TPL, array( HYLA_RUN_PATH,
+                                                HYLA_ROOT_PATH), $conf->get('template_name'));
             $tpl->set_file('misc', 'misc.tpl');
             $tpl->set_block('misc', array(
                     'error'         =>  'Hdlerror',
@@ -125,7 +163,9 @@ function view_suggestion($msg) {
     global $tpl;
     if ($msg) {
         if (!$tpl) {
-            $tpl = new Template(DIR_TEMPLATE);
+//            $tpl = new Template(DIR_TEMPLATE, HYLA_ROOT_PATH, DIR_TPL);
+            $tpl = new Template(DIR_TPL, array( HYLA_RUN_PATH,
+                                                HYLA_ROOT_PATH), $conf->get('template_name'));
             $tpl->set_file('misc', 'misc.tpl');
             $tpl->set_block('misc', array(
                     'error'         =>  'Hdlerror',
@@ -143,35 +183,40 @@ function view_suggestion($msg) {
     }
 }
 
-/*  Redirection d'une page à une autre
-    @param  string  $title      Titre fenêtre
-    @param  string  $page       Page de redirection
-    @param  string  $msg        Message
-    @param  int     $attente    Temps d'attente (secondes)
-    @param  bool    $rnow       Afficher le lien pour rediriger tout de suite ou non !
- */
-function redirect($title, $page, $msg, $attente = 0, $rnow = true) {
-    global $conf, $tpl;
+/*
+function new_redirect($pages) {
+    global $tpl;
+
+    $conf = conf::getInstance();
 
     if (!$attente) {
-        $attente = $conf['time_of_redirection'];
+        $attente = $conf->get('time_of_redirection');
     }
 
     // Le template...
-    $tpl = new Template(DIR_TEMPLATE);
+//    $tpl = new Template(DIR_TEMPLATE);
+    $tpl = new Template(array(  HYLA_RUN_PATH.DIR_TPL,
+                                HYLA_ROOT_PATH.DIR_TPL), $conf->get('template_name'));
     $tpl->set_file('redirect', 'redirect.tpl');
-    $tpl->set_block('redirect', 'AffichRedirectNow', 'HdlAffichRedirectNow');
+    $tpl->set_block('redirect', array(
+            'destination' =>  'Hdldestination',
+            'AffichRedirectNow' =>  'HdlAffichRedirectNow',
+    ));
 
-    include('l10n/'.$conf['lng'].'/suggestions.php');
+    include(HYLA_ROOT_PATH.'l10n/'.$conf->get('lng').'/suggestions.php');
 
     $tpl->set_var(array(
             'STYLESHEET'    =>  get_css(),
-            'TITLE'         =>  $title.' '.$conf['title'],
+            'TITLE'         =>  $title.' '.$conf->get('title'),
             'ATTENTE'       =>  $attente,
-            'PAGE'          =>  $page,
-            'MESSAGE'       =>  $msg,
-            'SUGGESTION'    =>  get_suggest($suggest['redirect']),
             ));
+
+    foreach ($pages as $url => $msg) {
+        $tpl->set_var(array(
+            'REDIRECT_URL'  =>  $url,
+            'REDIRECT_MSG'  =>  $msg,
+        ));
+    }
 
     if ($rnow)
         $tpl->parse('HdlAffichRedirectNow', 'AffichRedirectNow', true);
@@ -180,12 +225,128 @@ function redirect($title, $page, $msg, $attente = 0, $rnow = true) {
     $tpl->pparse('OutPut', 'redirect');
     unset($tpl);
 }
+*/
+
+/*  Redirection d'une page à une autre
+    @param  string  $title      Titre fenêtre
+    @param  string  $page       Page de redirection
+    @param  mixed   $msg        Message
+    @param  int     $attente    Temps d'attente (secondes)
+    @param  bool    $rnow       Afficher le lien pour rediriger tout de suite ou non !
+ */
+function redirect($title, $page, $msg, $attente = 0, $rnow = true) {
+    global $tpl;
+
+    $conf = conf::getInstance();
+
+    if (!$attente) {
+        $attente = $conf->get('time_of_redirection');
+    }
+
+    // Le template...
+//    $tpl = new Template(DIR_TEMPLATE, HYLA_ROOT_PATH, DIR_TPL);
+    $tpl = new Template(DIR_TPL, array( HYLA_RUN_PATH,
+                                        HYLA_ROOT_PATH), $conf->get('template_name'));
+    $tpl->set_file('redirect', 'redirect.tpl');
+    $tpl->set_block('redirect', array(
+            'destination'       =>  'Hdldestination',
+            'message'           =>  'Hdlmessage',
+            'AffichRedirectNow' =>  'HdlAffichRedirectNow',
+    ));
+
+    include(HYLA_ROOT_PATH.'l10n/'.$conf->get('lng').'/suggestions.php');
+
+    if (!is_array($msg)) {
+        $msg = array($msg);
+    }
+
+    foreach ($msg as $message) {
+        $tpl->set_var('MESSAGE', $message);
+        $tpl->parse('Hdlmessage', 'message', true);
+    }
+
+    $tpl->set_var(array(
+            'STYLESHEET'    =>  get_css(),
+            'TITLE'         =>  $title.' '.$conf->get('title'),
+            'ATTENTE'       =>  $attente,
+            'PAGE'          =>  $page,
+            'SUGGESTION'    =>  get_suggest($suggest['redirect']),
+            ));
+
+    if ($rnow) {
+        $tpl->parse('HdlAffichRedirectNow', 'AffichRedirectNow', true);
+    }
+
+//    $tpl->parse('HdlAffichRedirect', 'AffichRedirect', true);
+    $tpl->pparse('OutPut', 'redirect');
+    unset($tpl);
+}
+
+/**
+ *  Generate toolbar !
+ */
+function get_toolbar() {
+
+    global $tpl, $url;
+
+    $obj = obj::getInstance();
+    $cobj = $obj->getCurrentObj();
+
+    if (!$tpl) {
+//        $tpl = new Template(DIR_TEMPLATE, HYLA_ROOT_PATH, DIR_TPL);
+        $tpl = new Template(DIR_TPL, array( HYLA_RUN_PATH,
+                                            HYLA_ROOT_PATH), $conf->get('template_name'));
+        $tpl->set_file('misc', 'misc.tpl');
+        $tpl->set_block('misc', array(
+                'error'         =>  'Hdlerror',
+                'status'        =>  'Hdlstatus',
+                'suggestion'    =>  'Hdlsuggestion',
+                'sort'          =>  'Hdlsort',
+                'toolbar'       =>  'Hdltoolbar'
+                ));
+    }
+
+    // Load plugin
+    $dir = plugins::getDirFromType(PLUGIN_TYPE_GUI);
+    $plugins = plugin_gui::getPlugin('page');
+    foreach ($plugins as $name => $manifest) {
+        $tpl->set_var(  array(
+                            'URL_PLUGIN'            =>  $url->linkToPage($name),
+                            'PLUGIN_NAME'           =>  __($manifest->name),
+                            'PLUGIN_DESCRIPTION'    =>  __($manifest->description),
+                            'PLUGIN_ICON'           =>  HYLA_ROOT_URL.$dir.$name.'/icon.png',
+                        ));
+        $tpl->parse('Hdltoolbar_plugin_page', 'toolbar_plugin_page', true);
+    }
+
+    // Load plugin
+    $plugins = plugin_gui::getPlugin('action');
+    foreach ($plugins as $name => $manifest) {
+
+//echo (int)$manifest->obj_type.' & '.$cobj->type.' = '.($manifest->obj_type & $cobj->type).'<br>';
+
+        if (!($manifest->obj_type & $cobj->type)) {
+            continue;
+        }
+
+        $tpl->set_var(  array(
+                            'URL_PLUGIN'            =>  $url->linkToCurrentObj($name),
+                            'PLUGIN_NAME'           =>  __($manifest->name),
+                            'PLUGIN_DESCRIPTION'    =>  __($manifest->description),
+                            'PLUGIN_ICON'           =>  HYLA_ROOT_URL.$dir.$name.'/icon.png',
+                        ));
+        $tpl->parse('Hdltoolbar_plugin_action', 'toolbar_plugin_action', true);
+    }
+
+    return $tpl->parse('Hdltoolbar', 'toolbar', true);
+}
 
 /*  Test de 'empty' multiple renvoyant le message associé si un champs est vide...
     @param  array   $tab_empty  Tableau contenant les string et leurs message à renvoyé si vide
     @param  &       $msg        Référence de la chaine qui doit contenir le message de retour
     @return Booléen à false si au moins un champs était vide
  */
+/*
 function verif_value($tab_empty, &$msg) {
     $bool = true;
     foreach ($tab_empty as $key => $val) {
@@ -197,6 +358,60 @@ function verif_value($tab_empty, &$msg) {
     }
     return $bool;
 }
+*/
+
+function run_tpl() {
+    global $page_headers;
+    global $page_styles;
+
+    $page_headers = array();
+    $page_styles = array();
+
+    $conf = conf::getInstance();
+
+    $current_tpl = (file_exists(DIR_TPL.$conf->get('template_name')) ? $conf->get('template_name') : 'default');
+    define('DIR_TEMPLATE',  DIR_TPL.$current_tpl);
+
+
+
+    // Entête envoyé en premier
+    if (!file_exists(HYLA_ROOT_PATH.DIR_TEMPLATE.'/manifest.php')) {
+        system::end(__('Unable to load template manifest file !'));
+    }
+
+    include (HYLA_ROOT_PATH.DIR_TEMPLATE.'/manifest.php');
+
+    // Send header
+    header($manifest['header']);
+
+    // Get img dir
+    $dir_img = (array_key_exists('img-src', $manifest) && $manifest['img-src']) ? str_replace('%s', $current_tpl, $manifest['img-src']) : './tpl/default/img';
+
+    // Define DIR_IMAGE constant
+    $dir = HYLA_ROOT_URL;
+    if ($dir{strlen($dir) - 1} == '/' && substr($dir_img, 0, 1) == '/') {
+        define('DIR_IMAGE', substr($dir, 0, strlen($dir) - 1).$dir_img);
+    } else {
+        define('DIR_IMAGE', $dir.$dir_img);
+    }
+
+    // Include
+    $file_func = (array_key_exists('php-function', $manifest) && $manifest['php-function']) ? str_replace('%s', $current_tpl, $manifest['php-function']) : './tpl/default/function.php';
+    require_once HYLA_ROOT_PATH.$file_func;
+
+    foreach ($manifest['stylesheets'] as $elem) {
+        $css_href = $elem['href'];
+
+        // If stylesheet is in another dir, no include root dir
+        if ($css_href{0} != '/' && substr($css_href, 0, 7) != 'http://') {
+            $css_href = HYLA_ROOT_URL.DIR_TEMPLATE.'/'.$css_href;
+        }
+
+        add_stylesheet($css_href, $elem['title'], $elem['type'], $elem['media']);
+    }
+
+    unset($dir_img);
+}
 
 /*  Ajout d'une feuille de style
     @param  string  $href   le lien vers la feuille de style en partant de la racine de Hyla
@@ -204,12 +419,13 @@ function verif_value($tab_empty, &$msg) {
     @param  string  $type   Le type (ex: text/css)
     @param  string  $media  Le media (ex: screen/projection)
  */
-function add_stylesheet($href, $title, $type = 'text/css', $media = 'screen/projection') {
+function add_stylesheet($href, $title, $type = 'text/css', $media = 'screen/projection', $force_inc = false) {
     global $page_styles;
-    $page_styles[] = array( 'href'  =>  $href,
-                            'title' =>  $title,
-                            'type'  =>  $type,
-                            'media' =>  $media,
+    $page_styles[] = array( 'href'      =>  $href,
+                            'title'     =>  $title,
+                            'type'      =>  $type,
+                            'media'     =>  $media,
+                            'force_inc' =>  $force_inc,
                           );
 }
 
@@ -221,10 +437,10 @@ function add_stylesheet($href, $title, $type = 'text/css', $media = 'screen/proj
  */
 function add_stylesheet_plugin($href, $title, $type = 'text/css', $media = 'screen/projection') {
     global $page_styles_plugin;
-    $page_styles_plugin[] = array(   'href'  =>  $href,
-                                'title' =>  $title,
-                                'type'  =>  $type,
-                                'media' =>  $media,
+    $page_styles_plugin[] = array(  'href'      =>  $href,
+                                    'title'     =>  $title,
+                                    'type'      =>  $type,
+                                    'media'     =>  $media,
                         );
 }
 
@@ -236,79 +452,6 @@ function add_stylesheet_plugin($href, $title, $type = 'text/css', $media = 'scre
 function add_page_header($markup, $attr, $content = null) {
     global $page_headers;
     $page_headers[] = array('markup' =>  $markup, 'attribut' => $attr, 'content' => $content);
-}
-
-/*  Charge le tableau $conf à partir du fichier de configuration
- */
-function load_config() {
-
-    global $conf;
-    $conf = array();
-
-    $tab = (function_exists('parse_ini_file')) ? parse_ini_file(FILE_INI) : iniFile::read(FILE_INI, true);
-
-    $conf['webmaster_mail']     = $tab['webmaster_mail'];
-    $conf['name_template']      = $tab['template'] ? $tab['template'] : 'default';
-
-    $conf['style']              = $tab['style'] ? $tab['style'] : 'default';
-
-    $conf['lng']                = $tab['lng'] ? $tab['lng'] : DEFAULT_LNG;
-    $conf['title']              = $tab['title'];
-
-    $conf['file_chmod']         = octdec($tab['file_chmod']);
-    $conf['dir_chmod']          = octdec($tab['dir_chmod']);
-    $conf['anon_file_send']     = $tab['anon_file_send'];
-
-    $conf['register_user']      = $tab['register_user'];
-
-    $conf['group_by_sort']      = $tab['group_by_sort'];
-    $conf['nbr_obj']            = $tab['nbr_obj'];
-
-    $conf['view_hidden_file']   = $tab['view_hidden_file'];
-    $conf['download_counter']   = $tab['download_counter'];
-
-    $conf['plugin_default_dir'] = ($tab['plugin_default_dir'] ? strtolower($tab['plugin_default_dir']) : 'dir');
-    $conf['plugin_default_url'] = ($tab['plugin_default_url'] ? strtolower($tab['plugin_default_url']) : 'default');
-
-    $conf['view_toolbar']       = $tab['view_toolbar'];
-
-    $conf['view_tree']          = $tab['view_tree'];
-
-    $conf['time_of_redirection']        = $tab['time_of_redirection'];
-    if ($conf['time_of_redirection'] < 1) {
-        $conf['time_of_redirection'] = 1;
-    }
-
-    $conf['download_dir']       = $tab['download_dir'];
-
-    $conf['download_dir_max_filesize']  = $tab['download_dir_max_filesize'];
-
-    $conf['url_encode']         = $tab['url_encode'];
-
-    $conf['plugin_default_auth'] = $tab['plugin_default_auth'];
-
-    $conf['rss_nbr_obj']        = $tab['rss_nbr_obj'];
-    $conf['rss_nbr_comment']    = $tab['rss_nbr_comment'];
-
-    $conf['fs_charset_is_utf8'] = $tab['fs_charset_is_utf8'];
-
-    $sort_tab = array(
-            0 => SORT_DEFAULT,
-            1 => SORT_NAME_ALPHA,
-            2 => SORT_NAME_ALPHA_R,
-            3 => SORT_EXT_ALPHA,
-            4 => SORT_EXT_ALPHA_R,
-            5 => SORT_CAT_ALPHA,
-            6 => SORT_CAT_ALPHA_R,
-            7 => SORT_SIZE,
-            8 => SORT_SIZE_R,
-            );
-    $conf['sort_config'] = $sort_tab[$tab['sort']];
-
-    if ($tab['folder_first'])
-        $conf['sort_config'] |= SORT_FOLDER_FIRST;
-
-    unset($tab, $sort_tab);
 }
 
 /*  Ouvre le fichier de liaison extensions / icones et charge en mémoire les relations
@@ -330,7 +473,7 @@ function get_icon($ext) {
     global $tab_icon;
     $ret = (!array_key_exists($ext, $tab_icon)) ? $tab_icon['?']['icon'] : (isset($tab_icon[$ext]['icon']) ? $tab_icon[$ext]['icon'] : $tab_icon['?']['icon']);
     $dir = (!array_key_exists('dir', $tab_icon)) ? $tab_icon['?']['dir'] : $tab_icon[$ext]['dir'];
-    return REAL_ROOT_URL.$dir.$ret;
+    return HYLA_ROOT_URL.$dir.$ret;
 }
 
 /*  Renvoie la catégorie du fichier selon l'extension
@@ -371,24 +514,24 @@ function get_suggest($tab) {
     @param  string  $str    La chaine à encoder
  */
 function get_utf8($str) {
-    global $conf;
-    return ($conf['fs_charset_is_utf8'] ? $str : utf8_encode($str));
+    $conf = conf::getInstance();
+    return ($conf->get('fs_charset_is_utf8') ? $str : utf8_encode($str));
 }
 
 /*  Renvoie l'élément en ISO
     @param  string  $str    La chaine
  */
 function get_iso($str) {
-    global $conf;
-    return ($conf['fs_charset_is_utf8'] ? utf8_decode($str) : $str);
+    $conf = conf::getInstance();
+    return ($conf->get('fs_charset_is_utf8') ? utf8_decode($str) : $str);
 }
 
 /*  Renvoie l'élément encodés de la même manière que le système de fichiers
     @param  string  $str    La chaine
  */
 function get_2_fs_charset($str) {
-    global $conf;
-    return ($conf['fs_charset_is_utf8'] ? $str : utf8_decode($str));
+    $conf = conf::getInstance();
+    return ($conf->get('fs_charset_is_utf8') ? $str : utf8_decode($str));
 }
 
 /*  Renvoie l'objet correctement formaté...
@@ -409,9 +552,9 @@ function view_obj($str) {
     @param  ... ACL_xxx, ACL_xxx...
  */
 function acl_test() {
-    global $cobj, $cuser, $url;
+    global $obj, $cuser, $url;
     $ret = false;
-
+    
     $args = func_get_args();
     $r = call_user_func_array(array('acl', 'ok'), $args);
     if (!$r) {
@@ -434,11 +577,13 @@ function acl_test() {
 /*  Renvoie le chemin réel vers le fichier (si c'est une archive, renvoie le chemin vers le cache)
  */
 function get_real_directory() {
-    global $cobj;
+    global $obj;
     $ret = null;
+    $cobj = $obj->getCurrentObj();
     if ($cobj->type == TYPE_ARCHIVED) {
+        require_once HYLA_ROOT_PATH.'src/inc/cache.class.php';
         cache::getFilePath($cobj->file, $file);
-        $ret = DIR_ROOT.$file.'/'.$cobj->target;
+        $ret = HYLA_ROOT_PATH.$file.'/'.$cobj->target;
     } else {
         $ret = $cobj->realpath;
     }

@@ -23,9 +23,7 @@ class plugin_obj_default extends plugin_obj {   // implements _plugin { plugin i
 
     function plugin_obj_default($cobj) {
         parent::plugin_obj($cobj);
-        $this->tpl->set_root($this->plugin_dir.'default');
-        $this->tpl->set_file(array(
-                'default'       =>  'default.tpl'));
+        $this->tpl->set_file('default', 'default.tpl');
         $this->tpl->set_block('default', 'plugin_choice', 'Hdlplugin_choice');
     }
 
@@ -34,8 +32,9 @@ class plugin_obj_default extends plugin_obj {   // implements _plugin { plugin i
         $size = sizeof($tab);
         for($i = 0, $last = null, $last_type = null; $i < $size; $i++) {
             $this->tpl->set_var(array(
-                    'PLUGIN_NAME'           =>  $tab[$i]['name'],
-                    'PLUGIN_DESCRIPTION'    =>  $tab[$i]['description']
+                    'PLUGIN_NAME'           =>  $tab[$i]->name,
+                    'PLUGIN_NAME_VALUE'     =>  strtolower($tab[$i]->name),
+                    'PLUGIN_DESCRIPTION'    =>  $tab[$i]->description
                     ));
             $this->tpl->parse('Hdlplugin_choice', 'plugin_choice', true);
         }

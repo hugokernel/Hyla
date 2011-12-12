@@ -24,15 +24,13 @@ class plugin_obj_csv extends plugin_obj {
     function plugin_obj_csv($cobj) {
         parent::plugin_obj($cobj);
 
-        $this->tpl->set_root($this->plugin_dir.'csv');
         $this->tpl->set_file('csv', 'csv.tpl');
-
         $this->tpl->set_block('csv', array(
-                'head_line'     =>  'Hdlhead_line',
-                'line_int'      =>  'Hdlline_int',
-                'line_string'   =>  'Hdlline_string',
-                'row'           =>  'Hdlrow',
-                ));
+            'head_line'     =>  'Hdlhead_line',
+            'line_int'      =>  'Hdlline_int',
+            'line_string'   =>  'Hdlline_string',
+            'pcsv_line'     =>  'Hdlpcsv_line',
+        ));
     }
 
     function aff() {
@@ -57,7 +55,7 @@ class plugin_obj_csv extends plugin_obj {
 
             $this->tpl->set_var('Hdlline_int');
             $this->tpl->set_var('Hdlline_string');
-            $this->tpl->set_var('Hdlhead');
+//            $this->tpl->set_var('Hdlhead_line');
 
             $r = explode($separator, $line);
 
@@ -71,7 +69,7 @@ class plugin_obj_csv extends plugin_obj {
                     }
                 }
 
-                $this->tpl->set_var('CONTENT', $row);
+                $this->tpl->set_var('PCSV_CONTENT', $row);
 
                 // Affichage de l'entête
                 if (!$i) {
@@ -84,7 +82,8 @@ class plugin_obj_csv extends plugin_obj {
                     }
                 }    
             }
-            $this->tpl->parse('Hdlrow', 'row', true);
+
+            $this->tpl->parse('Hdlpcsv_line', 'pcsv_line', true);
             $i++;
         }
 

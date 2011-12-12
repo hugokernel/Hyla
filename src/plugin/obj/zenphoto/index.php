@@ -24,25 +24,24 @@ class plugin_obj_zenphoto extends plugin_obj { // implements _plugin {
     function plugin_obj_zenphoto($cobj) {
         parent::plugin_obj($cobj);
 
-        $this->tpl->set_root($this->plugin_dir.'zenphoto');
         $this->tpl->set_file('zenphoto', 'zenphoto.tpl');
 
         $this->tpl->set_block('zenphoto', array(
-                'zen_line_img'      =>  'Hdlzen_line_img',
-                'zen_line_other'    =>  'Hdlzen_line_other',
-                'zen_line'          =>  'Hdlzen_line',
-                'zen_line_cat'      =>  'Hdlzen_line_cat',
-                'zen'               =>  'Hdlzen',
-                ));
+            'zen_line_img'      =>  'Hdlzen_line_img',
+            'zen_line_other'    =>  'Hdlzen_line_other',
+            'zen_line'          =>  'Hdlzen_line',
+            'zen_line_cat'      =>  'Hdlzen_line_cat',
+            'zen'               =>  'Hdlzen',
+        ));
     }
 
     function aff($paff) {
 
-        global $sort, $start, $conf;
+        global $sort, $start;
 
         $this->addStyleSheet('default.css');
 
-        $sort = $_SESSION['sess_sort'];
+        $sort = $this->conf->get('sort');
         $grp = $_SESSION['sess_grp'];
 
         switch ($sort) {
@@ -73,8 +72,8 @@ class plugin_obj_zenphoto extends plugin_obj { // implements _plugin {
                 break;
         }
 
-        $img_width = $this->getConfVar('img_width', null, THUMB_SIZE_X);
-        $img_height = $this->getConfVar('img_height', null, $img_width);
+        $img_width = $this->getConfVar('img_width');
+        $img_height = $this->getConfVar('img_height');
 
         $tab = $this->obj->getDirContent($this->cobj->file, $sort, $start);
 
@@ -94,7 +93,7 @@ class plugin_obj_zenphoto extends plugin_obj { // implements _plugin {
                 $this->tpl->set_var('Hdlzen_line_other');
                 $this->tpl->set_var('Hdlzen_comment');
 
-                $this->tpl->set_var('ACTION',   (is_file(FOLDER_ROOT.'/'.$tab[$i]->path)) ? 'dl' : 'list');
+                $this->tpl->set_var('ACTION',   (is_file($this->obj->getRoot().'/'.$tab[$i]->path)) ? 'dl' : 'list');
 
                 $this->tpl->set_var(array(
                         'FILE_NAME'         =>  view_obj($tab[$i]->name),

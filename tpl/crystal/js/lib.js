@@ -23,7 +23,7 @@ $(document).ready(function() {
     show_layer_from_hash();
 
     // Si on clique sur une ligne dans un tableau
-    $(".tab .click").click(
+    $(".click").click(
         function() {
             $(this).toggleClass("selected");
         }
@@ -34,6 +34,22 @@ $(document).ready(function() {
 		sortClassAsc: 'ascending',
 		sortClassDesc: 'descending',
 		headerClass: 'header',
+    });
+
+    // Treeview
+    $("#arbre").treeview({
+/*   		persist: "location",
+		collapsed: true,
+		unique: true
+		animated: "fast",
+*/
+		collapsed: true,
+        /*
+		toggle: function() {
+			window.console && console.log("%o was toggled", this);
+		}
+        */
+
     });
 });
 
@@ -105,6 +121,11 @@ function getID(id) {
     return var_nav;
 }
 
+/*
+function trim(string) {
+    return string.replace(/^\s*|\s*$/g, '');
+}
+*/
 
 /*  Affiche un calque
  */

@@ -26,7 +26,6 @@ class plugin_obj_geshi extends plugin_obj {
     function plugin_obj_geshi($cobj) {
         parent::plugin_obj($cobj);
 
-        $this->tpl->set_root($this->plugin_dir.'geshi');
         $this->tpl->set_file('geshi', 'geshi.tpl');
     }
 

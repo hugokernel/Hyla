@@ -1,11 +1,21 @@
 Hyla ChangeLog
 
-[Version 0.8.2]
-		9 novembre 2007
-			* Correction dans l'installeur du chemin vers la feuille de style et les scripts js
-			* Correction d'un problème d'affichage de l'icone racine dans la liste des commentaires et pour les dossiers ayant une icone spéciale
-			* Correction d'un bug empêchant l'utilisation correcte des plugins flv, mp3, swf
-			* Ajout d'un test sur la provenance des fichiers avant upload
+[0.9.0]
+    - hugo
+		25 août 2008
+			* Ajout du cache dans la lecture des manifest
+		6 août 2008
+			* Modification du code afin de fonctionner en multi-site
+			* Les fichiers info.xml des plugins n'existe plus, les données sont en base et la configuration de chaque plugin est définie dans le manifest associé
+		24 juillet 2008
+			* Ajout d'un plugin gui "lostpass" afin de récupérer un mot de passe perdu par un user
+        5 décembre 2007
+            * Modification dans le système de log
+        novembre 2007
+            * Travail sur l'interface
+        5 octobre 2007
+            * Mise en place des plugins de base de données (db)
+            * Système de log permettant d'enregistrer toutes les actions exécutées par Hyla
 
 [Version 0.8.1]
     - hugo

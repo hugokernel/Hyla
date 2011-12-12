@@ -23,15 +23,14 @@ class plugin_obj_flv extends plugin_obj {
 
     function plugin_obj_flv($cobj) {
         parent::plugin_obj($cobj);
-        $this->tpl->set_root($this->plugin_dir.'flv');
+
         $this->tpl->set_file('flv', 'flv.tpl');
     }
 
     function aff() {
-        global $cobj;
 
         $this->tpl->set_var(array(
-                'SIZE'              =>  get_human_size_reading($cobj->size),
+                'SIZE'              =>  get_human_size_reading($this->cobj->size),
                 'PATH_2_PLUGIN'     =>  $this->_url_2_plugin,
                 'OBJECT_DOWNLOAD'   =>  $this->url->linkToCurrentObj('download'),
                 ));

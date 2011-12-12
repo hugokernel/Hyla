@@ -32,9 +32,6 @@ class plugin_obj_image extends plugin_obj {
                 ));
     }
 
-    function act($pact = null) {
-    }
-
     function aff($paff) {
 
         $this->addStyleSheet('default.css');

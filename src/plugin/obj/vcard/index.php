@@ -27,7 +27,6 @@ class plugin_obj_vcard extends plugin_obj {
     function plugin_obj_vcard($cobj) {
         parent::plugin_obj($cobj);
 
-        $this->tpl->set_root($this->plugin_dir.'vcard');
         $this->tpl->set_file('vcard', 'vcard.tpl');
 
         $this->tpl->set_block('vcard', array(

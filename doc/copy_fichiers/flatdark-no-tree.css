@@ -1,0 +1,14 @@
+
+@import "default.css";
+@import "flatdark.css";
+
+#tree {
+    display: none;
+}
+
+#content {
+    margin-left: 1% !important;
+    margin-right: 1% !important;
+    width: 98% !important;
+}
+

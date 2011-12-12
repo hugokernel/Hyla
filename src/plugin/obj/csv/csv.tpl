@@ -4,21 +4,21 @@
         <thead>
             <tr>
                 <!-- BEGIN head_line -->
-                <th>{CONTENT}</th>
+                <th>{PCSV_CONTENT}</th>
                 <!-- END head_line -->
             </tr>
         </thead>
         <tbody>
-            <!-- BEGIN row -->
+            <!-- BEGIN pcsv_line -->
             <tr class="click">
                 <!-- BEGIN line_int -->
-                <td align="center">{CONTENT}</td>
+                <td align="center">{PCSV_CONTENT}</td>
                 <!-- END line_int -->
                 <!-- BEGIN line_string -->
-                <td align="left">{CONTENT}</td>
+                <td align="left">{PCSV_CONTENT}</td>
                 <!-- END line_string -->
             </tr>
-            <!-- END row -->
+            <!-- END pcsv_line -->
         </tbody>
     </table>
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin target="admin" enabled="true">
+    <name>conf</name>
+    <description>Admin - Configuration</description>
+    <author>Alexandre Ravaux</author>
+    <version>1.0</version>
+    <minversion>0.8.1</minversion>
+</plugin>
+

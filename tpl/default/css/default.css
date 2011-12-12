@@ -3,7 +3,6 @@ body {
 /*  font-family: Verdana, Arial, Helvetica, sans-serif;*/
     font-family: Bitstream Vera Sans, sans-serif;
     background: white;
-    font-size: 80%;
     color: black;
 }
 
@@ -17,13 +16,6 @@ a:hover {
     color: #000;
     font-style: normal;
     text-decoration: none;
-}
-
-
-#content {
-    float: right;
-    width: 81%;
-    margin: 1%;
 }
 
 
@@ -306,6 +298,14 @@ legend {
     padding: 0.4em;
 }
 
+label {
+	float: left;
+	width: 40%;
+	text-align: right;
+	margin: 0;
+	padding: 0 .5em 0 0;
+	line-height: 1.8;
+}
 
 #form_misc {
 /*  padding: 10%;*/
@@ -456,6 +456,10 @@ th {
     display:inline;
 }
 
+#sidebar #current {
+    background: orange;
+}
+
 
 /*  L'arborescence
  */
@@ -471,9 +475,16 @@ th {
     color: blue;
 }
 
+#content {
+    float: right;
+    width: 81%;
+    margin: 1%;
+}
+
 #content-no-tree {
     clear: both;
     padding-top: 10px;
+    margin: 1%;
 }
 
 

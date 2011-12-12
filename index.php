@@ -19,82 +19,130 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-define('PAGE_HOME', true);
-
-require 'src/init.php';
-
-/*  Connection à la base
+/*  Here, you can modify site id
  */
-$bdd =& new db();
-if (!$bdd->connect(SQL_HOST, SQL_USER, SQL_PASS)) {
-    system::end(__('Couldn\'t connect to sql server !'));
+if (!defined(HYLA_SITE_ID)) {
+    define('HYLA_SITE_ID', 1);
 }
 
-if (!$bdd->select(SQL_BASE)) {
-    system::end(__('Unable to use database &laquo; %s &raquo;', SQL_BASE));
+/*  /!\ DO NOT EDIT NEXT LINE /!\
+ */
+define('HYLA_HOME', true);
+define('HYLA_ROOT_PATH', dirname(__FILE__).'/');
+define('HYLA_RUN_PATH',  dirname($_SERVER['SCRIPT_FILENAME']).'/');
+
+require HYLA_ROOT_PATH.'src/init.php';
+
+// Create obj
+$obj = obj::getInstance(HYLA_SITE_ID);
+$site_info = $obj->load();
+
+if ($site_info['url']) {
+    $dir = $site_info['url'];
+} else {
+    $dir = file::dirName($_SERVER['SCRIPT_NAME']);
+    $dir .= ($dir != '/') ? '/' : null;
 }
 
-/*  Chargement des infos de l'utilisateur courant
+define('HYLA_ROOT_URL', $dir);
+
+run_tpl();
+
+/*  Loading current user information
  */
-$auth = plugins::get(PLUGIN_TYPE_AUTH, $conf['plugin_default_auth']);
+$auth = plugins::get(PLUGIN_TYPE_AUTH);
 $auth->load();
 $cuser = $auth->getUser();
 
 
-/*  Chargement du dossier de partage et des droits
+/*
+dlog('Root path : '.HYLA_ROOT_PATH);
+dlog('Root url : '.HYLA_ROOT_URL);
+dlog('Run path : '.HYLA_RUN_PATH);
+//dbug($conf);
+*/
+
+
+/*    Loading shared dir and acl
  */
-$obj = new obj(FOLDER_ROOT);
+$obj = obj::getInstance();
+$id = $obj->datasource->register('FOLDER_ROOT', array(&$obj, 'wrapper'), $site_info['shared_dir']);
 $obj->loadRights();
 
 
+/*
+//define('LOG_TYPE', LOG_TYPE_FIREBUG | LOG_TYPE_SYSTEM); // | LOG_TYPE_OUT);  // | LOG_TYPE_BDD);
+//define('LOG_VIEWER_L_DEBUG', LOG_TYPE_FIREBUG);
+dbug(array('toto', 'tat'));
+dlog('toto');
+dlog('information', L_INFO);
+dlog('warning',     L_WARNING);
+dlog('error',       L_ERROR);
+*/
+
+
+
+/*  Web service or not ?
+ */
+if (isset($_REQUEST['method'])) {
+
+//    error_reporting(E_ERROR);
+
+    /*  Run action
+     */
+    require HYLA_ROOT_PATH.'src/inc/ws.class.php';
+
+    $format = (isset($_REQUEST['format'])) ? $_REQUEST['format'] : null;
+    switch ($format) {
+        case 'raw':
+            $context = null;
+            break;
+        case 'json':
+        default:
+            $context = 'json';
+            break;
+    }
+
+    $ret = ws::run($_GET['method'], $_REQUEST);
+    if (system::isError($ret)) {
+        out($_GET['method'].' : '.$ret->msg, -1);
+        system::end();
+    }
+
+    out($ret);
+
+    /*
+    echo '/*';
+    dlog(__('Executed in %s seconds with %s sql query', round((system::chrono() - START_TIME), 4), $bdd->getQueryCount()));
+    echo '*-/';
+    */
+
+    system::end();
+}
+
 /*  Url plugin loader
  */
-$url = plugins::get(PLUGIN_TYPE_URL, $conf['plugin_default_url']);
-$url->setRootUrl(REAL_ROOT_URL);
+$url = plugins::get(PLUGIN_TYPE_URL);
+$url->setRootUrl(HYLA_ROOT_URL);
 $url->load();
 if (!$url->getParam('obj') && $url->getParam('aff') != 'page') {
     $url->setParamObj('/');
     $url->setParam('aff', 0, 'obj');
 }
 
+$cobj = $obj->setCurrentObj($url->getParam('obj'));
 
-/*  On vérifie que le chemin est bon
+/*  Not read config file !
  */
-$cobj = ($url->getParam('aff', 0) != 'page') ? $obj->getInfo($url->getParam('obj'), true, true) : new tFile;
-if (!$cobj && $url->getParam('aff', 0) == 'obj' && ($cobj->type == TYPE_UNKNOW || !($obj->getCUserRights4Path($cobj->path) & AC_VIEW))) {
-    if (!$cobj || $cobj->file == '/') {
-        if ($cuser->id != ANONYMOUS_ID && ($obj->getCUserRights4Path('/') & AC_VIEW)) {
-            header('HTTP/1.x 404 Not Found');
-
-            // Si l'utilisateur est loggué, on redirige vers l'admin
-            if (!is_readable(FOLDER_ROOT)) {
-                redirect(__('Error'), $url->linkToPage('admin').'#configuration', __('Object not found !'));
-            } else {
-                redirect(__('Error'), $url->linkToObj('/'), __('Object not found !'));
-            }
-        } else {
-            header('HTTP/1.x 401 Authorization Required');
-            redirect(__('Error'), $url->linkToPage('login'), __('You do not have the rights sufficient to reach the resource !'));
-        }
-    } else {
-        header('HTTP/1.x 404 Not Found');
-        redirect(__('Error'), $url->linkToObj('/'), __('Object not found !'));
-    }
-    system::end();
-}
-
-/*  Interdit de lire la config
- */
-if (file::isInPath($cobj->realpath, file::dirName(__FILE__).'/'.DIR_CONF)) {
+if (file::isInPath($cobj->realpath, HYLA_ROOT_PATH.DIR_CONF)) {
     system::end(__('You do not have the rights sufficient to reach the resource !'));
 }
 
-/*  Traitement des actions suivi de l'affichage correspondant
- */
-include 'src/act.php';
 
-include 'src/aff.php';
+$basket = basket::getInstance();
+$basket->restore();
 
+include(HYLA_ROOT_PATH.'src/aff.php');
 
 $bdd->close();
 

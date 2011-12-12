@@ -23,6 +23,8 @@ $l10n['Object not found !']			= 'L\'objet est introuvable !';
 $l10n['Error']						= 'Erreur';
 $l10n['No description !']			= 'Pas de description !';
 
+$l10n['You do not have the sufficient rights !'] = 'Vous n\'avez pas les droits suffisants !';
+
 $l10n['You will be redirected towards the object !']	= 'Vous allez être redirigé vers l\'objet !';
 
 $l10n['You do not have the rights sufficient to reach the resource !']	= 'Vous n\'avez pas les droits suffisant pour accéder à la ressource !';
@@ -32,9 +34,6 @@ $l10n['An error occured while uploading the file !']	= 'Une erreur est survenue 
 $l10n['Error while accessing remote file, "allow_url_fopen" parameter is off']		= 'Impossible d\'accéder au fichier distant, le paramètre "allow_url_fopen" du fichier php.ini est à Off !';
 
 $l10n['Not implemented !']		= 'Non implémenté !';
-
-$l10n['Last comments']			= 'Liste des derniers commentaires';
-$l10n['Comments posted from oldest to most recent.']	=	'Commentaires affichés du plus vieux au plus récent.';
 
 $l10n['Empty filename !']		= 'Le nom de fichier est vide !';
 $l10n['No specified file  !']	= 'Aucun fichier spécifié !';
@@ -61,9 +60,6 @@ $l10n['No right was found in all the filesystem !']	= 'Aucun droit n\'a été tr
 
 $l10n['You did not select user !']	= 'Vous n\'avez pas sélectionné d\'utilisateur !';
 
-$l10n['Impossible to rename the root']		= 'Impossible de renommer la racine';
-$l10n['The objet was renamed !']			= 'L\'objet à été renommé !';
-$l10n['An error occured during rename !']	= 'Une erreur est survenue durant le renommage de l\'objet !';
 
 $l10n['There are an invalid char in the file name, unauthorized char are : %s']	= 'Il y a un caractère invalide dans le nom, les caractères interdits sont : %s';
 
@@ -89,8 +85,7 @@ $l10n['The author field is required']			= 'Le champs auteur doir être rempli !'
 $l10n['The message field is required']			= 'Le contenu du message ne doit pas être vide !';
 
 $l10n['All the fields must be filled']			= 'Tous les champs doivent être remplis...';
-$l10n['Error during authentification']			= 'Erreur durant l\'authentification !';
-$l10n['You are now authenticated !']			= 'Vous êtes dorénavant authentifié !';
+$l10n['Error during authentification !']		= 'Erreur durant l\'authentification !';
 
 $l10n['Thank you for authenticate you']			= 'Merci de vous authentifier...';
 $l10n['You are now disconnected']				= 'Vous êtes maintenant déconnecté !';
@@ -126,11 +121,8 @@ $l10n['Unknow']			=	'Inconnu';
 
 //$l10n['Copy ok !']					= 'Copie effectuée avec succès !';
 
-$l10n['A new version ( %s ) is disponible !']	= 'Une nouvelle version ( %s ) est disponible !';
-$l10n['You have the latest version !']			= 'Vous avez la dernière version !';
-
 $l10n['Passwords are different']								= 'Les mots de passe sont différents !';
-$l10n['Password must have at least %s characters !']			= 'Le mot de passe doit avoir au moins de %s caractères !';
+$l10n['Password must have at least %s characters !']			= 'Le mot de passe doit avoir au moins %s caractères !';
 $l10n['Password changed !']										= 'Mot de passe changé !';
 $l10n['Unable to change his own administration permission !']	= 'Impossible de changer sa propre permission d\'administration !';
 

@@ -49,8 +49,6 @@ class plugin_url_pathinfo extends plugin_url {
 
             parse_str($_SERVER['PATH_INFO'], $request);
             $ret->act = isset($request['act']) ? explode('-', $request['act']) : null;
-            $ret->pact = isset($request['pact']) ? $request['pact'] : null;
-            $ret->paff = isset($request['paff']) ? $request['paff'] : null;
             
             $_GET = array_merge($_GET, $request);
             $_REQUEST = array_merge($_REQUEST, $request);
@@ -63,11 +61,9 @@ class plugin_url_pathinfo extends plugin_url {
         @param  mixed   $object Object
         @param  array   $aff    Page
         @param  array   $act    Action
-        @param  string  @pact   Plugin action
-        @param  string  @paff   Plugin aff
         @return Url
      */
-    function get($object, $aff = null, $act = null, $pact = null, $paff = null) {
+    function get($object, $aff = null, $act = null, $args = null) {
                 
         $url = null;
         
@@ -81,6 +77,21 @@ class plugin_url_pathinfo extends plugin_url {
         $aff = $aff ? implode('-', $aff) : null;
         $url .= '/'.$aff;
 
+//dbug(func_get_args());
+
+        // Arg
+        /*
+        if ($args) {
+            //dbug($args);
+            $url .= '|';
+            foreach ($args as $key => $value) {
+                $arr[] = $key.':'.$value;
+            }
+            $url .= implode('|', $arr);
+            $url .= '|';
+        }
+        */
+
         // Insert object
         if ($object) {
             $url .= $this->encode($object);
@@ -89,16 +100,6 @@ class plugin_url_pathinfo extends plugin_url {
         // Action
         if ($act) {
             $url .= '&amp;act='.implode('-', $act);
-        }
-
-        // Plugin act
-        if ($pact) {
-            $url .= '&amp;pact='.$pact;
-        }
-
-        // Plugin aff
-        if ($paff) {
-            $url .= '&amp;paff='.$paff;
         }
 
         return $url;

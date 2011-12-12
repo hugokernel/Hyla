@@ -1,0 +1,8 @@
+* Enlever les paramètres pact et paff du plugin url
+* Les plugins obj:archive et obj:image n'ont plus de paramètre d'url d'action et d'affichage
+* plugin_gui, renommer cat en type
+* Faire en sorte que la génération de l'arbo se fasse selon le content courant
+* Sauvegarder les paramètres du context de tri...
+* Lorsqu'il n'y a pas de dossier présent dans l'arborescence, cacher l'arbo !
+* Creation d'un nouveau théme.
+* Multiple appels à getManifest (notamment dans gui)

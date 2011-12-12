@@ -25,13 +25,16 @@ class cache {
      */
     function free() {
         $i = 0;
-        $hdl = dir(DIR_ROOT.DIR_CACHE);
+        $hdl = dir(HYLA_RUN_PATH.DIR_CACHE);
         if ($hdl) {
             while (false !== ($occ = $hdl->read())) {
-                if ($occ{0} == '.')
+                if ($occ{0} == '.') {
                     continue;
-                if (file::rmDirs(DIR_ROOT.DIR_CACHE.$occ))
+                }
+
+                if (file::rmDirs(HYLA_RUN_PATH.DIR_CACHE.$occ)) {
                     $i++;
+                }
             }
         }
         return $i;
@@ -45,12 +48,14 @@ class cache {
         $types = archive::getAllType();
         foreach ($types as $type) {
             cache::getArchivePath($file, $out, $type);
-            if (is_file(DIR_ROOT.$out)) {
-                unlink(DIR_ROOT.$out);
+            if (is_file(HYLA_RUN_PATH.$out)) {
+                unlink(HYLA_RUN_PATH.$out);
             }
         }
 
-        if (!is_dir(FOLDER_ROOT.$file)) {
+        $obj = obj::getInstance();
+        $path = $obj->getRoot();
+        if (!is_dir($path.$file)) {
 
             cache::getFilePath($file, $out);
             if (is_dir($out)) {
@@ -63,16 +68,16 @@ class cache {
                         if ($_occ == '.' || $_occ == '..') {
                             continue;
                         }
-                        $fmd5 = md5(file::dirName(DIR_ROOT.$out.'/'.$_occ));
+                        $fmd5 = md5(file::dirName(HYLA_RUN_PATH.$out.'/'.$_occ));
                         $file[] = '#'.preg_quote($fmd5).'.[0-9]*x[0-9]*.'.preg_quote($_occ).'#s';
                         $dir = file::dirName($fmd5{0}.'/'.$fmd5);
                     }
                 }
                 $hdl->close();
 
-                if (is_dir(DIR_ROOT.DIR_CACHE.$dir)) {
+                if (is_dir(HYLA_RUN_PATH.DIR_CACHE.$dir)) {
                     $list = array();
-                    $hdl = dir(DIR_ROOT.DIR_CACHE.$dir);
+                    $hdl = dir(HYLA_RUN_PATH.DIR_CACHE.$dir);
                     if ($hdl) {
                         while (false !== ($_occ = $hdl->read())) {
                             if ($_occ == '.' || $_occ == '..')
@@ -87,15 +92,15 @@ class cache {
                             if ($ret = preg_grep($k, $list)) {
                                 $ret = array_values($ret);
                                 foreach ($ret as $r) {
-                                    unlink(DIR_ROOT.DIR_CACHE.$dir.'/'.$r);
+                                    unlink(HYLA_RUN_PATH.DIR_CACHE.$dir.'/'.$r);
                                 }
                             }
                         }
                     }
                 }
 
-                if (is_dir(DIR_ROOT.$out)) {
-                    file::rmDirs(DIR_ROOT.$out);
+                if (is_dir(HYLA_RUN_PATH.$out)) {
+                    file::rmDirs(HYLA_RUN_PATH.$out);
                 }
             }
         }

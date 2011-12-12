@@ -24,7 +24,6 @@ class plugin_obj_text extends plugin_obj {
     function plugin_obj_text($cobj) {
         parent::plugin_obj($cobj);
 
-        $this->tpl->set_root($this->plugin_dir.'text');
         $this->tpl->set_file('text', 'text.tpl');
     }
 

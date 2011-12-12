@@ -24,28 +24,27 @@ class plugin_obj_slideshow extends plugin_obj {
     function plugin_obj_slideshow($cobj) {
         parent::plugin_obj($cobj);
 
-        $this->tpl->set_root($this->plugin_dir.'slideshow');
         $this->tpl->set_file('slideshow', 'slideshow.tpl');
 
         $this->tpl->set_block('slideshow', array(
-                'description'       =>  'Hdldescription',
+            'description'       =>  'Hdldescription',
 
-                'image_cache'       =>  'Hdlimage_cache',
-                'image_thumb'       =>  'Hdlimage_thumb',
+            'image_cache'       =>  'Hdlimage_cache',
+            'image_thumb'       =>  'Hdlimage_thumb',
 
-                'mode_manual'       =>  'Hdlmode_manual',
-                'previous_slide'    =>  'Hdlprevious_slide',
-                'next_slide'        =>  'Hdlnext_slide',
-                'header_mode_auto'  =>  'Hdlheader_mode_auto',
-                'mode_auto'         =>  'Hdlmode_auto',
+            'mode_manual'       =>  'Hdlmode_manual',
+            'previous_slide'    =>  'Hdlprevious_slide',
+            'next_slide'        =>  'Hdlnext_slide',
+            'header_mode_auto'  =>  'Hdlheader_mode_auto',
+            'mode_auto'         =>  'Hdlmode_auto',
 
-                'aff'               =>  'Hdlaff',
-                ));
+            'aff'               =>  'Hdlaff',
+        ));
     }
 
     function fullscreen($paff) {
 
-        global $obj, $conf;
+        global $obj;
 
         $filter = null;
 
@@ -113,7 +112,7 @@ class plugin_obj_slideshow extends plugin_obj {
 
                     'PATH_2_PLUGIN' =>  $this->_url_2_plugin,
 
-                    'TITLE'         =>  $conf['title'],
+                    'TITLE'         =>  $this->conf->get('title'),
                     
                     'STYLESHEET'    =>  get_css(),
                     ));

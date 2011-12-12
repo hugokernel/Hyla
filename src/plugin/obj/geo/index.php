@@ -26,18 +26,17 @@ class plugin_obj_geo extends plugin_obj {
     function plugin_obj_geo($cobj) {
         parent::plugin_obj($cobj);
 
-        $this->tpl->set_root($this->plugin_dir.'geo');
         $this->tpl->set_file('geo', 'geo.tpl');
         $this->tpl->set_block('geo', array(
-                'kml'       =>  'Hdlkml',
-                'json_line' =>  'Hdljson_line',
-                'json'      =>  'Hdljson',
-                ));
+            'kml'       =>  'Hdlkml',
+            'json_line' =>  'Hdljson_line',
+            'json'      =>  'Hdljson',
+        ));
     }
 
     function aff() {
 
-        $google_key = $this->getConfVar('google_key', $_SERVER['HTTP_HOST']);
+        $google_key = $this->getConfVar('google_key');
         $max_poi = $this->getConfVar('max_poi');
         
         switch ($this->cobj->extension) {

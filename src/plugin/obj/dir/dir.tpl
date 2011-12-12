@@ -12,16 +12,31 @@
         </tr>
     <!-- END line_header -->
     <!-- BEGIN line_content -->
-        <tr class="line">
-            <td width="32%">
-                <a href="{PATH_INFO}"><img src="{FILE_ICON}" class="icon" align="middle" alt="Infos" /> {FILE_NAME}</a>
+        <tr class="line obj_container">
+            <td width="50%">
+                <!-- BEGIN line_file -->
+                <span class="file drop" id="{FILE_OBJECT_ID}">
+                    <img src="{FILE_ICON}" class="icon" align="middle" alt="Infos" />
+                    {FILE_PATH}
+                </span>
+                <!-- END line_file -->
+                <!-- BEGIN line_dir -->
+                <span class="dir drop" id="{FILE_OBJECT_ID}">
+                    <img src="{FILE_ICON}" class="icon" align="middle" alt="Infos" />
+                    {FILE_PATH}
+                </span>
+                <!-- END line_dir -->
+
                 <!-- BEGIN line_comment -->
-                <a href="{PATH_INFO}#comment" title="{NBR_COMMENT} commentaire(s)"><img src="{DIR_IMAGE}/comment.png" border="0" align="middle" alt="Commentaires" /><!--<sub>{NBR_COMMENT}</sub>--></a>
+                <a href="{PATH_INFO}#comment" title="{NBR_COMMENT} commentaire(s)">
+                    <img src="{DIR_IMAGE}/comment.png" border="0" align="middle" alt="Commentaires" /><!--<sub>{NBR_COMMENT}</sub>-->
+                </a>
                 <!-- END line_comment -->
             </td>
-            <td width="56%" align="right" class="description">{FILE_DESCRIPTION}</td>
-            <td width="10%" align="right">{FILE_SIZE}</td>
-            <td width="2%" align="right"><a href="{PATH_DOWNLOAD}" title="Télécharger"><img src="{DIR_IMAGE}/download.png" border="0" align="middle" alt="Télécharger" /></a></td>
+            <td width="40%" align="right" class="edit-description description" id="{FILE_OBJECT_ID}" >{FILE_DESCRIPTION}</td>
+            <td width="5%" align="right">{FILE_SIZE}</td>
+            <td width="5%" align="right"><a href="{PATH_DOWNLOAD}" title="Télécharger"><img src="{DIR_IMAGE}/download.png" border="0" align="middle" alt="Télécharger" /></a></td>
+            <td><input type="checkbox" name="obj[]" value="{FILE_OBJECT}" /></td>
         </tr>
     <!-- END line_content -->
     <!-- END line -->

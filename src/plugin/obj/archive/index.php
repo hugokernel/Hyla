@@ -19,92 +19,92 @@
         Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
      */
 
-    class plugin_obj_archive extends plugin_obj {
+class plugin_obj_archive extends plugin_obj {
 
-        var $zip;
+    var $zip;
 
-        var $_act;
-        var $_act_result_ok;
-        var $_act_result_error;
+    var $_act;
+    var $_act_result_ok;
+    var $_act_result_error;
 
-        function plugin_obj_archive($cobj) {
-            parent::plugin_obj($cobj);
+    function plugin_obj_archive($cobj) {
+        parent::plugin_obj($cobj);
 
-            $this->_act = null;
-            $this->_act_result_ok = null;
-            $this->_act_result_error = null;
+        $this->_act = null;
+        $this->_act_result_ok = null;
+        $this->_act_result_error = null;
+    }
 
-            $this->tpl->set_root($this->plugin_dir.'archive');
-            $this->tpl->set_file('archive', 'archive.tpl');
-            $this->tpl->set_block('archive', array(
-                    'zipfile'       =>  'Hdlzipfile',
-                    'act_extract'   =>  'Hdlact_extract',
-                    ));
-        }
+    function act($act = null) {
 
-        function act($act = null) {
+        // Extrait dans le dossier parent
+        if ($act == 'extract') {
 
-            global $conf;
+            acl_test(ADMINISTRATOR_ONLY);
 
-            $this->addStyleSheet('default.css');
+            $out = archive::extract($this->cobj->realpath, file::format($this->obj->getRoot().$this->cobj->path));
 
-            // Extrait dans le dossier parent
-            if ($act == 'extract') {
+            $this->_act = $act;
+            $this->_act_result = 0;
 
-                acl_test(ADMINISTRATOR_ONLY);
-
-                $out = archive::extract($this->cobj->realpath, file::formatPath(FOLDER_ROOT.$this->cobj->path));
-
-                $this->_act = $act;
-                $this->_act_result = 0;
-
-                foreach ($out as $occ) {
-                    if ($occ['status'] == 'ok') {
-                        $this->_act_result_ok++;
-                        @chmod($occ['filename'], $conf['file_chmod']);
-                    } else
-                        $this->_act_result_error++;
+            foreach ($out as $occ) {
+                if ($occ['status'] == 'ok') {
+                    $this->_act_result_ok++;
+                    @chmod($occ['filename'], $this->conf->get('file_chmod'));
+                } else {
+                    $this->_act_result_error++;
                 }
             }
         }
+    }
 
-        function aff($paff) {
+    function aff($paff) {
 
-            global $cuser;
+        global $cuser;
 
-            $list = archive::listContent($this->cobj->realpath);
+        $this->tpl->set_file('archive', 'archive.tpl');
+        $this->tpl->set_block('archive', array(
+            'zipfile'       =>  'Hdlzipfile',
+            'act_extract'   =>  'Hdlact_extract',
+        ));
 
-            if ($list) {
-                for ($size = 0, $i = 0; $i < sizeof($list); $i++) {
-                    $size += $list[$i]['size'];
-                    if (!$list[$i]['folder']) {
-                        $this->tpl->set_var(array(
-                                'FILE_ICON'         =>  get_icon(file::getExtension(basename($list[$i]['filename']))),
-                                'FILE_NAME'         =>  $list[$i]['filename'],
-                                'FILE_URL'          =>  $this->url->linkToObj(array($this->cobj->file, $list[$i]['filename'])),
-                                'FILE_SIZE'         =>  get_human_size_reading($list[$i]['size']),
-                                'PATH_DOWNLOAD'     =>  $this->url->linkToObj(array($this->cobj->file, $list[$i]['filename']), 'download'),
-                            ));
-                    $this->tpl->parse('Hdlzipfile', 'zipfile', true);
-                }
+        $this->addStyleSheet('default.css');
+
+        $list = archive::listContent($this->cobj->realpath);
+        if (!$list) {
+            system::out(__('Plugin::Archive : Error'));
+        }
+        
+        for ($size = 0, $i = 0; $i < sizeof($list); $i++) {
+            $size += $list[$i]['size'];
+            if ($list[$i]['folder']) {
+                continue;
             }
-
+                    
             $this->tpl->set_var(array(
-                    'ACT_EXTRACT'       =>  $this->url->linkToCurrentObj(null, null, 'extract'),
-                    'RAPPORT'           =>  (($this->_act_result_ok) ? view_status(__('%s extracted files', $this->_act_result_ok)) : null).(($this->_act_result_error) ? view_error(__('%s error during extraction', $this->_act_result_error)) : null),
-                    'NBR_FILE'          =>  sizeof($list),
-                    'COMPRESSED_SIZE'   =>  get_human_size_reading(filesize($this->cobj->realpath)),
-                    'REAL_SIZE'         =>  get_human_size_reading($size),
-                    'OBJECT'            =>  $this->url->linkToCurrentObj()
-                    ));
+                'FILE_ICON'     =>  get_icon(file::getExtension(basename($list[$i]['filename']))),
+                'FILE_NAME'     =>  $list[$i]['filename'],
+                'FILE_SIZE'     =>  get_human_size_reading($list[$i]['size']),
+                'URL_FILE'      =>  $this->url->linkToObj(array($this->cobj->file, $list[$i]['filename'])),
+                'URL_DOWNLOAD'  =>  $this->url->linkToObj(array($this->cobj->file, $list[$i]['filename']), 'download'),
+                ));
+            $this->tpl->parse('Hdlzipfile', 'zipfile', true);
+        }
 
-            // Affichage du lien pour l'extraction
-            if (acl::ok(ADMINISTRATOR_ONLY)) {
-                $this->tpl->parse('Hdlact_extract', 'act_extract', true);
-            }
-        } else
-            echo __('Plugin::Archive : Error');
+        $this->tpl->set_var(array(
+            'URL_EXTRACT'       =>  $this->url->linkToCurrentObj(null, null, 'extract'),
+            'RAPPORT'           =>  (($this->_act_result_ok) ? view_status(__('%s extracted files', $this->_act_result_ok)) : null).(($this->_act_result_error) ? view_error(__('%s error during extraction', $this->_act_result_error)) : null),
+            'NBR_FILE'          =>  count($list),
+            'COMPRESSED_SIZE'   =>  get_human_size_reading(filesize($this->cobj->realpath)),
+            'REAL_SIZE'         =>  get_human_size_reading($size),
+            'OBJECT'            =>  $this->url->linkToCurrentObj()
+            ));
 
+        // Affichage du lien pour l'extraction
+        if (acl::ok(ADMINISTRATOR_ONLY)) {
+            $this->tpl->parse('Hdlact_extract', 'act_extract', true);
+        }
+            
         return $this->tpl->parse('OutPut', 'archive');
     }
 }

@@ -25,7 +25,7 @@
     @param  ...
  */
 function __($str) {
-    global $l10n;
+    $l10n = l10n::getInstance();
     $ret = $l10n->getVal($str);
     if (func_num_args() > 1) {
         $tab = func_get_args();
@@ -41,12 +41,27 @@ class l10n {
     var $_lng;
     var $_arr;
 
+    var $_last_context;
+
     /*  Traduction
         @param string   $lng    La langue
      */
     function l10n($lng = DEFAULT_LNG) {
         $this->_lng = $lng;
         $this->_arr = array();
+
+        $this->_last_context = null;
+    }
+
+    /**
+     *  Get obj (Singleton...)
+     */
+    function getInstance() {
+        static $obj = null;
+        if ($obj == null) {
+            $obj = new l10n();
+        }
+        return $obj;
     }
 
     /*  Envoie l'entête
@@ -59,12 +74,16 @@ class l10n {
         @param  string  $file   Le nom du fichier
      */
     function setFile($file) {
-        $f = 'l10n/'.$this->_lng.'/'.$file;
-        if (file_exists($f)) {
-            require $f;
-            $this->_arr[$file] = $l10n;
-        } else
-            system::end(__('Fatal error : translate file (%s) not present !', $file));
+        $f = HYLA_ROOT_PATH.'l10n/'.$this->_lng.'/'.$file;
+        if (!file_exists($f)) {
+            system::end(__('Fatal error : translate file (%s) not present !', $f));
+        }
+
+        include($f);
+        $this->_arr[$file] = $l10n;
+
+        $this->_last_context = $file;
+
         return $f;
     }
 
@@ -73,13 +92,27 @@ class l10n {
         @param  string  $file   Le nom du fichier (ex: messages.php)
      */
     function setSpecialFile($path, $file) {
-        $f = $path.'l10n/'.$this->_lng.'/'.$file;
-        if (file_exists($f)) {
-            require $f;
-            $this->_arr[$path.$file] = $l10n;
-        } else
-            system::end(__('Fatal error : translate file (%s) not present !', $file));
+        $l10n = array();
+        $path .= '/';
+        $f = $path.'/l10n/'.$this->_lng.'/'.$file;
+        if (!file_exists($f)) {
+            system::end(__('Fatal error : translate file (%s) not present !', $f));
+        }
+        
+        include($f);
+        $this->_last_context = file::format($path.$file);
+        $this->_arr[$this->_last_context] = $l10n;
+       
         return $f;
+    }
+
+    /**
+     *  Test if file exist in appropriate language dir
+     *  @param  string  $path   Path
+     *  @param  string  $file   File
+     */
+    function testFile($path, $file) {
+        return file_exists(file::format($path.'/l10n/'.$this->_lng.'/'.$file));
     }
 
     /*  Renvoi la valeur demandée
@@ -109,17 +142,21 @@ class l10n {
         @param  string  $context    Le fichier concerné
      */
     function parse($var) {
-        $var = preg_replace('/\{LANG:([^}]+)\}/e', "\$this->getVal('$1')", $var);
-        return $var;
+        return preg_replace('/\{LANG:([^}]+)\}/e', "\$this->getVal('$1')", $var);
     }
 
     /*  Assigne une valeur dans le tableau de traduction
-        @param  string  $context    Le fichier concerné
+        @param  string  $context    Le fichier concerné (if null, last context is used)
         @param  string  $var        Clef
-        @param  ... Arguement à passer à fprint
+        @param  ... Argument à passer à fprint
      */
     function setStr($context, $str) {
         $ret = null;
+
+        if (is_null($context)) {
+            $context = $this->_last_context; 
+        }
+
         if (func_num_args() >= 2) {
             if (is_array($str)) {
                 foreach ($str as $strg) {

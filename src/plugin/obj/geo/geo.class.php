@@ -21,9 +21,10 @@
 
 class geo {
 
-    /*  Get data from file
-        @param  string  $filename   File name
-        @param  string  $ext        File format (extension)
+    /**
+     *  Get data from file
+     *  @param  string  $filename   File name
+     *  @param  string  $ext        File format (extension)
      */
     function getData($filename, $ext = null) {
         $ret = null;
@@ -40,8 +41,30 @@ class geo {
         return $ret;   
     }
 
-    /*  Get data from asc file
-        @param  string  $filename   File name
+    /**
+     *  Write data to file
+     *  @param  string  $filename   File name
+     *  @param  string  $ext        File format
+     *  @param  array   $data       Data
+     */
+    function writeData($filename, $ext = null, $data) {
+        $ret = null;
+        
+        switch ($ext) {
+            case 'asc':
+                $ret = geo::writeDataToAsc($filename, $data);
+                break;
+            case 'ov2':
+                $ret = geo::writeDataToOv2($filename, $data);
+                break;
+        }
+        
+        return $ret;   
+    }
+
+    /**
+     *  Get data from asc file
+     *  @param  string  $filename   File name
      */
     function getDataFromAsc($filename) {
         $ret = null;
@@ -79,8 +102,35 @@ class geo {
         return $ret;
     }
 
-    /*  Get data from ov2 file
-        @param  string  $filename   File name
+    /**
+     *  Write data to asc file
+     *  @param  string  $filename   File name
+     *  @param  array   $data       Data
+     */
+    function writeDataToAsc($filename, $data) {
+
+        $ret = false;
+        $content = null;
+
+        foreach ($data as $poi) {
+
+            // Quote
+            $poi['label'] = '"'.str_replace('"', '\"', $poi['label']).'"';
+
+            $content .= implode(',', $poi);
+            $content .= "\n";
+        }
+
+        if ($content) {
+            $ret = file_put_contents($filename, $content); //, FILE_APPEND);
+        }
+
+        return $ret;
+    }
+
+    /**
+     *  Get data from ov2 file
+     *  @param  string  $filename   File name
      */
     function getDataFromOv2($filename) {
         $ret = null;
@@ -128,6 +178,32 @@ class geo {
                         break;
                 }
             }
+        }
+
+        return $ret;
+    }
+
+    /**
+     *  Write data to ov2
+     *  @param  string  $filename   File
+     *  @param  array   $data       Data
+     */
+    function writeDataToOv2($filename, $data) {
+
+        $ret = false;
+        $content = null;
+
+        foreach ($data as $poi) {
+            $content .= pack('C', 0x02).
+                        pack('V', strlen($poi['label']) + 14).
+                        pack('V', (int)round($poi['lon'] * 100000.0)).
+                        pack('V', (int)round($poi['lat'] * 100000.0)).
+                        $poi['label'].
+                        chr(0x00);
+        }
+        
+        if ($content) {
+            $ret = file_put_contents($filename, $content);  //, FILE_APPEND);
         }
 
         return $ret;
