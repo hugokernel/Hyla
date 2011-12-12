@@ -1,0 +1,21 @@
+
+* Feature
+	- Afficher une erreur lors du téléchargement de tout un répertoire zippé raté
+	- Un système permettant de prendre les login, mail...etc d'un autre système (blog, forum...)
+	- Faire en sorte que lorsqu'on affiche les derniers commentaires ou login...etc..., on ne voit pas s'afficher l'icone et le nom de l'objet courant...
+	- Permettre de choisir l'ordre d'affichage des derniers commentaires
+	- Plugin permettant d'ouvrir une page html dans une frame peut être...
+	- Revoir un peu la feuille de style
+	- Dans l'édition d'un répertoire, pouvoir choisir l'icone à afficher
+	- Faire un système permettant l'ajout d'un fichier de langue dans les plugins
+	- Ajouter dans la classe obj, une variable membre permettant de désigner l'objet courant
+	- Améliorer le système dans obj qui permet de mettre à jour la description...etc... : evitez de faire 1 requete avant pour voir si il existe ou non
+	- Pouvoir supprimer un répertoire
+	- Refaire le code de l'upload
+	- Pouvoir choisir le nom du fichier que l'on upload ou télécharge
+	- Envoyer des vrais code d'erreur (404, 403...etc...)
+
+* BUGs :
+	- Supprimer le cache, et toutes ces infos en base d'un fichier lorsqu'on le supprime
+	- Si on supprime un plugin en supprimant son répertoire, attention au objet en base de données qui s'en servait
+

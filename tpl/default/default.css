@@ -1,0 +1,373 @@
+
+body {
+/*	font-family: Verdana, Arial, Helvetica, sans-serif;*/
+	font-family: Bitstream Vera Sans, sans-serif;
+}
+
+a {
+	color: #00F;
+	font-style: normal;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #000;
+	font-style: normal;
+	text-decoration: none;
+}
+
+.line {
+	background: transparent;
+}
+
+.line:hover {
+	background: #DDD;
+}
+
+.line td {
+	border-bottom: 1px solid #BBB;
+}
+
+.table {
+	margin: 10px 5%;
+}
+
+.table .header {
+	padding: 10px;
+	background: #EEE;
+	font-size: 110%;
+}
+
+.table .header-info {
+	font-size: 115%;
+	font-weight: bold;
+}
+
+.line a {
+	color: #00F;
+	font-style: normal;
+	text-decoration: none;
+	font-size: 100%;
+}
+
+.line a:hover {
+	color: #000;
+	font-style: normal;
+	text-decoration: none;
+}
+
+.status {
+	padding: 5px;
+	margin: 5px;
+	-moz-border-radius: 15px;
+	border: 2px #AAA dashed;
+}
+
+.error {
+	color: red;
+	background: #FCC;
+//	font-size: 90%;
+	font-weight: bold;
+	padding: 5px;
+	margin: 5px;
+	-moz-border-radius: 15px;
+}
+
+h4 {
+	border: 2px solid #CCC;
+	padding: 5px;
+	background: #EEE;
+	font-weight: normal;
+}
+
+
+fieldset {
+	margin: 0px;
+}
+
+fieldset, body > div > a {
+	font-size: 80%;
+}
+
+.copyright {
+	padding: 5px;
+	font-size: 80%;
+	text-align: left;
+}
+
+
+.footer {
+	clear: both;
+}
+
+.footer > fieldset > a {
+	padding: 2px;
+	border: 1px solid transparent;
+}
+
+.footer > fieldset > a:hover {
+	background: #EEE;
+	border: 1px solid #BBB;
+}
+
+.description {
+	font-size: 85%;
+	color: #AA0;
+}
+
+
+
+
+/*	Les formulaires
+ */
+textarea{
+	width: 100%;
+	border: 1px solid #CCC;
+/*	padding: 0px;*/
+	background: #FFE;
+}
+
+textarea:focus {
+	background: #FFF;
+}
+
+input {
+	border: 1px solid #CCC;
+	padding: 3px;
+	background: #FFE;
+}
+
+input:focus {
+	background: #FFF;
+}
+
+input[type=submit] {
+	border: 1px solid #999;
+	padding: 1px;
+	background: #CCC;
+}
+
+input[type=submit]:hover {
+	border: 1px solid #999;
+	padding: 1px;
+	background: #DDD;
+}
+
+
+fieldset {
+	border: 1px solid #CCC;
+	background: #EEE;
+}
+
+legend {
+	font-size: 120%;
+	font-weight: bold;
+}
+
+
+
+.comment_line {
+	margin: 5px;
+	padding: 15px;
+	background: #EEE;
+	font-size: 90%;
+}
+
+#comment_add {
+	padding: 40px;
+	width: 50%;
+}
+
+.comment_info {
+	font-weight: bold;
+	padding: 1px;
+}
+
+.comment_content {
+	padding: 10px;
+}
+
+.comment_nbr {
+/*
+	background : transparent url(img/PostIt.png) repeat-x top left;
+	width: 100px;
+	height: 70px;
+*/
+	color: #990;
+	display: inline;
+}
+
+
+
+img {
+	border: 0px;
+}
+
+
+
+.option {
+	padding: 5px;
+	border: 1px #BBB solid;
+	background: #EEE;
+}
+
+
+.plugin {
+	padding: 5px;
+	border: 2px #AAA dashed;
+	text-align: center;
+}
+
+
+.info {
+	border: 1px dashed #AAC;
+	padding: 5px;
+	background: #CCE;
+	font-weight: normal;
+	margin-left: 10%;
+	margin-right: 10%;
+}
+
+th {
+	background: #CCC;
+}
+
+
+.pagination {
+	width: 100%;
+	text-align: center;
+	font-size: 100%;
+	padding-bottom: 20px;
+}
+
+.pagination > #current {
+	width: 30%;
+}
+
+.pagination > #previous {
+	float: left;
+	width: 30%;
+}
+
+.pagination > #next {
+	float: right;
+	width: 30%;
+}
+
+
+.gallery {
+	width: 100%;
+/*	margin-left: 5%;
+	margin-right: 5%;
+*/
+	text-align: center;
+}
+
+
+
+.gallery td {
+/*	padding: 20px;*/
+	background: #EEE;
+	border: 1px solid #CCC;
+	font-size: 80%;
+	text-align: right;
+}
+
+
+.gal_item {
+
+}
+
+.gal_comment {
+/*	text-align: left;
+	background: #DDD;*/
+/*	float: right;*/
+/*	top: 1px;
+	left: 1px;*/
+/*	position: absolute;*/
+}
+
+.gal_img {
+	text-align: center;
+	padding: 5%;
+}
+
+/*
+.gal_line {
+	display: inline;
+}
+
+.gallery > div {
+	background: #CCC;
+}
+*/
+
+
+.gallery fieldset {
+	border: 0px;
+	border: 1px #CCC solid;
+	background: #EEE;
+}
+
+.gallery fieldset legend {
+	border: 1px #CCC solid;
+	background: #DDD;
+}
+
+.gallery img {
+	/*border: 3px black solid;*/
+}
+
+
+.gallery > .img1 {
+	margin-left: 50%;
+}
+
+.gallery > .img2 {
+	margin-right: 50%;
+}
+
+
+
+/*	Zenphoto
+ */
+
+.imagethumb a {
+	display: block;
+	padding: 10px;
+	margin: 6px;
+	
+	border: 1px solid #92BED3;
+	background: #DDEAF0;
+	line-height: 0px;
+
+	height: 120px;
+	width: 120px;
+}
+
+.imagethumb a:hover {
+	border: 1px solid #62A0BF;
+	background: #F4F9FB;
+}
+
+.imagethumb {
+	float: left;
+}
+
+
+#mainzen {
+	text-align: left;
+	margin-left: 10%;
+	margin-right: 10%;
+	width: 80%;
+/*
+	background: #fff;
+	padding: 20px 30px 70px;
+	border-top: 1px solid #E6E6DF;
+	border-right: 1px solid #E6E6DF;
+	border-bottom: 5px solid #E6E6DF;
+	border-left: 1px solid #E6E6DF;
+*/
+}
+
+

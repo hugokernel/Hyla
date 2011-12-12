@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+
+<plugin target="file" ext="mp3">
+	<name>mp3</name>
+	<description>Un plugin flash permet de lire le fichier mp3</description>
+	<author>hugo</author>
+	<version>1</version>
+</plugin>
+

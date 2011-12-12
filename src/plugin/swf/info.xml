@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+
+<plugin target="file" ext="swf">
+	<name>swf</name>
+	<description>Permet de lire les fichiers flash</description>
+	<author>hugo</author>
+	<version>1</version>
+</plugin>

@@ -1,0 +1,102 @@
+---------------------< ChangeLog iFile >----------------------
+
+[VERSION 0.4.1]
+	- hugo
+		31 mai 2006
+			* BUG: Correction d'un bug ralentissant l'affichage d'un répertoire car on allait chercher systématiquement les objet précédents, suivants...
+			* BUG: Dans certain cas, le groupage par critère de tri était erroné dû à une erreur dans la récupération des extensions des fichiers
+			* Le script d'installation ne renvoie plus de notice (E_ERROR)
+			* Pour l'utilisation sur Windows, une fonction fnmatch de remplacement à été ajoutée
+
+[VERSION 0.4]
+	- hugo
+		29 mai 2006
+			* Le plugin mp3 se sert dorénavant du plugin flash de Neolao
+			* Un nouveau plugin permet de lire les vidéos au format flv par le biais du plugin flash de Neolao
+			* Un compteur de permet de compter les téléchargement (et non les visualisations)
+			* Création d'un plugin permettant de lire les fichiers flash (swf)
+			* Création d'un script d'installation automatique (install.php)
+		27&28 mai 2006
+			* La pagination est dorénavant possible lorsque l'on navigue dans les fichiers
+			* Possibilité dans la plugin image de choisir la taille de l'image à afficher
+			* Le plugin archive permet d'extraire dans le répertoire courant les fichiers contenu dans une archive
+			* BUG: Correction d'un problème lorsque l'on lisait une image contenu dans une archive, les données EXIF n'était pas lues
+			* La pagination existe aussi dans les archives !!
+			* Lorsque l'on accède à un fichier qui n'existe pas dans une archive, il y a une erreur !
+		25&26 mai 2006
+			* La configuration du fichier .ini est dorénavant lue avec la fonction parse_ini_file() inclu dans php si elle est disponible
+			* Ajout du groupage par critère de tri dans le plugin Dir
+			* On passe par la fonction fnmatch pour les recherches (plus simple pour les non initiés que les expressions régulières avec preg)
+			* On affiche la taille maximale téléchargeable dans la page upload
+			* Lorsque l'on clique sur une action alors que l'on est pas loggué, on est redirigé vers le login puis l'action qui avait été stoppé par la phase de login est reprise
+			* Dans l'édition d'un répertoire, il est maintenant possible de remettre le plugin par défaut
+			* Changement dans l'affichage des pages pour faciliter l'intégration du système de pagination
+
+[VERSION 0.2]
+	- hugo
+		5&8 mai 2006
+			* BUG: Correction d'un bug avec les fichiers venant du cache
+			* Un répertoire dénommé conf est placé à la racine de l'application, il contient config.inc.php et un nouveau fichier (.ini) : ifile.ini, ce dernier
+			  contient les options de configuration suceptible d'être changer par l'intermédiaire de la future console d'administration
+			* Création du plugin zenphoto
+		3 mai 2006
+			* Ajout du support de l'upload multiple local et distant
+		2 mai 2006
+			* On peut modifier la description d'un objet ainsi que le plugin par défaut d'un répertoire permettant de le passer en galerie
+			* Les icones des répertoires avec le plugin galeries sont différents permettant de les distinguer
+			* Possibilité de faire des recherches dans le système de fichiers
+		28 avril 2006
+			* Le tri est dorénavant gérer dans les plugins (dir...) et la valeur du tri est stockée dans la session php
+		26&27 avril 2006
+			* Réécriture du moteur interne, dorénavant, une requête globale est exécutée pour un répertoire lu, il est possible de spécifier
+			  à partir de quel fichier commencer l'affichage et le nombre de fichiers à afficher dans les répertoires permettant ainsi de gérer la pagination
+			* Ajout d'un plugin mp3 qui permet de les lire au travers d'un plugin en flash: dewplayer
+		10&11 avril 2006
+			* Refonte du code : terminé le fichier XML, on passe en base de données (Sqlite)
+			* Ajout du système de cache des images
+			* Mise en place des modifications au niveau des plugins, maintenant, chaque plugin à un répertoire dans src/plugin/
+			* Mise en place du système permettant de lire un fichier contenu dans une archive comme un simple fichier
+
+Le projet à été arrêté car il répondait aux attentes initiales et j'ai décidé de le reprendre avec beaucoup plus de fonctionnalités...
+
+[VERSION 0.1]
+	- hugo
+		18&20 janvier 2004
+			* Ajout d'un système de comptage de fichiers téléchargés
+			* Lorsque l'on créé un répertoire, on a la possibilité de directement mettre un commentaire / type
+			* BUG: Lorsque un fichier sans extension était édité, problème de chargement de plugin
+			* Gros changement visuel et interne dans le système d'upload
+			* Il est dorénavant impossible de supprimer la racine
+		13 janvier 2004
+			* Lorsqu'un quote (') était présent dans une description, il était affiché "slashé"
+			* Correction d'un bug empéchant le téléchargement d'un fichier contenu dans un Zip
+			* Correction d'un bug dans le plugin archive empechant la lecture du contenu d'un fichier Zip
+			* Suppression d'une alerte NOTICE lorsque qu'aucun plugin n'est trouvé pour un type de fichier
+		20 décembre 2004
+			* Possibilité dans l'administration de synchronisé le fichier xml avec le système de fichier pour
+			  être sûr quand cas de suppression de fichiers sans passer par l'appli, le fichier xml soit à jour
+		15&16 décembre 2004
+			* Vérification des droits d'un fichier ou répertoire avec is_writable() avant suppression
+			* Affichage pour l'utilisateur root d'infos comme les permissions et la taille d'un objet
+			* BUG: Lors de la suppression d'un répertoire, on était redirigé vers celui-ci !
+		13 décembre 2004
+			* BUG: Correction d'un bug lorsque "register_global" à On
+			* BUG: Problème lors de recherche à partir de la racine
+		6-9 décembre 2004
+			* Fork et passage en PHP4
+			* BUG: lors de déconnection, on était redirigé vers la mauvaise page
+			* install.php permet l'installation sur un serveur plus simplement mais n'est pas encore terminé
+		3 novembre 2004
+			* BUG: Lorsqu'un ' était contenu dans un nom de fichier, PHP rajoutait un slash
+		28 octobre 2004
+			* BUG: Lors d'un upload, le fichier était toujours mis à la racine et non dans le dossier courant
+			* BUG: Une recherche est effectué qu'à partir du répertoire courant et non depuis la racine
+			* Dans une galerie, on voit maintenant tous les fichiers et plus seulement les images
+		26-29 juillet 2004
+			* Le plugin archive n'affiche plus les répertoire contenu dans l'archive mais uniquement les fichiers
+		26 juillet 2004
+			* Tout est à base de plugin, lorsqu'un répertoire est lu, c'est le plugin 'dir' qui est chargé...
+			* Ajout d'une administration pour ajouter / supprimer des utilisateurs
+		16 juillet 2004
+			* BUG: On n'affiche pas la case à cocher 'Galerie image' dans l'edition d'un fichier
+			* Nettoyage du code de listf.class.php

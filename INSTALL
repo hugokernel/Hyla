@@ -1,0 +1,25 @@
+L'installation est très simple.
+
+Vous  avez  2  possiblités  pour  installer  iFile,  la  première  entièrement
+automatique grâce au script d'installation et la seconde, manuellement mais qui
+n'est franchement pas compliquée !
+
+Utilisateurs de free.fr : n'oubliez pas de créer un répertoire "sessions" à la RACINE de votre site !
+
+I. Avec le script d'installation
+
+	1. Copiez tous les fichiers nécessaires à l'application sur votre serveur
+	2. Assurez-vous que l'utilisateur de PHP à les droits d'écriture dans le répertoire cache/ ainsi que dans conf/
+	3. Ouvrez votre navigateur et entrez l'adresse de l'application suivi de install.php : http://localhost/ifile/install.php
+	4. Suivez simplement les indications
+
+
+II.	Manuellement
+
+	1. Copiez tous les fichiers nécessaires à l'application sur votre serveur
+	2. Assurez-vous que l'utilisateur de PHP à les droits d'écriture dans le répertoire cache/ ainsi que dans conf/
+	3. Copiez le fichier conf/config.inc.default.php en conf/config.inc.php et ouvrez éditez le correctement (tout est expliqué dans le fichier)
+	4. Créez les 2 tables nécessaires à l'application grâce au script sql se trouvant ici : src/db/mysql.sql
+	5. Vous pouvez éventuellement éditer le fichier conf/ifile.ini
+
+Dans tous les cas, N'OUBLIEZ pas de supprimer le fichier install.php sinon, l'application ne se lancera pas !

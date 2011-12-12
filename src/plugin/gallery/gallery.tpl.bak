@@ -1,0 +1,34 @@
+<div id="main">
+<div class="images">
+	<!-- BEGIN gal -->
+	<div class="image">
+	<!-- BEGIN gallery_line -->
+
+		<div class="imagethumb">
+			<div class="gal_item">
+
+
+				<!-- BEGIN gallery_comment -->
+					<!--<a href="{PATH}#comment"><img src="{FOLDER_TEMPLATE}/img/comment.png" class="gal_comment" width="32" height="32" border="0" align="middle" alt="Commentaires" /></a>-->
+				<!-- END gallery_comment -->
+
+			</div>
+
+			<!-- BEGIN gallery_line_img -->
+			<div class="gal_img">
+				<a href="{PATH}"><img src="{OBJECT_MINI}" border="0" align="middle" alt="Image" /></a>
+			</div>
+			<!-- END gallery_line_img -->
+
+			<!-- BEGIN gallery_line_other -->
+			<div class="gal_img">
+				<img src="img/mimetypes/{FILE_ICON}" width="48" height="48" border="0" align="middle" alt="Infos" /></a> <a href="{PATH}">{FILE_NAME}</a>
+			</div>
+			<!-- END gallery_line_other -->
+
+		</div>
+	<!-- END gallery_line -->
+	</div>
+	<!-- END gal -->
+</div>
+</div>
