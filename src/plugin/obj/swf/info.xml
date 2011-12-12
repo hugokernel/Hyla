@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin target="file" ext="swf">
-	<name>Swf</name>
-	<description>Permet de lire les fichiers flash</description>
-	<author>hugo</author>
-	<version>1</version>
+<plugin target="file" enabled="true">
+    <name>Swf</name>
+    <extension>swf</extension>
+    <description>Permet de lire les fichiers flash</description>
+    <author>hugo</author>
+    <version>1</version>
+    <minversion>0.8.1</minversion>
 </plugin>

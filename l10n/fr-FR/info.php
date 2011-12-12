@@ -32,4 +32,19 @@ $l10n['Remain permanently connected to activity of the site with rss.']	= 'Reste
 $l10n['Rss feed of file in this dir.']				= 'Fil rss des fichiers de ce dossier.';
 $l10n['Rss feed of comment in this dir.']			= 'Fil rss des commentaires de ce dossier.';
 
+
+$l10n['Export']			= 'Exportation';
+$l10n['Export content plugin in your own site, blog !'] =
+			'Il vous est possible de placer le contenu du plugin sur votre site, blog, simplement en copiant le code ci dessus et en le plaçant oû vous le souhaitez !';
+
+$l10n['Javascript exportation']	= 'Exportation en javascript';
+$l10n['Iframe exportation']		= 'Exportation en iframe';
+
+$l10n['With jQuery, you can include Hyla plugin directly in your html dom, try this : $("#div_name").load("http://EXPORTED_URL")']   =
+            'À l\'aide de JQuery, vous pouvez inclure un plugin Hyla oû vous le souhaitez simplement de cette manière : $("#div_name").load("http://EXPORTED_URL")';
+
+$l10n['Test']		= 'Tester';
+
+$l10n['Anonymous user do not have the rights to reach this resource !'] = 'L\'utilisateur anonyme n\'a pas les droits d\'accéder au dossier courant !';
+
 ?>

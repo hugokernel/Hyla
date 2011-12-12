@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <rdf:RDF
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:dc="http://purl.org/dc/elements/1.1/"
-	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
-	xmlns:admin="http://webns.net/mvcb/"
-	xmlns:content="http://purl.org/rss/1.0/modules/content/"
-	xmlns="http://purl.org/rss/1.0/">
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+    xmlns:admin="http://webns.net/mvcb/"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns="http://purl.org/rss/1.0/">
 
-	<channel>
-		<title>{TITLE}</title>
-		<description>{DESCRIPTION}</description>
-		<link>{URL}</link>
-		<dc:language>{LANG}</dc:language>
-		<dc:creator>{AUTHOR}</dc:creator>
-		<dc:rights>{COPYRIGHT}</dc:rights>
-		<dc:date>{DATE}</dc:date>
-		<admin:generatorAgent rdf:resource="http://www.hyla-project.org/" />
+    <channel>
+        <title>{TITLE}</title>
+        <description>{DESCRIPTION}</description>
+        <link>{URL}</link>
+        <dc:language>{LANG}</dc:language>
+        <dc:creator>{AUTHOR}</dc:creator>
+        <dc:rights>{COPYRIGHT}</dc:rights>
+        <dc:date>{DATE}</dc:date>
+        <admin:generatorAgent rdf:resource="http://www.hyla-project.org/" />
 
-		<sy:updatePeriod>daily</sy:updatePeriod>
-		<sy:updateFrequency>1</sy:updateFrequency>
-	</channel>
+        <sy:updatePeriod>daily</sy:updatePeriod>
+        <sy:updateFrequency>1</sy:updateFrequency>
+    </channel>
 
-	<!-- BEGIN item -->
-	<item rdf:about="{OBJ_LINK}#comment,{OBJ_ID}">
-		<title>{OBJ_TITLE} - {OBJ_AUTHOR}</title>
-		<link>{OBJ_LINK}</link>
-		<dc:date>{OBJ_DATE}</dc:date>
-		<dc:creator>{OBJ_AUTHOR}</dc:creator>
-		<description>{OBJ_DESCRIPTION}</description>
-		<content:encoded>
-			{OBJ_CONTENT}
-		</content:encoded>
-	</item>
-	<!-- END item -->
+    <!-- BEGIN item -->
+    <item rdf:about="{OBJ_LINK}#comment,{OBJ_ID}">
+        <title>{OBJ_TITLE} - {OBJ_AUTHOR}</title>
+        <link>{OBJ_LINK}</link>
+        <dc:date>{OBJ_DATE}</dc:date>
+        <dc:creator>{OBJ_AUTHOR}</dc:creator>
+        <description>{OBJ_DESCRIPTION}</description>
+        <content:encoded>
+            {OBJ_CONTENT}
+        </content:encoded>
+    </item>
+    <!-- END item -->
 
 </rdf:RDF>

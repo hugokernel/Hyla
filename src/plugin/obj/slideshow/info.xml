@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin target="experimental">
-	<name>SlideShow</name>
-	<description>Affichage d'images en plein écran</description>
-	<author>hugo</author>
-	<version>1</version>
+<plugin target="experimental" enabled="true">
+    <name>SlideShow</name>
+    <description>Affichage d'images en plein écran</description>
+    <author>hugo</author>
+    <version>1</version>
+    <minversion>0.8.1</minversion>
 </plugin>

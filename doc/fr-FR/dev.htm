@@ -43,6 +43,7 @@
 					</ul>
 				</li>
 				<li><a href="#plugins-auth">Les plugins d'authentification</a></li>
+				<li><a href="#plugins-url">Les plugins d'url</a></li>
 			</ul>
 		</li>
 	</ul>
@@ -177,24 +178,24 @@
 	</p>
 
 	<pre>
-		&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 
-		&lt;template&gt;
-			&lt;name&gt;Default&lt;/name&gt;
-			&lt;description&gt;Thème par défaut en xhtml&lt;/description&gt;
-			&lt;author&gt;hugo&lt;/author&gt;
-			&lt;version&gt;1&lt;/version&gt;
-			&lt;header&gt;Content-Type: text/html; charset=UTF-8&lt;/header&gt;
-			&lt;img-src&gt;/tpl/default/img&lt;/img-src&gt;
-			&lt;php-function&gt;./tpl/default/function.php&lt;/php-function&gt;
-			&lt;stylesheets&gt;
-				&lt;stylesheet&gt;
-					&lt;type&gt;text/css&lt;/type&gt;
-					&lt;media&gt;screen,projection&lt;/media&gt;
-					&lt;title&gt;Standard&lt;/title&gt;
-					&lt;href&gt;default.css&lt;/href&gt;
-				&lt;/stylesheet&gt;
-		[...]
+&lt;template&gt;
+	&lt;name&gt;Default&lt;/name&gt;
+	&lt;description&gt;Thème par défaut en xhtml&lt;/description&gt;
+	&lt;author&gt;hugo&lt;/author&gt;
+	&lt;version&gt;1&lt;/version&gt;
+	&lt;header&gt;Content-Type: text/html; charset=UTF-8&lt;/header&gt;
+	&lt;img-src&gt;/tpl/default/img&lt;/img-src&gt;
+	&lt;php-function&gt;./tpl/default/function.php&lt;/php-function&gt;
+	&lt;stylesheets&gt;
+		&lt;stylesheet&gt;
+			&lt;type&gt;text/css&lt;/type&gt;
+			&lt;media&gt;screen,projection&lt;/media&gt;
+			&lt;title&gt;Standard&lt;/title&gt;
+			&lt;href&gt;default.css&lt;/href&gt;
+		&lt;/stylesheet&gt;
+[...]
 	</pre>
 
 	<p>
@@ -269,25 +270,25 @@
 			Maintenant, copions le fichier info.xml du dossier <span class="path">/tpl/default/</span> dans <span class="path">/tpl/test/</span> puis éditons-le afin
 			qu'il ressemble à ceci :
 			<pre>
-			&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 
-			&lt;template&gt;
-				&lt;name&gt;<strong>test</strong>&lt;/name&gt;
-				&lt;description&gt;<strong>Modèle avec la barre d'action en haut</strong>&lt;/description&gt;
-				&lt;author&gt;<strong>VotreNom</strong>&lt;/author&gt;
-				&lt;version&gt;1&lt;/version&gt;
-				&lt;header&gt;Content-Type: text/html; charset=UTF-8&lt;/header&gt;
-				&lt;img-src&gt;/tpl/default/img&lt;/img-src&gt;
-				&lt;php-function&gt;./tpl/default/function.php&lt;/php-function&gt;
-				&lt;stylesheets&gt;
-					&lt;stylesheet&gt;
-						&lt;type&gt;text/css&lt;/type&gt;
-						&lt;media&gt;screen,projection&lt;/media&gt;
-						&lt;title&gt;Standard&lt;/title&gt;
-						&lt;href&gt;default.css&lt;/href&gt;
-					&lt;/stylesheet&gt;
-				&lt;/stylesheets&gt;
-			&lt;/template&gt;
+&lt;template&gt;
+	&lt;name&gt;<strong>test</strong>&lt;/name&gt;
+	&lt;description&gt;<strong>Modèle avec la barre d'action en haut</strong>&lt;/description&gt;
+	&lt;author&gt;<strong>VotreNom</strong>&lt;/author&gt;
+	&lt;version&gt;1&lt;/version&gt;
+	&lt;header&gt;Content-Type: text/html; charset=UTF-8&lt;/header&gt;
+	&lt;img-src&gt;/tpl/default/img&lt;/img-src&gt;
+	&lt;php-function&gt;./tpl/default/function.php&lt;/php-function&gt;
+	&lt;stylesheets&gt;
+		&lt;stylesheet&gt;
+			&lt;type&gt;text/css&lt;/type&gt;
+			&lt;media&gt;screen,projection&lt;/media&gt;
+			&lt;title&gt;Standard&lt;/title&gt;
+			&lt;href&gt;default.css&lt;/href&gt;
+		&lt;/stylesheet&gt;
+	&lt;/stylesheets&gt;
+&lt;/template&gt;
 			</pre>
 		Vous remarquerez que j'ai supprimé les déclarations des feuilles de style qui ne nous intéressaient pas pour garder
 		uniquement default.css.
@@ -297,29 +298,29 @@
 			<span class="path">/tpl/default/index.tpl</span> dans <span class="path">/tpl/test/</span>, ouvrez maintenant ce fichier
 			(<span class="path">/tpl/test/index.tpl</span>) et modifiez le code html de cette manière :
 			<pre>
-				[...]
-				&lt;div id="main"&gt;
-				    {CONTENT}
-				&lt;/div&gt;
-
-				{TOOLBAR}
-
-				&lt;div class="copyright"&gt;
-				[...]
+    [...]
+    &lt;div id="main"&gt;
+        {CONTENT}
+    &lt;/div&gt;
+    
+    {TOOLBAR}
+    
+    &lt;div class="copyright"&gt;
+    [...]
 			</pre>
 
 			afin que cela ressemble à ceci :
 
 			<pre>
-				[...]
-				<strong>{TOOLBAR}</strong>
-
-				&lt;div id="main"&gt;
-				    {CONTENT}
-				&lt;/div&gt;
-
-				&lt;div class="copyright" <strong>style="clear:both"&gt;</strong>
-				[...]
+    [...]
+    <strong>{TOOLBAR}</strong>
+    
+    &lt;div id="main"&gt;
+        {CONTENT}
+    &lt;/div&gt;
+    
+    &lt;div class="copyright" <strong>style="clear:both"&gt;</strong>
+    [...]
 			</pre>
 		</li>
 		<li>
@@ -339,12 +340,14 @@
 	<p>
 		Sur Hyla, un plugin est une classe qui est instanciée à la volée.
 		<br />
-		Dans Hyla, il existe 2 types de plugins :
+		Dans Hyla, il existe 3 types de plugins et les futures versions permettront toujours
+		plus de modularité grâce au plugin :
 	</p>
 
 	<ul>
 		<li><a href="#plugins-obj">Les plugins d'objets</a> qui permettent de lire les dossiers, de créer des galeries photos...etc...</li>
 		<li><a href="#plugins-auth">Les plugins d'authentification</a> qui permettent d'authentifier un utilisateur qui saisi sont mot de passe.</li>
+		<li><a href="#plugins-url">Les plugins d'url</a> qui permettent de générer et de scanner les urls</li>
 	</ul>
 
 	<h3 id="plugins-obj">Les plugins d'objets</h3>
@@ -355,7 +358,7 @@
 	</p>
 
 	<p>
-		Pour illustrer le fonctionnement des plugins d'objets,voici, ci-dessous, le contenu du dossier d'un plugin très simple, le plugin Text qui
+		Pour illustrer le fonctionnement des plugins d'objets, voici, ci-dessous, le contenu du dossier d'un plugin très simple, le plugin Text qui
 		permet d'afficher le contenu d'un fichier txt :
 	</p>
 
@@ -365,15 +368,15 @@
 			<th>Description</th>
 		</tr>
 		<tr>
-			<td><span class="path">/src/plugins/obj/text/index.php</span></td>
+			<td><span class="path">/src/plugin/obj/text/index.php</span></td>
 			<td>Le plugin en lui même</td>
 		</tr>
 		<tr>
-			<td><span class="path">/src/plugins/obj/text/info.xml</span></td>
+			<td><span class="path">/src/plugin/obj/text/info.xml</span></td>
 			<td>Fichier de description contenant les informations sur le plugin.</td>
 		</tr>
 		<tr>
-			<td><span class="path">/src/plugins/obj/text/text.tpl</span></td>
+			<td><span class="path">/src/plugin/obj/text/text.tpl</span></td>
 			<td>Le fichier modèle</td>
 		</tr>
 	</table>
@@ -383,14 +386,15 @@
 	</p>
 
 	<pre>
-		&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 
-		&lt;plugin target="file" ext="txt,c,h"&gt;
-			&lt;name&gt;Text&lt;/name&gt;
-			&lt;description&gt;Affichage du contenu du fichier&lt;/description&gt;
-			&lt;author&gt;hugo&lt;/author&gt;
-			&lt;version&gt;1&lt;/version&gt;
-		&lt;/plugin&gt; 
+&lt;plugin target="file" enabled="true"&gt;
+	&lt;name&gt;Text&lt;/name&gt;
+	&lt;extension&gt;txt&lt;/extension&gt;
+	&lt;description&gt;Affichage du contenu du fichier&lt;/description&gt;
+	&lt;author&gt;hugo&lt;/author&gt;
+	&lt;version&gt;1&lt;/version&gt;
+&lt;/plugin&gt; 
 	</pre>
 
 	<p>
@@ -399,33 +403,33 @@
 	</p>
 
 	<p>
-		Voici, le contenu du fichier <span class="path">/src/plugins/obj/text/index.php</span> suivi des explications :
+		Voici, le contenu du fichier <span class="path">/src/plugin/obj/text/index.php</span> suivi des explications :
 	</p>
 
-	<pre>
-	&lt;?php
+<pre>
+&lt;?php
 
-	class plugin_obj_text extends plugin_obj {
+class plugin_obj_text extends plugin_obj {
+    
+    function plugin_obj_text($cobj) {
+        parent::plugin_obj($cobj);
+    
+        $this->tpl->set_root($this->plugin_dir.'text');
+        $this->tpl->set_file('text', 'text.tpl');
+    }
+    
+    function aff() {
+    
+        $content = file::getContent($this->real_file);
+        $content = htmlentities($content, ENT_QUOTES);
+    
+        $this->tpl->set_var('CONTENT', $content);
+    
+        return $this->tpl->parse('OutPut', 'text');
+    }
+}
 
-		function plugin_obj_text($cobj) {
-			parent::plugin_obj($cobj);
-
-			$this->tpl->set_root($this->plugin_dir.'text');
-			$this->tpl->set_file('text', 'text.tpl');
-		}
-		
-		function aff() {
-
-			$content = file::getContent($this->_real_file);
-			$content = htmlentities($content, ENT_QUOTES);
-
-			$this->tpl->set_var('CONTENT', $content);
-
-			return $this->tpl->parse('OutPut', 'text');
-		}
-	}
-
-	?&gt;</pre>
+?&gt;</pre>
 
 	<p>
 		Comme mentionné plus haut, un plugin est bel et bien une classe qui est nommée d'une manière défini, en l'occurence : "plugin_obj_" + le nom du plugin.
@@ -440,13 +444,13 @@
 		Vous aurez remarqué la méthode nommée aff() qui est appelée automatiquement par Hyla lors du chargement d'un fichier text, une fois l'objet créé,
 		cette fonction peut prendre un paramètre (paramètre envoyé au plugin) et doit renvoyer le contenu généré par le plugin.
 		<br />
-		Au sein de cette fonction, vous remarquerez l'utilisation de la variable membre <strong>$this->_real_file</strong> qui permet de renvoyer le chemin
+		Au sein de cette fonction, vous remarquerez l'utilisation de la variable membre <strong>$this->real_file</strong> qui permet de renvoyer le chemin
 		vers l'objet courant, si l'objet courant est un fichier contenu dans une archive, cette variable vous renverra alors, entièrement automatiquement,
 		le chemin vers le fichier extrait dans le cache.
 	</p>
 
 	<p class="remarque">
-		<u>Remarque :</u> A aucun moment, un plugin ne doit afficher le contenu de la variable <strong>$this->_real_file</strong> car le visiteur n'a pas
+		<u>Remarque :</u> A aucun moment, un plugin ne doit afficher le contenu de la variable <strong>$this->real_file</strong> car le visiteur n'a pas
 		à savoir dans quel dossier se fait la lecture des objets...
 	</p>
 
@@ -462,14 +466,16 @@
 	</p>
 
 	<pre>
-		&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 
-		&lt;plugin target="file" ext="coucou"&gt;
-			&lt;name&gt;Hello&lt;/name&gt;
-			&lt;description&gt;Hello World pour fichier .coucou&lt;/description&gt;
-			&lt;author&gt;votre nom&lt;/author&gt;
-			&lt;version&gt;1&lt;/version&gt;
-		&lt;/plugin&gt; 
+&lt;plugin target="file" enabled="true"&gt;
+	&lt;name&gt;Hello&lt;/name&gt;
+	&lt;extension&gt;coucou&lt;/extension&gt;
+	&lt;description&gt;Hello World pour fichier .coucou&lt;/description&gt;
+	&lt;author&gt;votre nom&lt;/author&gt;
+	&lt;version&gt;1&lt;/version&gt;
+	&lt;minversion&gt;0.8.1&lt;/minversion&gt;
+&lt;/plugin&gt;		
 	</pre>
 
 	<p>
@@ -477,21 +483,21 @@
 		que nous avons créé plus haut et éditons le afin qu'il ressemble à cela :
 	</p>
 
-	<pre>
-	&lt;?php
+<pre>
+&lt;?php
 
-	class plugin_obj_hello extends plugin_obj {
+class plugin_obj_hello extends plugin_obj {
 
-		function plugin_obj_hello($cobj) {
-			parent::plugin_obj($cobj);
-		}
-		
-		function aff() {
-			return 'Hello World !';
-		}
-	}
+    function plugin_obj_hello($cobj) {
+        parent::plugin_obj($cobj);
+    }
+    
+    function aff() {
+        return 'Hello World !';
+    }
+}
 
-	?&gt;</pre>
+?&gt;</pre>
 
 	<p>
 		Voilà, c'est tout, maintenant, à l'ouverture d'un fichier comportant une extension .coucou, Hyla affichera Hello World, totalement inutile,
@@ -507,43 +513,44 @@
 		le choix du type d'authentification se fait par le biais du fichier de configuration <span class="path">/conf/hyla.ini</span> :
 	</p>
 
-	<pre>
-	[...]
+<pre>
+[...]
 
-	; La méthode d'authentification
-	; - default : méthode standard
-	; - ldap : Authentification grâce à un annuaire LDAP (bêta)
-	auth_method = default
+; La méthode d'authentification
+; - default : méthode standard
+; - ldap : Authentification grâce à un annuaire LDAP (bêta)
+plugin_default_auth = default
 
-	[...]</pre>
+[...]
+</pre>
 
 	<p>
-		Les plugins d'authentification se situe dans l'arborescence suivante : <span class="path">/src/plugins/auth</span>, examinons le fonctionnement du plugin d'authentification
-		&laquo; default &raquo; en éditant le fichier <span class="path">/src/plugins/auth/default/index.php</span> :
+		Les plugins d'authentification se situe dans l'arborescence suivante : <span class="path">/src/plugin/auth</span>, examinons le fonctionnement du plugin d'authentification
+		&laquo; default &raquo; en éditant le fichier <span class="path">/src/plugin/auth/default/index.php</span> :
 	</p>
 
 	<pre>
-	&lt;?php
+&lt;?php
 	
-	class plugin_auth_default {
+class plugin_auth_default {
 
-		/*	Initialisations
-		 */
-		function plugin_auth_default() {
+    /*  Initialisations
+        */
+    function plugin_auth_default() {
+        parent::plugin_auth();
+    }
+    
+    /*  Phase d'authentification
+        @param	$name		Le nom de l'utilisateur
+        @param	$password	Le mot de passe associé
+        */
+    function auth($name, $password) {
+        $usr = new users();
+        return $usr->auth($name, $password);		
+    }
+}
 
-		}
-
-		/*	Phase d'authentification
-			@param	$name		Le nom de l'utilisateur
-			@param	$password	Le mot de passe associé
-		 */
-		function auth($name, $password) {
-			$usr = new users();
-			return $usr->auth($name, $password);		
-		}
-	}
-
-	?&gt;</pre>
+?&gt;</pre>
 
 	<p>
 		Comme vous le voyez, un plugin d'authentification est en fait une classe qui est nommé d'une manière défini ( "plugin_auth_" + le nom du plugin )
@@ -554,14 +561,116 @@
 		cette dernière doit retourner null en cas d'erreur ou une structure de type tUser correctement renseignée en cas de succès :
 	</p>
 
+<pre>
+class tUser {
+        var $id;		// Id
+        var $name;		// Nom
+        var $type;		// Type
+}
+</pre>
+
+	<h3 id="plugins-url">Les plugins d'url</h3>
+
+	<p>
+		Ces derniers permettent de gérer les url, ainsi, il vous est possible de faire en sorte qu'Hyla
+		génère des urls identique à celle que vous utilisez sur votre site.
+		<br />
+		Le choix du type d'url se fait, comme pour le plugin d'authentification, par le biais du fichier de configuration <span class="path">/conf/hyla.ini</span> :
+	</p>
+
 	<pre>
-	class tUser {
-		var $id;		// Id
-		var $name;		// Nom
-		var $type;		// Type
-	}
+[...]
+
+; Url plugin
+; - default : méthode standard
+; - pathinfo : Génère des url de type path info
+plugin_default_url = pathinfo
+
+[...]
 	</pre>
 
+	<p>
+		Les plugins d'url se situe dans l'arborescence suivante : <span class="path">/src/plugin/url</span>
+	</p>
+	
+	<p>
+	   Voici le squelette d'un plugin d'url :
+	</p>
+
+	<pre>
+&lt;?php
+	
+class plugin_url_default extends plugin_url {
+
+    /*  Constructor
+        */
+    function plugin_url_default() {
+        parent::plugin_url();
+    }
+
+    /*  Scan url
+        @param  array   $url    Array ($_REQUEST or other)
+        @return tUrl object
+        */
+    function scan($url) {
+
+        $ret = new tUrl;
+
+        [...]
+        
+        return $ret;
+    }
+
+    /*  Get an url
+        @param  mixed   $object Object
+        @param  array   $aff    Page
+        @param  array   $act    Action
+        @param  string  @pact   Plugin action
+        @param  string  @paff   Plugin aff
+        @return Url
+        */
+    function get($object, $aff = null, $act = null, $pact = null, $paff = null) {
+                
+        [...]
+
+        return $url;
+    }
+}
+
+?&gt;</pre>
+
+    <p>
+        Le constructeur doit appelé le constructeur parent afin d'initialiser des variables.
+        <br />
+        Vous aurez remarquez la présence de 2 méthodes obligatoires scan et get, la première permet
+        de scanner l'url courante et elle doit renvoyer une structure (classe) de type tUrl (voir ci-dessous)
+        et la seconde permet de générer des urls.
+    </p>
+    
+    <p>
+        Voici le contenu de la structure tUrl :
+    </p>
+    
+    <pre>
+class tUrl {
+    var $obj;       // Current object
+
+    var $act;       // Current action
+    var $aff;       // Current view
+
+    var $pact;      // Plugin action
+    var $paff;      // Plugin view
+}
+    </pre>
+    
+    <ul>
+        <li><strong>$obj</strong> : Objet courant
+        <li><strong>$act</strong> : L'action courante
+        <li><strong>$aff</strong> : L'affichage courant sous forme de tableau (ex: array('obj', 'download'))
+        <li><strong>$pact</strong> : Paramètre d'action pour le plugin courant
+        <li><strong>$paff</strong> : Paramètre d'affichage pour le plugin courant
+    </ul>
+    
 	<hr />
 
 	<a href="#">Remonter</a>

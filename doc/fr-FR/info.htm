@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+
+<head>
+	<title>Informations</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<link rel="shortcut icon" type="image/x-icon" href="img/icon.png" />
+	<link rel="icon" type="image/png" href="img/icon.png"/>
+
+	<link rel="stylesheet" type="text/css" media="screen,projection" title="Standard" href="default.css" />
+
+</head>
+
+<body>
+
+	<h1>Informations</h1>
+
+	<p>
+		<a href="index.htm">Retourner à l'index</a>
+	</p>
+
+	<ul>
+		<li><a href="#introduction">Introduction</a></li>
+		<li><a href="#general">Général</a></li>
+		<li><a href="#general">Syndication</a></li>
+		<li><a href="#general">Exportation</a></li>
+	</ul>
+
+	<hr />
+
+	<h2 id="introduction">Introduction</h2>
+
+	<p>
+		La page information est disponible pour tout type d'objet et vous permet
+		d'obtenir des informations à propos de l'objet courant.
+	</p>
+	
+	<p>
+	   Cette page est divisée en trois catégories : Général, Syndication et Exportation.
+	</p>
+
+	<h2 id="general">Général</h2>
+
+	<p>
+        Cette catégorie vous permet d'obtenir des informations comme
+        la taille de l'objet, son type, et éventuellement calculer, si
+        c'est un fichier ou un fichier archivé, son md5.
+	</p>
+	
+	<p>
+	   Des liens vous permettent de télécharger l'objet courant en différent format d'archive.
+	</p>
+
+	<h2>Syndication</h2>
+
+    <p>
+        La syndication vous permet d'être tenu au courant de l'activité
+        du site à l'aide des flux <acronym title="Really Simple Syndication">rss</acronym>.
+    </p>
+    
+    <p>
+        Pour cela, il vous faut utiliser un lecteur de flux
+        <acronym title="Really Simple Syndication">rss</acronym>, notons que Mozilla Firefox
+        et Mozilla Thunderbird sont capable de lire de tel flux.
+    </p>
+
+	<h2>Exportation</h2>
+
+	<p>
+        L'exporation permet comme son nom l'indique d'exporter le contenu d'un
+        plugin afin de l'afficher hors de Hyla.
+        <br />
+        Cette fonction est très utile pour les blogs, forums souhaitant afficher
+        au sein de leur messages des objets tel que des documents csv, des vidéos,
+        le contenu d'archives...
+	</p>
+	
+	<h3>Exporter en javascript, ajax</h3>
+	
+	<p>
+	   Pour exporter le contenu d'un plugin dans un élément html en javascript à l'aide de
+	   <a href="http://www.jquery.com/">jQuery</a>, procédez ainsi :
+	</p>
+	
+	<ol>
+	   <li>Copiez le contenu du champs texte</li>
+	   <li>Insérez le code ainsi copié</li>
+	</ol>
+	
+	<p>
+	   Téléchargez jQuery sur le <a href="http://jquery.com/">site officiel</a>, copiez la
+	   librairies sur votre site et ajoutez le code html suivant afin de charger jQuery :
+	</p>
+	
+	<pre>
+	
+&lt;script language="javascript" type="text/javascript" src="/chemin_vers/jquery.js"&gt;&lt;/script&gt;
+	</pre>
+	
+	<p>
+	   Puis, ajoutez le code ci dessous :
+	</p>
+	
+	<pre>
+	   
+   &lt;script type="text/javascript"&gt;
+       $("#div_name").load("http://localhost/hyla/index.php/obj-export-content/");
+   &lt;/script&gt;
+	</pre>
+	
+	<p>
+	   Le contenu du plugin sera alors inséré dans l'élement possédant l'id "div_name"
+	   (ex: &lt;div id="div_name" ...).
+	</p>
+	
+	<h3>Exportation en iframe</h3>
+	
+	<p>
+	   Pour exporter le contenu d'un plugin dans une iframe sur votre site, suivez les étapes
+	   suivantes :
+	</p>
+	
+	<ol>
+	   <li>Sur la page exportation, copiez le contenu du champs de texte "Exportation en iframe".</li>
+	   <li>Ensuite, collez simplement le code html dans le billet de votre blog ou autre</li>
+	</ol>
+	
+	<p>
+	   Une iframe contenant le plugin exporté sera alors visible sur votre site.
+	</p>
+
+	<hr />
+
+	<a href="#">Remonter</a>
+
+</body>
+
+</html>

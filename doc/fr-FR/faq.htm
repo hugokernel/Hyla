@@ -21,29 +21,98 @@
 		<a href="index.htm">Retourner à l'index</a>
 	</p>
 
-	<hr />
-
 	<p>
 		Voici une liste de questions / réponses souvent posées.
 	</p>
+	
+	<ul>
+	   <li><a href="#secure">Que conseillez-vous pour sécuriser au maximum les fichiers partagés par Hyla ?</a></li>
+	   <li><a href="#modif-folder_root">Comment modifier le dossier de partage ?</a></li>
+	   <li><a href="#del-free">Je n'arrive pas à supprimer de répertoires par le biais de Hyla sur mon compte free, à quoi est-ce dû ?</a></li>
+	   <li><a href="#ecran-vide">J'ai un écran vide sans aucun message, que faire ?</a></li>
+	</ul>
 
-	<h3>Comment modifier le répertoire de partage ?</h3>
+	<hr />
+
+    <h3 id="secure">Que conseillez-vous pour sécuriser au maximum les fichiers partagés par Hyla ?</h3>
+    
+    <p>
+        Depuis la version 0.8.0, Hyla possède un système de <a href="rights.htm">droits</a>
+        vous permettant, par exemple, de bloquer l'accès à certains dossiers de manière à protéger
+        leurs contenu.
+    </p>
+    
+    <p>
+        Des petites règles sont cependant importantes afin de s'assurer que les fichiers dit "sécurisés"
+        (entendez, fichiers au sein d'un dossier possédant des droits) ne soit pas accessibles par
+        un autre point d'entrée que Hyla. 
+    </p>
+
+    <ol>
+        <li>
+            <p>
+                Le dossier <span class="path">/sys/</span> ne doit à aucun moment être accessible
+                depuis le web, en effet, ce dernier contient des sous dossiers comprenant les fichiers
+                anonymes ayant été envoyés ainsi que le cache de fichiers (miniatures, archives...).
+            </p>
+            <p>
+                Par défaut, ce dossier contient un fichier .htaccess avec la clause "deny from all"
+                permettant sur un serveur <a href="http://www.apache.org">Apache</a> de bloquer
+                l'accès.
+            </p>
+            <p>
+                Vous pouvez vous assurer que le dossier <span class="path">/sys/</span> est bien
+                inaccessible en essayant de vous connecter dessus (ex: http://localhost/hyla/sys/).
+            </p>
+        </li>
+        <li>
+            Assurez-vous qu'il n'existe pas d'autre point d'entrée pour accéder au dossier partagé.
+            <br />
+            Un exemple vaut mieux qu'un long discour, imaginez l'arborescence suivante :
+            <p>
+                <span class="path">/var/www/</span> est la racine de votre site web.
+                <br />
+                <span class="path">/var/www/share/</span> est le dossier de partage de Hyla.
+                <br />
+                <span class="path">/var/www/hyla/</span> est le dossier oû est installé Hyla.
+            </p>
+            <p>
+                Dans cette configuration, il sera tout aussi simple d'accéder aux fichiers
+                partagés par Hyla directement en accédant au dossier <span class="path">/var/www/share/</span>
+                avec une url du genre http://localhost/share/,
+                les droits de Hyla ne pouvant empêcher un accès direct au dossier
+            </p>
+            <p class="remarque">    
+                <u>Note pour les développeurs de plugins:</u> C'est la raison pour laquelle il ne faut pas
+                afficher à l'utilisateur le chemin complet sur le serveur car une personne mal
+                intentionné pourrait alors, si le chemin n'est pas protégé, accéder au contenu partagé.
+            </p>
+            <p>
+                Il est donc conseiller de spécifier un dossier de partage qui ne soit pas accessible
+                directement depuis le web ou, si vous ne pouvez pas, créér un fichier .htaccess à la racine
+                de votre dossier de partage (ex: <span class="path">/var/www/share/</span>) contenant
+                "deny from all".
+            </p>
+        </li>
+    </ol>
+
+	<h3 id="modif-folder_root">Comment modifier le dossier de partage ?</h3>
 	<p>
-		Simplement en éditant le fichier conf/config.inc.php et en modifiant la constante &laquo; FOLDER_ROOT &raquo;
+		Simplement en éditant le fichier <span class="path">/conf/config.inc.php</span> et en modifiant la constante &laquo; FOLDER_ROOT &raquo;
 		<br />
 		Ainsi, pour partager le répertoire <span class="path">c:/program file/apps/easysphp1-8/www/docs</span>, éditez ainsi :
 	</p>
 
 	<pre>
 
-			define('FOLDER_ROOT', 'c:/program file/apps/easysphp1-8/www/docs');
+	define('FOLDER_ROOT', 'c:/program file/apps/easysphp1-8/www/docs');
 	</pre>
 	<p>
 		Sous Gnu/Linux / MacOs, procédez de la même manière, pour partager le dossier <span class="path">/var/www/share</span>, faites ainsi :
 	</p>
 	<pre>
 
-			define('FOLDER_ROOT', '/var/www/share');
+	define('FOLDER_ROOT', '/var/www/share');
 	</pre>
 	<p>
 
@@ -51,7 +120,7 @@
 	</p>
 
 
-	<h3>Je n'arrive pas à supprimer de répertoires par le biais de Hyla sur mon compte free, à quoi est-ce dû ?</h3>
+	<h3 id="del-free">Je n'arrive pas à supprimer de répertoires par le biais de Hyla sur mon compte free, à quoi est-ce dû ?</h3>
 	<p>
 		Free a désactivé la fonction qui permet de supprimer les dossiers pour des raisons de sécurité, Hyla ne peut donc pas supprimer les répertoires,
 		vous devez les supprimer par vos propres moyens, ftp...
@@ -59,6 +128,40 @@
 		Les futures versions de Hyla proposeront une corbeille qui permettra de contourner ce souci.
 	</p>
 
+    <h3 id="ecran-vide">J'ai un écran vide sans aucun message, que faire ?</h3>
+    
+    <p>
+        Il est fort probable qu'il y est un souci dans la configuration ou lors de l'établissement
+        de la connection avec le serveur SQL, par défaut, Hyla n'affiche pas les erreurs mais vous
+        pouvez forcer l'affichage afin de trouver la cause de votre problème.
+        <br />
+        Ouvrez le fichier <span class="path">/src/init.php</span>, au début de ce dernier, vous devriez
+        voir ceci :
+    </p>
+    
+    <pre>
+/*  Modifiez ici l'affichage des erreurs
+ */
+error_reporting(E_ERROR);
+</pre>
+
+    <p>
+        Modifiez la ligne afin d'obtenir celà :
+    </p>
+    
+    <pre>
+/*  Modifiez ici l'affichage des erreurs
+ */
+error_reporting(E_ALL);
+    </pre>
+
+    <p>
+        Dorénavant, toutes les erreurs seront affichés, il est maintenant plus simple de connaitre
+        la cause de votre problème.
+        <br />
+        Une fois le problème résolu, n'oubliez pas de remettre le fichier <span class="path">/src/init.php</span>
+        dans sa configuration initiale.
+    </p>
 
 	<hr />
 

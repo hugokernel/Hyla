@@ -1,0 +1,222 @@
+
+@import "default.css";
+
+body {
+    background: black;
+    color: #CCC;
+}
+
+a, #tree a {
+    color: green;
+}
+
+a, #tree a:hover {
+    color: #EEE;
+}
+
+a:hover {
+    color: #CCC;
+}
+
+.line th {
+    background: #222;
+    color: white;
+    border: 1px solid #333;
+}
+
+.line td {
+    border: 1px solid #333;
+}
+
+.line a {
+    color: green;
+}
+
+#toolbar {
+    max-height: 0.8ex;
+    padding: 5px 0 0;
+    overflow: auto;
+}
+
+#toolbar:hover {
+    max-height: none;
+    overflow: hidden;
+}
+
+#toolbar {
+    background: #444;
+}
+
+#toolbar a, #sidebar a {
+    border: 0;
+}
+
+#toolbar a:hover, #sidebar a:hover {
+    background: #555;
+    border: 0;
+}
+
+#current {
+    background: #444;
+}
+
+#current h3 {
+    background: #000;
+    border: 0;
+    color: white;
+}
+
+#current h3 a {
+    color: green;
+}
+
+hr {
+    border: 1px solid #333;
+}
+
+#header-toolbar {
+    border: 0;
+}
+
+.comment_content {
+    padding: 10px;
+    background: #444;
+}
+
+fieldset {
+    background: #444;
+    border: 0;
+}
+
+legend {
+    background: #111;
+}
+
+.info {
+    background: #888;
+    color: #FFF;
+}
+
+input, textarea, select {
+    background: #777;
+}
+
+input:hover, textarea:hover, select:hover {
+    background: #DDD;
+}
+
+.tab th {
+    background: #555;
+}
+
+.tab tr:hover {
+    background: #111;
+}
+
+.tab td, .tab th {
+    border: 1px solid #333;
+}
+
+.tab a {
+    color: green;
+}
+
+.tab a:hover {
+    color: white;
+}
+
+.header {
+    background: #444;
+}
+
+h4.description {
+    background: #880;
+    border: 0;
+}
+
+.status {
+    background: #444;
+    color: #FFF;
+}
+
+.error {
+    color: red;
+    background: #F88;
+}
+
+.textbox {
+    background: #CCC;
+    color: #000;
+}
+
+.suggestion {
+    background: #444;
+}
+
+.tab .selected {
+    background: #C00;
+}
+
+.tab .selected:hover {
+    background: #F00;
+}
+
+/*  Plugins
+ */
+
+
+/*  Dir
+ */
+#dir .line a {
+    color: green;
+}
+
+#dir .line:hover {
+    background: #111;
+}
+
+#dir .line a:hover {
+    color: #EEE;
+}
+
+/*  Zenphoto
+ */
+#zenphoto .imagethumb a {
+    border: 1px solid #000;
+    background: #555;
+}
+
+#zenphoto .imagethumb a:hover {
+    border: 1px solid #000;
+    background: #888;
+}
+
+/*  Gallery
+ */
+#gallery td {
+    background: #555;
+    border: 1px solid #000;
+}
+
+/*  Archive
+ */
+#archive .line td, #archive .line th {
+    padding: 5px;
+    border: 0px;
+    border-bottom: 1px solid #444;
+}
+
+#archive .line tr:hover {
+    background: #DDD;
+}
+
+/*  Slideshow
+ */
+#pages {
+    background: #444 !important;
+    border: 0 !important;
+}
+
+#pages #pcurrent {
+    border: 2px solid #999;
+}

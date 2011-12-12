@@ -19,7 +19,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 $l10n['Object not found !']			= 'L\'objet est introuvable !';
 $l10n['Error']						= 'Erreur';
 $l10n['No description !']			= 'Pas de description !';
@@ -27,9 +26,6 @@ $l10n['No description !']			= 'Pas de description !';
 $l10n['You will be redirected towards the object !']	= 'Vous allez être redirigé vers l\'objet !';
 
 $l10n['You do not have the rights sufficient to reach the resource !']	= 'Vous n\'avez pas les droits suffisant pour accéder à la ressource !';
-
-$l10n['The new template will be applied !']	= 'Le nouveau modèle va être appliqué !';
-$l10n['Configuration was correctly recorded !'] = 'La configuration à été enregistrée !';
 
 $l10n['The file is too large !']						= 'Le fichier est trop gros !';
 $l10n['An error occured while uploading the file !']	= 'Une erreur est survenue durant le téléchargement !';
@@ -81,7 +77,6 @@ $l10n['Object not readable !']	= 'L\'objet n\'est pas accessible en lecture !';
 
 $l10n['The root dir (FOLDER_ROOT) is not readable, please, edit FOLDER_ROOT constant in configuration file %s.'] =
 			'Le dossier de partage (FOLDER_ROOT) n\'est pas accessible en lecture, éditez la constante FOLDER_ROOT dans le fichier de configuration %s.';
-
 
 $l10n['Time out !']	=	'Temps d\'exécution dépassé !';
 
@@ -155,6 +150,7 @@ $l10n['Supervisor']		= 'Superviseur';
 $l10n['Administrator']	= 'Administrateur';
 
 
+$l10n['None']					= 'Aucun';
 $l10n['View']					= 'Visualisation';
 $l10n['Add comment']			= 'Ajout de commentaire';
 $l10n['Description edition']	= 'Édition de description';

@@ -33,7 +33,8 @@ define('FOLDER_ROOT', '/var/www');
 	Ex: http://ifile.free.fr/hyla/			-> mettez '/hyla'
 	Ex: http://ifile.free.fr/data/hyla		-> mettez '/data/hyla'
 
-	* Si ce champs est vide, la valeur de $_SERVER['PHP_SELF'] sera utilisée
+	Si ce champs est vide, la valeur de $_SERVER['PHP_SELF'] sera utilisée
+    Laissez tel quel par défaut
  */
 //define('ROOT_URL', '');
 

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin target="dir">
-	<name>Dir</name>
-	<description>Listage de répertoire</description>
-	<author>hugo</author>
-	<version>1</version>
+<plugin target="dir" enabled="true">
+    <name>Dir</name>
+    <description>Listage de répertoire</description>
+    <author>hugo</author>
+    <version>1</version>
+    <minversion>0.8.1</minversion>
 </plugin>
 

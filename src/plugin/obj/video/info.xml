@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin target="file" ext="mpg,avi,wmv">
-	<name>Video</name>
-	<description>Ce plugin permet de lire les vidéos</description>
-	<author>hugo</author>
-	<version>1</version>
+<plugin target="file" enabled="true">
+    <name>Video</name>
+    <extension>mpg, avi, wmv</extension>
+    <description>Ce plugin permet de lire les vidéos</description>
+    <author>hugo</author>
+    <version>1</version>
+    <minversion>0.8.1</minversion>
 </plugin>

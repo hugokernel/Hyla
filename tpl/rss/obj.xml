@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<rss	xmlns:content="http://purl.org/rss/1.0/modules/content/"
-		xmlns:gml="http://www.opengis.net/gml/3.1.1"
-		xmlns:dc="http://purl.org/dc/elements/1.1/"
-		version="2.0">
+<rss    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+        xmlns:gml="http://www.opengis.net/gml/3.1.1"
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        version="2.0">
 
-	<channel>
-		<title>{TITLE}</title>
-		<link>{URL}</link>
-		<description>{DESCRIPTION}</description>
-		<language>{LANG}</language>
+    <channel>
+        <title>{TITLE}</title>
+        <link>{URL}</link>
+        <description>{DESCRIPTION}</description>
+        <language>{LANG}</language>
 
-		<copyright>{COPYRIGHT}</copyright>
-		<pubDate>{DATE}</pubDate>
-		<dc:creator>{AUTHOR}</dc:creator>
-		<dc:date>{DATE}</dc:date>
-		<dc:language>{LANG}</dc:language>
-		<dc:rights>{COPYRIGHT}</dc:rights>
+        <copyright>{COPYRIGHT}</copyright>
+        <pubDate>{DATE}</pubDate>
+        <dc:creator>{AUTHOR}</dc:creator>
+        <dc:date>{DATE}</dc:date>
+        <dc:language>{LANG}</dc:language>
+        <dc:rights>{COPYRIGHT}</dc:rights>
 
-		<!-- BEGIN item -->
-		<item>
-			<title>{OBJ_TITLE}</title>
-			<link>{OBJ_URL}</link>
-			<enclosure url="{OBJ_URL}" length="{OBJ_SIZE}" type="{OBJ_MIME}" />
-			<pubDate>{OBJ_DATE}</pubDate>
-			<guid>{OBJ_URL}</guid>
-			<dc:creator>{OBJ_AUTHOR}</dc:creator>
-			<dc:date>{OBJ_DATE}</dc:date>
-			<description>{OBJ_DESCRIPTION}</description>
-			<content:encoded>
-				<![CDATA[
-					{STYLESHEET_PLUGIN}
+        <!-- BEGIN item -->
+        <item>
+            <title>{OBJ_TITLE}</title>
+            <link>{OBJ_URL}</link>
+            <enclosure url="{OBJ_URL}" length="{OBJ_SIZE}" type="{OBJ_MIME}" />
+            <pubDate>{OBJ_DATE}</pubDate>
+            <guid>{OBJ_URL}</guid>
+            <dc:creator>{OBJ_AUTHOR}</dc:creator>
+            <dc:date>{OBJ_DATE}</dc:date>
+            <description>{OBJ_DESCRIPTION}</description>
+            <content:encoded>
+                <![CDATA[
+                    {STYLESHEET_PLUGIN}
 
-					{OBJ_CONTENT}
-				]]>
-			</content:encoded>
-		</item>
-		<!-- END item -->
-	</channel>
+                    {OBJ_CONTENT}
+                ]]>
+            </content:encoded>
+        </item>
+        <!-- END item -->
+    </channel>
 </rss>

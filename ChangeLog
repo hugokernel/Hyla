@@ -1,5 +1,49 @@
 Hyla ChangeLog
 
+[Version 0.8.1]
+    - hugo
+		26 septembre 2007
+			* Correction d'un problème affichant des "Warning" si open_basedir est actif
+			* Ajout d'une variable de conf (download_dir_max_filesize) dans /conf/hyla.ini permettant de spécifier la taille maximale au delà de laquelle il ne faut plus sauvergarder le cache d'un dossier archivé
+        10-11 septembre 2007
+            * Les css et js des modèles sont placés respectivement dans les dossiers css et js des modèles
+        4-5 septembre 2007
+            * Création de la feuille de style "Flat Dark"
+            * Ajout du plugin jQuery tablesorter permettant de trier les éléments de tableau
+        27-3 septembre 2007
+            * Test global
+            * Mise à jour de la documentation
+        10-20 août 2007
+            * Possibilité de spécifier le format voulu lors du téléchargement d'un dossier, d'un fichier ou d'une archive
+            * Le plugin geo peut maintenant lire les fichiers ov2 (Tomtom) et asc (Garmin...)
+        01-08 août 2007
+            * Nouveau plugin d'url : pathinfo
+	- hugo
+		19 juillet 2007
+			* Ajout d'une méthode permettant d'ajouter des entêtes quelconque dans le "head" d'une page (utile pour les plugins ayant besoin d'ajouter des scripts js)
+        5 juillet 2007
+            * Ajout du choix concernant la création des comptes par les utilisateurs dans l'interface d'administration
+            * Correction d'un bug se produisant lors des redirections après une action
+            * Ajout d'une option permettant de valider d'office un fichier anonyme et ou d'envoyer un courriel en même temps
+        2 juillet 2007
+            * Le plugin d'url "default" est configurable en path_info
+            * Pour plus de logique, les variables de conf des plugins par défaut ont été renommées : *_default_plugin -> plugin_default_*
+        23 juin 2007
+            * Refonte du système de plugins
+            * Ajout d'un système permettant à un utilisateur de créer son compte de lui même (basé sur la contribution de KaZaad)
+		10 juin 2007
+			* La variable de configuration auth_method est remplacée par auth_default_plugin
+		31 mai 2007
+			* Les plugins possèdent maintenant, dans leurs fichiers info.xml, une balise (minversion) permettant de définir la version minimale de Hyla
+		10 mai 2007
+			* Modification des fichiers info.xml dans les plugins et ajout de
+			l'attribut enabled permettant de désactiver un plugin
+			* Ajout des plugins geshi et geo
+			* Il est dorénavanant possible pour chaque utilisateur de changer son mot de passe
+			* L'export du contenu des plugins permet d'afficher le contenu d'un plugin directement dans un billet sur son blog ou sur un forum, il existe actuellement en export iframe et javascript
+		17 mai 2007
+			* Le fichier de configuration général des plugins (/conf/plugins.ini) est remplacé par un fichier (conf.ini) directement dans le dossier des plugins en nécessitant
+
 [Version 0.8.0]
 	- hugo
 		12&26 mars 2007

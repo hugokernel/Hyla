@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin target="file" enabled="true">
+    <name>Geshi</name>
+    <extension>
+        as,
+        a, ada, adb, ads,
+        conf,
+        ash, asm,
+        asp, sh, c, h, cdfg, cpp, hpp, css, dpk, dpr, html, htm, java, js, lisp, lua, pas, pl, pm,
+        php, php3, php4, php5, phtml, phps,
+        py, bi, sas, bas, xml
+    </extension>
+    <description>Affichage de code source</description>
+    <author>hugo</author>
+    <version>1</version>
+    <minversion>0.8.1</minversion>
+</plugin>

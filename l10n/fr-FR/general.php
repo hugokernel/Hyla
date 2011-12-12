@@ -25,6 +25,8 @@ $l10n['View / Hide']		= 'Voir / Cacher';
 $l10n['Top of page']		= 'Haut de la page';
 $l10n['Documentation']		= 'Documentation';
 
+$l10n['Profile']			= 'Profil';
+
 /*
 $l10n['Info
 $l10n['Infos

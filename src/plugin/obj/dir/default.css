@@ -1,40 +1,44 @@
 
 #dir .header {
-	padding: 10px;
-	background: transparent;
-	font-size: 100%;
-	border: 0px;
+    padding: 10px;
+    background: transparent;
+    font-size: 100%;
+    border: 0px;
 }
 
 #dir .header-info {
-	font-size: 100%;
-	font-weight: bold;
+    font-size: 100%;
+    font-weight: bold;
 }
 
 #dir .line {
-	background: transparent;
+    background: transparent;
 }
 
 #dir .line:hover {
-	background: #EEE;
+    background: #EEE;
 }
 
 #dir table {
-	border-collapse: collapse;
+    border-collapse: collapse;
 }
 
 #dir .line td, #dir .line th {
-	padding: 2px;
-	border: 0px;
+    padding: 2px;
+    border: 0px;
 }
 
 #dir .line a {
-	color: #00F;
-	font-style: normal;
-	text-decoration: none;
-	font-size: 100%;
+    color: #00F;
+    font-style: normal;
+    text-decoration: none;
+    font-size: 100%;
 }
 
 #dir .line a:hover {
-	color: #000;
+    color: #000;
+}
+
+#dir img {
+    border: 0;
 }

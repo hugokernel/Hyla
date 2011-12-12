@@ -1,0 +1,33 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#pages {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    margin: 0px;
+
+    background: #EEE;
+    border: 1px solid #CCC;
+}
+
+.page {
+    text-align: center;
+
+    width: 20%;
+    padding: 0;
+    margin: 0;
+    float: left;
+}
+
+#options {
+    width: 60%;
+    float: left;
+    text-align: center;
+}
+
+#pages #pcurrent {
+    border: 2px solid #999;
+}

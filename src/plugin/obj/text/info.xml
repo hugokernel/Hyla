@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin target="file" ext="txt,c,h">
-	<name>Text</name>
-	<description>Affichage du contenu du fichier</description>
-	<author>hugo</author>
-	<version>1</version>
+<plugin target="file" enabled="true">
+    <name>Text</name>
+    <extension>txt</extension>
+    <description>Affichage du contenu du fichier</description>
+    <author>hugo</author>
+    <version>1</version>
+    <minversion>0.8.1</minversion>
 </plugin>
 

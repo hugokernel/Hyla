@@ -23,7 +23,7 @@
 
 	<ul>
 		<li><a href="#description">Description</a></li>
-		<li><a href="#pre-requi">Pré-requi</a></li>
+		<li><a href="#pre-requi">Prérequis</a></li>
 		<li><a href="#fonctionnement">Fonctionnement</a></li>
 	</ul>
 
@@ -80,7 +80,7 @@
 				Hyla se chargera alors dans ce dernier cas, de télécharger le fichier pour vous.
 			</p>
 			<p>
-				Si vous le souhaitez, il est également possible d'autoriser l'envoie de fichiers anonymes, ainsi, les visiteurs de votre site pourront
+				Si vous le souhaitez, il est également possible d'autoriser l'envoi de fichiers anonymes, ainsi, les visiteurs de votre site pourront
 				envoyer leur fichiers, ces derniers seront placés dans un endroit protégé que seul un administrateur peut voir, il pourra par la suite
 				valider ou supprimer les fichiers téléchargés, il est également possible de recevoir une notification par mail lorsqu'un fichier anonyme à été envoyé.
 			</p>
@@ -108,6 +108,9 @@
 				<li><em>Video</em> : Lit vos vidéos dans un lecteur embarqué</li>
 				<li><em>Zenphoto</em> : Ce plugin permet de générer des galeries à la manière de l'application <a href="http://www.zenphoto.org/">Zenphoto</a></li>
 			</ul>
+			<p>
+				Il est très simple par la suite d'ajouter un plugin.
+			</p>
 		</li>
 		<li>
 			<strong>
@@ -182,7 +185,7 @@
 	<h2 id="pre-requi">Pré-requi</h2>
 
 	<p>
-		Voici, ci dessous, la configuration minimale exigée par Hyla 0.8 :
+		Voici, ci dessous, la configuration minimale exigée par Hyla 0.8.1 :
 	</p>
 
 	<ul>
@@ -232,7 +235,17 @@
 		Le fonctionnement de Hyla est assez simple, tout est basé sur <a href="dev.htm#plugins">un système de plugins</a>, ainsi, à l'ouverture d'un objet (c'est ainsi que sont nommés
 		les fichiers ou dossiers au sein de Hyla), Hyla va charger le plugin correspondant au type de ce dernier, si l'objet courant est un dossier,
 		un plugin listage de dossier va être ouvert, si, par contre, l'objet courant est un fichier, Hyla va tenter d'ouvrir ce dernier avec un plugin
-		adéquate en fonction de l'extension du fichier, si Hyla ne trouve pas de plugin, il vous sera possible de forcer l'ouverture d'un plugin.
+		adéquat en fonction de l'extension du fichier, si Hyla ne trouve pas de plugin, il vous sera possible de forcer l'ouverture d'un plugin.
+	</p>
+	
+	<p>
+	   La gestion des url est aussi basée sur un système de plugin, qui charge, selon la configuration choisie,
+	   le plugin d'url adéquate et permet ainsi d'obtenir des url parfaitement intégrée à votre site.
+	</p>
+	
+	<p>
+	   Enfin, l'authentification des utilisateurs est, elle aussi, basée sur un système de plugin permettant
+	   d'authentifier un utilisateur au travers de diverses méthodes.
 	</p>
 
 	<hr />

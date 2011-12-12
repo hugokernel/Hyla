@@ -209,13 +209,14 @@ class Template
 	$this->l10n = &$l10n;
 
     if ($this->debug & 4) {
-      echo "<p><b>Template:</b> root = $root, unknowns = $unknowns</p>\n";
+        echo "<p><b>Template:</b> root = $root, unknowns = $unknowns</p>\n";
     }
 
 	$dir = REAL_ROOT_URL;
 	$this->set_var(array(
-			'DIR_TEMPLATE'	=>	($dir == '/') ? $root : $dir.'/'.$root,
-			'DIR_IMAGE'		=>	$dir.DIR_IMAGE,
+			'DIR_TEMPLATE'	=>	$dir.$root,     //($dir == '/') ? $root : $dir.'/'.$root,
+            'DIR_IMAGE'     =>  DIR_IMAGE,      //($dir == '/') ? DIR_IMAGE : $dir.DIR_IMAGE,
+			'DIR_ROOT'		=>	$dir,
 			'L10N'			=>	$conf['lng'],
 			));
 

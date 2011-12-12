@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin target="file" ext="csv,tsv">
-	<name>Csv</name>
-	<description>Affichage du contenu de fichiers au format csv, tsv.</description>
-	<author>hugo</author>
-	<version>1</version>
+<plugin target="file" enabled="true">
+    <name>Csv</name>
+    <extension>csv, tsv</extension>
+    <description>Affichage du contenu de fichiers au format csv, tsv.</description>
+    <author>hugo</author>
+    <version>1.1</version>
+    <minversion>0.8.1</minversion>
+    <priority>1</priority>
 </plugin>
-

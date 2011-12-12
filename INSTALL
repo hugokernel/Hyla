@@ -47,5 +47,5 @@ A LIRE SI VOUS DÉCIDEZ D'INSTALLER MANUELLEMENT HYLA :
 Lorsque  vous  créez  les  tables  manuellement  en  exécutant  le  script  SQL,
 ce  dernier  créer  aussi  un  utilisateur  par défaut nommé 'admin', ce dernier
 à  pour  mot  de  passe  'hyla',  si  par  mégarde,  vous  oubliez  de  changer 
-ce mot de passe par défaut, une personne mal intentionné pourrait se connecter à
-l'administration et ainsi prendre le contrôle sur vos fichiers.
+ce mot de passe par défaut, une personne mal intentionnée pourrait se  connecter
+à l'administration et ainsi prendre le contrôle sur vos fichiers.

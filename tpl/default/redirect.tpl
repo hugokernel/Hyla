@@ -13,27 +13,27 @@
 <link rel="icon" type="image/png" href="img/icon.png" />
 <link rel="shortcut icon" href="img/icon.ico"/>
 
-<script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/styleswitcher.js"></script>
+<script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/js/styleswitcher.js"></script>
 
 </head>
 
 <body>
 
 <div style="margin: 5% 10% 0 10%" align="center">
-	
-	<p>
-		{MESSAGE}
-	</p>
 
-	<img src="{DIR_IMAGE}/loading.gif" />
+    <p>
+        {MESSAGE}
+    </p>
 
-	<!-- BEGIN AffichRedirectNow -->
-	<p>
-		<a href="{PAGE}">Cliquez ici</a> pour &ecirc;tre redirig&eacute; tout de suite !
-	</p>
-	<!-- END AffichRedirectNow -->
+    <img src="{DIR_IMAGE}/loading.gif" />
 
-	{SUGGESTION}
+    <!-- BEGIN AffichRedirectNow -->
+    <p>
+        <a href="{PAGE}">Cliquez ici</a> pour &ecirc;tre redirig&eacute; tout de suite !
+    </p>
+    <!-- END AffichRedirectNow -->
+
+    {SUGGESTION}
 
 </div>
 

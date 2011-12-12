@@ -1,0 +1,63 @@
+
+/*  Cette css regroupe tous les éléments communs liés aux plugins
+ */
+a {
+    text-decoration: none;
+}
+
+
+.info {
+    background: #CCE;
+    border: 1px dashed #AAC;
+    padding: 5px;
+
+    font-weight: normal;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.plugin {
+    padding: 5px;
+    border: 1px #AAA dashed;
+    text-align: center;
+}
+
+.textbox {
+    background: #FFF;
+    text-align: left;
+    padding: 10px;
+    font-size: 120%;
+}
+
+img {
+    border: 0;
+}
+
+.pagination {
+    width: 100%;
+    text-align: center;
+    font-size: 100%;
+    padding-bottom: 20px;
+    clear: both;
+}
+
+.pagination #current_page {
+    font-weight: bold;
+}
+
+.pagination #previous {
+    float: left;
+    width: 20%;
+    text-align: left;
+}
+
+.pagination #num_page {
+    width: 60%;
+    float: left;
+}
+
+.pagination #next {
+    float: right;
+    width: 20%;
+    text-align: right;
+}

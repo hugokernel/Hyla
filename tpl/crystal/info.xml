@@ -1,34 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <template>
-	<name>Crystal</name>
-	<description>Thème en xhtml</description>
-	<author>hugo</author>
-	<version>1</version>
-	<header>Content-Type: text/html; charset=UTF-8</header>
-	<img-src>/tpl/%s/img</img-src>
-	<php-function></php-function>
-	<stylesheets>
-		<stylesheet>
-			<type>text/css</type>
-			<media>screen,projection</media>
-			<title>Standard</title>
-			<href>default.css</href>
-		</stylesheet>
-		<stylesheet>
-			<type>text/css</type>
-			<media>screen,projection</media>
-			<title>Cacher l'arborescence</title>
-			<href>no-tree.css</href>
-		</stylesheet>
-<!--
-		<stylesheet>
-			<type>text/css</type>
-			<media>screen,projection</media>
-			<title>Spécial</title>
-			<href>special.css</href>
-		</stylesheet>
--->
-	</stylesheets>
+    <name>Crystal</name>
+    <description>Thème en xhtml</description>
+    <author>hugo</author>
+    <version>1</version>
+    <header>Content-Type: text/html; charset=UTF-8</header>
+    <img-src>/tpl/%s/img</img-src>
+    <php-function></php-function>
+    <minversion>0.8.1</minversion>
+    <stylesheets>
+        <stylesheet>
+            <type>text/css</type>
+            <media>screen,projection</media>
+            <title>Standard</title>
+            <href>css/default.css</href>
+        </stylesheet>
+        <stylesheet>
+            <type>text/css</type>
+            <media>screen,projection</media>
+            <title>Standard sans arborescence</title>
+            <href>css/no-tree.css</href>
+        </stylesheet>
+        <stylesheet>
+            <type>text/css</type>
+            <media>screen,projection</media>
+            <title>Spécial (Cache automatiquement la barre d'action)</title>
+            <href>css/special.css</href>
+        </stylesheet>
+        <stylesheet>
+            <type>text/css</type>
+            <media>screen,projection</media>
+            <title>Spécial sans arborescence</title>
+            <href>css/special-no-tree.css</href>
+        </stylesheet>
+        <stylesheet>
+            <type>text/css</type>
+            <media>screen,projection</media>
+            <title>FlatDark</title>
+            <href>css/flatdark.css</href>
+        </stylesheet>
+        <stylesheet>
+            <type>text/css</type>
+            <media>screen,projection</media>
+            <title>FlatDark sans arborescence</title>
+            <href>css/flatdark-no-tree.css</href>
+        </stylesheet>
+    </stylesheets>
 </template>
 

@@ -23,11 +23,19 @@
 		<li>
 			Les différentes manières d'installer Hyla :
 			<ul>
-				<li><a href="#standard">Installation standard ou migration depuis une version 0.7.2</a></li>
+				<li><a href="#standard">Installation standard</a></li>
 				<li><a href="#manuel">Installation manuelle</a></li>
 			</ul>
 		</li>
 	</ul>
+	
+	<p class="remarque">
+	   Dans cette version de Hyla (0.8.1), il n'y a pas de migration depuis la version 0.8.0
+	   car la structure des tables n'a pas évoluée.
+	   <br />
+	   Si vous utilisez encore la version 0.7.2, vous devez d'abord migrer vos données grâce
+	   à l'installeur de la version 0.8.0.
+	</p>
 
 	<hr />
 
@@ -53,30 +61,11 @@
 	</p>
 
 	<ul style="list-style-type: none;">
-		<li>4a. Saisi des informations</li>
-		<li>5a. Création du fichier de configuration</li>
-		<li>6a. Création des tables et insertions des données</li>
-		<li>7a. Création de l'utilisateur principal (Saisi)</li>
-		<li>8a. Création de l'utilisateur principal</li>
-	</ul>
-
-	<p>
-		Si vous possédiez une version 0.7.2, il vous est possible de migrer totalement
-		vos données vers la nouvelle version, pour cela, il vous suffit juste de garder les
-		fichiers et dossiers de l'ancienne installation, l'outil de migration ira automatiquement
-		lire les informations dont il a besoin (connection à la base de données...etc...) et
-		s'occupera de tout.
-	</p>
-
-	<p>
-		Ainsi, à l'étape 3, dans le choix du type d'installation,
-		choisissez migration :
-	</p>
-
-	<ul style="list-style-type: none;">
-		<li>4b. On spécifie le chemin de partage</li>
-		<li>5b. Récapitulatif avant migration</li>
-		<li>6b. Migration</li>
+		<li>4. Saisi des informations</li>
+		<li>5. Création du fichier de configuration</li>
+		<li>6. Création des tables et insertions des données</li>
+		<li>7. Création de l'utilisateur principal (Saisi)</li>
+		<li>8. Création de l'utilisateur principal</li>
 	</ul>
 
 	<h2 id="manuel">Installation manuelle</h2>
@@ -96,7 +85,7 @@
 			dans <span class="path">/src/db/mysql.sql</span>
 		</li>
 		<li>Vous pouvez éventuellement éditer le fichier <span class="path">/conf/hyla.ini</span></li>
-		<li>Supprimez le fichier <span class="path">/install.php</span></li>
+		<li>Créez un fichier vide nommé lock dans <span class="path">/conf/</span></li>
 	</ol>
 
 	<p class="remarque">

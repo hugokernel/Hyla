@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin>
+    <name>Default</name>
+    <description>Normal auth user</description>
+    <author>hugo</author>
+    <version>1</version>
+    <minversion>0.8.1</minversion>
+</plugin>
+

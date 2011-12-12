@@ -114,7 +114,7 @@
 	<ul>
 		<li><strong>Droits à attribuer aux fichiers uploadés :</strong> Lors de l'ajout d'un fichier dans Hyla, il s'agit des droits qui lui seront attribué (prenez garde en modifiant cette option !).</li>
 		<li><strong>Droits à attribuer aux dossiers créés :</strong> Lorsqu'un dossier est créé, il s'agit des droits qui lui seront attribué (prenez garde en modifiant cette option !).</li>
-		<li><strong>Faut-il envoyer un courriel lors de l'envoi d'un fichier anonyme ?</strong> Pour chaque fichier anonyme envoyé, vous recevrez une notification par courriel.</li>
+		<li><strong>Action à réaliser lors de l'envoi d'un fichier anonyme :</strong> Pour chaque fichier anonyme envoyé, il est possible de recevoir un courriel vous avertissant de l'ajout d'un nouveau fichier à valider.</li>
 	</ul>
 
 	<h3 id="conf-listage">Listage de dossiers</h3>
@@ -140,6 +140,9 @@
 					de manière à ce qu'elle soit à Oui pour un système de fichiers en Utf8 ou à non pour les autres types (ISO...), si
 					vous êtes utilisateur de Windows, cette clef devrait être à Non.
 		</li>
+		<li><strong>Autoriser les utilisateurs à créer des comptes ?</strong> Si cette option est positionnée
+		sur "oui", un utilisateur pourra créer de lui même son propre compte utilisateur.
+		</li>
 	</ul>
 
 	<h2 id="users">Utilisateurs</h2>
@@ -158,8 +161,7 @@
 	<h3 id="users-liste">Liste des utilisateurs</h3>
 
 	<p>
-		Ce tableau vous permet de voir tous les utilisateurs du système,
-		leur id (identifiant unique) et leur type.
+		Ce tableau vous permet de voir tous les utilisateurs du système et leur type.
 	</p>
 
 	<p>
@@ -176,7 +178,7 @@
 	<p>
 		Vous pourrez remarquer la présence de 3 utilisateurs ayant un type
 		"Spécial" appelés aussi "méta-utilisateurs", ils appartiennent au système, pour cette raison, il est
-		impossible de les éditer ou des les supprimer ou d'en ajouter, voici leur rôle :
+		impossible de les éditer, des les supprimer ou, bien sûr, d'en ajouter, voici leur rôle :
 	</p>
 
 	<ul>
@@ -196,7 +198,7 @@
  		<dt id="users_nom">Nom</dt>
  		<dd>
 			Le nom d'un utilisateur ne peut être constitué que de lettres de
-			l'alphabet, du trait d'union (-) et de le tiret bas (_),
+			l'alphabet, du trait d'union (-) et du tiret bas (_),
 			attention tout de même, le nom doit commencer par une lettre et est
 			limité à 32 caractères.
 		</dd>
@@ -214,7 +216,7 @@
 
 	<p>
 		Dans la colonne "Actions", vous trouverez en face de chaque utilisateur,
-		sauf spéciaux et vous même, un lien permettant de supprimer l'utilisateur.
+		sauf utilisateurs spéciaux et vous même, un lien permettant de supprimer l'utilisateur.
 	</p>
 
 	<h2 id="groups">Groupes</h2>

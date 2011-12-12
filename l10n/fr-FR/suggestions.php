@@ -19,7 +19,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-$suggest['admin'][]		= 'N\'oubliez pas de vérifier que vous possédez bien la dernière version de Hyla en vous connectant dans l\'administration ou en allant sur <a href="'.URL_HYLA_SITE.'">le site de Hyla</a> !';
+$suggest['admin'][]		= 'N\'oubliez pas de vérifier que vous possédez bien la dernière version de Hyla en vous connectant dans l\'administration ou en allant sur <a href="'.URL_OFFICIAL_SITE.'">le site de Hyla</a> !';
 
 $suggest['redirect'][]	= 'Il est possible de configurer le temps de redirection dans l\'interface d\'administration.';
 $suggest['redirect'][]	= 'Merci d\'utiliser Hyla !';

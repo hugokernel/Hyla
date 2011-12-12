@@ -1,39 +1,39 @@
 
 #zenphoto {
-	text-align: left;
-	margin-left: 5%;
-	margin-right: 5%;
-	width: 90%;
+    text-align: left;
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 90%;
 }
 
 #zenphoto .header-info {
-	clear: both;
-	margin: 0%;
-	padding: 2% 0% 0% 0%;
-	font-size: 115%;
-	font-weight: bold;
+    clear: both;
+    margin: 0%;
+    padding: 2% 0% 0% 0%;
+    font-size: 115%;
+    font-weight: bold;
 }
 
 #zenphoto .imagethumb a {
-	display: block;
-	padding: 10px;
-	margin: 6px;
-	
-	border: 1px solid #92BED3;
-	background: #DDEAF0;
-	line-height: 0px;
+    display: block;
+    padding: 10px;
+    margin: 6px;
 
-	height: 200px;
-	width: 200px;
-	text-align: center;
-	vertical-align: middle;
+    border: 1px solid #92BED3;
+    background: #DDEAF0;
+    line-height: 0px;
+
+    height: 200px;
+    width: 200px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 #zenphoto .imagethumb a:hover {
-	border: 1px solid #62A0BF;
-	background: #F4F9FB;
+    border: 1px solid #62A0BF;
+    background: #F4F9FB;
 }
 
 #zenphoto .imagethumb {
-	float: left;
+    float: left;
 }
