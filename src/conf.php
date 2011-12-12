@@ -52,8 +52,8 @@ register_shutdown_function(array('system', 'timeOut'));
 define('FILE_L10N', 'l10n/'.$conf['lng'].'/messages.php');
 require FILE_L10N;
 
-define('DIR_TEMPLATE', 	'tpl/'.$conf['name_template']);
+define('DIR_TEMPLATE', 	DIR_TPL.$conf['name_template']);
 
-define('HYLA_VERSION',	'0.6.1');
+define('HYLA_VERSION',	'0.7.1');
 
 ?>

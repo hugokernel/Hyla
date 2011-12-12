@@ -6,8 +6,4 @@
 		<param name="wmode" value="transparent" />
 	</object>
 
-	<p>
-		Télécharger le fichier : <a href="{OBJECT_DOWNLOAD}">Ici</a>
-	</p>
-
 </div>

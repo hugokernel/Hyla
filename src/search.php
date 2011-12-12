@@ -33,8 +33,7 @@ if (isset($_POST['word']) && !empty($_POST['word'])) {
 	$scandir = (isset($_POST['scandir'])) ? true : false;
 	$recurs = (isset($_POST['recurs'])) ? true : false;
 
-	$tab = file::searchFile($cobj->path, $_POST['word'], $recurs, FOLDER_ROOT, $scandir);
-	
+	$tab = file::searchFile($cobj->path, $_POST['word'], $recurs, FOLDER_ROOT, $scandir, $conf['view_hidden_file']);
 	if ($tab) {
 		$tab = $obj->getDirContent(null, null, 0, 10000, $tab);
 	
@@ -65,7 +64,7 @@ if (isset($_POST['word']) && !empty($_POST['word'])) {
 
 $tpl->set_var(array(
 		'FORM_SEARCH'	=>	url::getCurrentObj('search'),
-		'OBJECT'		=>	$cobj->file
+		'OBJECT'		=>	$cobj->path
 		));
 
 $var_tpl = $tpl->parse('OutPut', 'search');

@@ -20,7 +20,7 @@
  */
 
 
-/*	Le décalage pour l'heure |
+/*	Le décalage pour l'heure
  */
 define('TIME_OFFSET', 0);
 
@@ -28,6 +28,8 @@ define('TIME_OFFSET', 0);
 /*	Répertoires et fichiers de travail...
  */
 define('DIR_PLUGINS',	'src/plugin/');
+
+define('DIR_TPL',		'tpl/');
 
 define('DIR_CACHE', 	'sys/cache/');
 define('DIR_ANON', 		'sys/anon');
@@ -52,22 +54,24 @@ define('TABLE_USERS',	PREFIX_TABLE.'users');
 
 
 /*	/!\ Grain de sel pour le cryptage des mot de passe
-	Attention, si vous changez cette valeur, il vous faudra changez tous les mots de passe
+	Attention, si vous changez cette valeur après l'installation, il vous faudra changez tous les mots de passe
  */
 define('CRYPT_SALT',	123456789);
 
-/*	+------------------------------------------------------------------+
-	| ATTENTION, les valeurs en dessous ne doivent pas être changé !!! |
-	| Il s'agit des constantes indispensable pour le moteur            |
-	+------------------------------------------------------------------+
+/*	+-------------------------------------------------------------------+
+	| ATTENTION, les valeurs en dessous ne doivent pas être changé !!!  |
+	| Il s'agit des constantes indispensable pour le bon fonctionnement |
+	| du moteur...                                                      |
+	+-------------------------------------------------------------------+
  */
 
-define('UNAUTHORIZED_CHAR', '\/:*?"<>|');
+define('UNAUTHORIZED_CHAR', '\/:*?"<>|!');
 
 define('URL_TEST_VERSION',	'http://www.digitalspirit.org/hyla/last_version.php');
 
 define('PREFIX_ANON',		'[ANON]');
 
+define('DIR_ICON',			'icon.png');
 
 
 define('TYPE_UNKNOW',		0);		// Inconnu
@@ -83,9 +87,11 @@ define('SORT_ALPHA',	 	1);		// A -> Z
 define('SORT_ALPHA_R',	 	2);		// Z -> A
 define('SORT_ALPHA_EXT', 	4);		// xxx.A -> xxx.Z
 define('SORT_ALPHA_EXT_R',	8);		// xxx.Z -> xxx.A
-define('SORT_FOLDER_FIRST',	16);	// Répertoire en premier
-
-//define('ROOT', 'root');
+define('SORT_ALPHA_CAT',	16);	// Doc, Image
+define('SORT_ALPHA_CAT_R',	32);	// Image, Doc
+define('SORT_SIZE',			64);	// Taille - / +
+define('SORT_SIZE_R',		128);	// Taille + / -
+define('SORT_FOLDER_FIRST',	256);	// Répertoire en premier
 
 
 /*	Les permissions

@@ -99,6 +99,17 @@ class plugins {
 		/!\ Factoriser le code ci dessous avec le reste du code, c'est pas très propre... /!\
 	 */
 	function getDirPlugins() {
+		return plugins::_getPlugins(true);
+	}
+
+	/*	Renvoie un tableau contenant les plugins disponibles pour un fichier
+		@access	static
+	 */
+	function getFilePlugins() {
+		return plugins::_getPlugins(false);
+	}
+
+	function _getPlugins($type = true) {
 
 		$tab = array();
 
@@ -118,7 +129,8 @@ class plugins {
 				if (file_exists($xfile)) {
 
 					$xml =& new XPath($xfile);
-					$res = $xml->match('/plugin[contains(@target,"dir")]/*');
+					$exp = $type ? '/plugin[contains(@target,"dir")]/*' : '/plugin[contains(@target,"file")]/*';
+					$res = $xml->match($exp);
 					if ($res) {
 						$tab[] = array(
 							'dir'			=>	$xfile,
@@ -134,34 +146,64 @@ class plugins {
 		return $tab;
 	}
 
+	/*	Vérifie que le plugin existe bien
+		@param	string	$plugin_name	Le nom du plugin
+		@return	Retourne true ou false
+	 */
+	function isValid($plugin_name) {
+		$ret = false;
+		$tab = plugins::getDirPlugins();
+		foreach ($tab as $occ) {
+			if (strtolower($occ['name']) == strtolower($plugin_name)) {
+				$ret = true;
+				break;
+			}
+		}
+		return $ret;
+	}
+
 	/*	Charge le plugin correspondant
+		@param	string	$plugin	Le plugin forcé
 		@return	On renvoie le contenu généré par le plugin
 	 */
-	function load() {
+	function load($plugin = null) {
 
 		global $curl, $conf, $l10n;
 
 		$var_tpl = null;
 
-		$pfile = DIR_PLUGINS.$this->info['dir'].'/index.php';
+		$plugin_dir = $plugin ? strtolower($plugin) : $this->info['dir'];
+
+		$pfile = DIR_PLUGINS.$plugin_dir.'/index.php';
 
 		if (file_exists($pfile)) {
 			include($pfile);
 
 			$pname = 'Plugin_';
-			$pname .= $this->info['dir'];
+			$pname .= $plugin_dir;
 
 			// Y'a t-il un fichier de langue ?
-			$l10n_file = DIR_PLUGINS.$this->info['dir'].'/'.FILE_L10N;
+			$l10n_file = DIR_PLUGINS.$plugin_dir.'/'.FILE_L10N;
 			if (file_exists($l10n_file)) {
 				include($l10n_file);
 			}
 
 			// Chargement de la classe 
 			$p = new $pname();
+
+			$p->plugin_name = strtolower($this->info['name']);
+
 			if (method_exists($p, 'act')) {
 				$p->act($curl->pact);
 			}
+
+			// Y'a t-il une méthode fullscreen ?
+			if (method_exists($p, 'fullscreen') && $plugin) {
+				$var_tpl = $p->fullscreen($curl->paff);
+				print($p->tpl->finish($var_tpl));
+				system::end();
+			}
+
 			$var_tpl = $p->aff($curl->paff);
 			$p = null;
 		}

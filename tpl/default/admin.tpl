@@ -1,6 +1,4 @@
 
-<div id="main">
-
 	<h2>Administration</h2>
 
 	<div id="sidebar">
@@ -9,6 +7,7 @@
 		<a href="{ADMIN_PAGE_USERS}"><img src="{DIR_TEMPLATE}/img/users.png" align="middle" width="32" height="32" alt="Silhouettes" /> Utilisateurs</a>
 		<a href="{ADMIN_PAGE_COMMENT}"><img src="{DIR_TEMPLATE}/img/comment.png" align="middle" width="32" height="32" alt="Commentaires" /> Commentaires</a>
 		<a href="{ADMIN_PAGE_ANON}"><img src="{DIR_TEMPLATE}/img/gnome-fs-bookmark-missing.png" align="middle" width="32" height="32" alt="Poubelle" /> Fichiers anonymes</a>
+		<a href="{ADMIN_PAGE_MAINTENANCE}"><img src="{DIR_TEMPLATE}/img/gnome-devel.png" align="middle" width="32" height="32" alt="Truelle" /> Maintenance</a>
 	</div>
 
 	<!-- BEGIN aff_home -->
@@ -52,10 +51,27 @@
 		</ul>
 	</fieldset>
 
+	<p>
+		Liens utiles :
+	</p>
+
+	<ul>
+		<li><a href="http://www.digitalspirit.org/hyla/">Le site officiel de Hyla</a>
+		<li><a href="http://www.digitalspirit.org/hyla/?aff=doc">La documentation</a>
+		<li><a href="http://www.digitalspirit.org/forums/viewforum.php?id=11">Le forum dédié</a>
+		<li><a href="http://www.digitalspirit.org/hyla/?aff=faq">Les questions les plus fréquemment posées</a>
+		<li><a href="http://www.digitalspirit.org/blog/index.php">Le blog de développement de Hyla</a>
+	</ul>
+
 	<!-- END aff_home -->
 
 	<!-- BEGIN aff_conf -->
-	<h3>Edition du fichier de configuration ( {FILE_INI} )</h3>	{ERROR}
+	<h3>Edition du fichier de configuration ( {FILE_INI} )</h3>
+
+	<blockquote class="info">
+		Les modifications effectuées ici même peuvent aussi être effectuées en éditant le fichier /conf/hyla.ini
+	</blockquote>
+	{ERROR}
 
 	<form method="post" name="ad_form" action="{ADMIN_PAGE_SAVECONF}">
 	<fieldset>
@@ -71,7 +87,11 @@
 			<label for="conf_template">
 				Le template par défaut :
 			</label>
-			<input type="text" name="conf_template" id="conf_template" size="25" value="{NAME_TEMPLATE}" />
+			<select name="conf_template" id="conf_template">
+				<!-- BEGIN aff_conf_template -->
+				<option value="{TEMPLATE_NAME}" {CONF_TEMPLATE_NAME}>{TEMPLATE_NAME}</option>
+				<!-- END aff_conf_template -->
+			</select>
 			<p class="help">
 				Il s'agit du répertoire dans (tpl/) contenant le template définissant l'apparence.
 			</p>
@@ -80,7 +100,7 @@
 			</label>
 			<input type="text" name="conf_lng" id="conf_lng" size="8" value="{LNG}" />
 			<p class="help">
-				La langue, assurez-vous qu'un répertoire contenant les fichiers adéquates se trouvent bien dans le répertoire lng/ .
+				La langue, assurez-vous qu'un répertoire contenant les fichiers adéquates se trouvent bien dans le répertoire l10n/ .
 			</p>
 			<label for="conf_title">
 				Titre navigateur :
@@ -100,14 +120,14 @@
 			</label>
 			<input type="text" name="conf_file_chmod" id="conf_file_chmod" size="8" value="{FILE_CHMOD}" />
 			<p class="help">
-				Il est fortement recommandé pour des raisons de sécurité évidente de laissé la valeur par défaut !
+				Il est fortement recommandé pour des raisons de sécurité évidente de laiser la valeur par défaut !
 			</p>
 			<label for="conf_dir_chmod">
 				Les droits à attribuer aux répertoires créés :
 			</label>
 			<input type="text" name="conf_dir_chmod" id="conf_dir_chmod" size="8" value="{DIR_CHMOD}" />
 			<p class="help">
-				Il est fortement recommandé pour des raisons de sécurité évidente de laissé la valeur par défaut !
+				Il est fortement recommandé pour des raisons de sécurité évidente de laisser la valeur par défaut !
 			</p>
 			<label for="conf_anonymous_add_file">
 				Autoriser l'ajout de fichier anonyme :
@@ -117,7 +137,7 @@
 				<option value="true" {CONF_ANONYMOUS_ADD_FILE_1}>Oui</option>
 			</select>
 			<p class="help">
-				En autorisant l'envoie de fichiers anonyme, toute personne non connectée pourra envoyer des fichiers,
+				En autorisant l'envoie de fichiers anonyme, toute personne non authentifiée pourra envoyer des fichiers,
 				ils seront placés dans un lieu accessible uniquement par un usager connecté et ayant les droits d'administrer ces derniers.
 			</p>
 			<label for="conf_send_mail">
@@ -140,11 +160,15 @@
 				Le tri par défaut :
 			</label>
 			<select name="conf_sort" id="conf_sort">
-				<option value="0" {CONF_SORT_0}>Par défaut (dépend du système de fichiers)</option>
-				<option value="1" {CONF_SORT_1}>De A à Z</option>
-				<option value="2" {CONF_SORT_2}>De Z à A</option>
-				<option value="3" {CONF_SORT_3}>Extensions de A à Z</option>
-				<option value="4" {CONF_SORT_4}>Extensions de Z à A</option>
+				<option value="0" {CONF_SORT_0}>&nbsp;Ordre par défaut (dépend du système de fichiers)</option>
+				<option value="1" {CONF_SORT_1}>&nbsp;Alphabétique A / Z</option>
+				<option value="2" {CONF_SORT_2}>&nbsp;Alphabétique Z / A</option>
+				<option value="3" {CONF_SORT_3}>&nbsp;Extensions   A / Z</option>
+				<option value="4" {CONF_SORT_4}>&nbsp;Extensions   Z / A</option>
+				<option value="5" {CONF_SORT_5}>&nbsp;Catégories   A / Z</option>
+				<option value="6" {CONF_SORT_6}>&nbsp;Catégories   Z / A</option>
+				<option value="7" {CONF_SORT_7}>&nbsp;Taille - / +</option>
+				<option value="8" {CONF_SORT_8}>&nbsp;Taille + / -</option>
 			</select>
 			<p class="help">
 				Défini l'ordre ou seront affiché les fichiers et répertoires.
@@ -157,7 +181,7 @@
 				<option value="true" {CONF_FOLDER_FIRST_1}>Oui</option>
 			</select>
 			<p class="help">
-				Affiche les répertoire en premier.
+				Affiche les répertoires en premier.
 			</p>
 			<label for="conf_group_by_sort">
 				Grouper par critère de tri :
@@ -177,6 +201,20 @@
 			<p class="help">
 				Pour afficher tous les fichiers et répertoires, indiquez 0 mais cela est FORTEMENT non recommandé pour des raisons de charge serveur
 				dans le cas de génération de galeries, vous êtes prévenu !!!
+			</p>
+			<label for="conf_default_plugin">
+				Plugin des répertoires par défaut :
+			</label>
+
+			<select name="conf_default_plugin" id="conf_default_plugin">
+				<!-- BEGIN aff_conf_plugin -->
+				<option value="{PLUGIN_NAME}" {CONF_PLUGIN_NAME}>{PLUGIN_NAME} ( {PLUGIN_DESCRIPTION} ) </option>
+				<!-- END aff_conf_plugin -->
+			</select>
+
+<!--			<input type="text" name="conf_default_plugin" id="conf_default_plugin" size="15" value="{DIR_DEFAULT_PLUGIN}" />-->
+			<p class="help">
+				Spécifiez ici le plugin par défaut à utiliser, ainsi, si vous désirez générer uniquement des galerie photos avec le plugin zenphoto, choisissez "zenphoto".
 			</p>
 			<label for="conf_view_hidden_file">
 				Afficher les fichiers cachés ou non :
@@ -204,13 +242,6 @@
 			<p class="help">
 				 Cette option vous permet de compter les téléchargements et non les visualisations.
 			</p>
-			<label for="conf_default_plugin">
-				Plugin des répertoires par défaut :
-			</label>
-			<input type="text" name="conf_default_plugin" id="conf_default_plugin" size="15" value="{DIR_DEFAULT_PLUGIN}" />
-			<p class="help">
-				Spécifiez ici le plugin par défaut à utiliser, ainsi, si vous désirez générer uniquement des galerie photos avec le plugin zenphoto, mettez "zenphoto"
-			</p>
 			<label for="conf_view_toolbar">
 				Toujours voir les actions :
 			</label>
@@ -219,7 +250,17 @@
 				<option value="true" {CONF_VIEW_TOOLBAR_1}>Oui</option>
 			</select>
 			<p class="help">
-				Permet d'afficher les liens vers les actions de la barre d'outil même lorsque l'on n'est pas connecté
+				Permet d'afficher les liens vers les actions de la barre d'outils même lorsque l'on n'est pas connecté
+			</p>
+			<label for="conf_view_tree">
+				Afficher l'arborescence des répertoires :
+			</label>
+			<select name="conf_view_tree" id="conf_view_tree">
+				<option value="false" {CONF_VIEW_TREE_0}>Non</option>
+				<option value="true" {CONF_VIEW_TREE_1}>Oui</option>
+			</select>
+			<p class="help">
+				Permet d'afficher tous les répertoires en arborescence.
 			</p>
 		</div>
 	</fieldset>
@@ -324,8 +365,8 @@
 			<td>{USER_ID}</td>
 			<td>{USER_NAME}</td>
 			<td align="center">{PERM_ADD_COMMENT}</td>
-			<td align="center">{PERM_ADD_FILE}</td>
 			<td align="center">{PERM_EDIT_FILE}</td>
+			<td align="center">{PERM_ADD_FILE}</td>
 			<td align="center">{PERM_DEL_FILE}</td>
 			<td align="center">{PERM_CREATE_DIR}</td>
 			<td align="center">{PERM_DEL_DIR}</td>
@@ -368,12 +409,12 @@
 					<input name="ad_add_comment" id="ad_add_comment" type="checkbox" {CHECKBOX_ADD_COMMENT} />
 				</p>
 				<p>
-					<label for="ad_add_file">Ajout de fichiers :</label>
-					<input name="ad_add_file" id="ad_add_file" type="checkbox" {CHECKBOX_ADD_FILE}  />
-				</p>
-				<p>
 					<label for="ad_edit_file">Edition de fichiers :</label>
 					<input name="ad_edit_file" id="ad_edit_file" type="checkbox" {CHECKBOX_EDIT_FILE} />
+				</p>
+				<p>
+					<label for="ad_add_file">Ajout de fichiers :</label>
+					<input name="ad_add_file" id="ad_add_file" type="checkbox" {CHECKBOX_ADD_FILE}  />
 				</p>
 				<p>
 					<label for="ad_del_file">Suppression de fichiers :</label>
@@ -456,4 +497,29 @@
 
 	<!-- END users -->
 
-</div>
+	<!-- BEGIN maintenance -->
+	<div id="form_misc">
+		<ul>
+			<li>
+				<a href="{ADMIN_PAGE_MAINTENANCE_PURGE}">Vider le cache</a>
+				<p class="help">
+					Supprime tous les fichiers "cache", utile si des erreurs de lecture d'archives se produisent
+				</p>
+				<p>
+					{PURGE_RAPPORT}
+				</p>
+			</li>
+			<li>
+				<a href="{ADMIN_PAGE_MAINTENANCE_SYNC}">Lancer une synchronisation</a>
+				<p class="help">
+					Si vous supprimer des fichiers ou des répertoires sans passer par l'interface de Hyla (ftp...), il peut être utile d'effectuer une synchronisation
+					de la base de données avec le système de fichiers.
+				</p>
+				<p>
+					{SYNC_RAPPORT}
+				</p>
+			</li>
+		</ul>
+
+	</div>
+	<!-- END maintenance -->

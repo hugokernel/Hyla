@@ -14,6 +14,13 @@
 			<textarea name="description" cols="50" rows="7">{DESCRIPTION}</textarea>
 		</p>
 
+		<p>
+			<label for="redirect">
+				Être redirigé vers l'objet :
+			</label>
+			<input type="checkbox" name="redirect" id="redirect" value="1" />
+		</p>
+
 		<input type="submit" name="Submit" value="Modifier" />
 
 	</div>
@@ -45,6 +52,14 @@
 			</label>
 		</p>
 		<!-- END plugin -->
+
+		<p>
+			<label for="mk_redirect">
+				Être redirigé vers l'objet :
+			</label>
+			<input type="checkbox" name="redirect" id="mk_redirect" value="1" />
+		</p>
+
 		<input type="submit" name="Submit" value="Modifier" />
 	</div>
 

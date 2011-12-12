@@ -24,6 +24,7 @@ $l10n['Object not found !']			= 'L\'objet est introuvable !';
 $l10n['Error']						= 'Erreur';
 $l10n['No description !']			= 'Pas de description !';
 
+$l10n['You will be redirected towards the object !']	= 'Vous allez être redirigé vers l\'objet !';
 
 $l10n['The file is too large !']						= 'Le fichier est trop gros !';
 $l10n['An error occured while uploading the file !']	= 'Une erreur est survenue durant le téléchargement !';
@@ -128,6 +129,15 @@ $l10n['Not writable !']			= 'Ecriture impossible !';
 
 $l10n[' download']				= ' téléchargement(s)';
 
-$l10n['%s query executed in %s seconds']	= '%s requête(s) exécutée(s) en %s seconde(s)';
+$l10n['Dir(s) ']	= 'Répertoire(s) ';
+$l10n['File(s) ']	= 'Fichier(s) ';
+
+$l10n['Last comment']	= 'Derniers commentaires';
+$l10n['Administration']	= 'Administration';
+
+$l10n['%s objet(s) was deleted from database !']	= '%s objets supprimé(s) de la base de données !';
+$l10n['Cache was purged !']	= 'Le cache à été purgé !';
+
+$l10n['%s sql query executed in %s seconds']	= '%s requête(s) sql exécutée(s) en %s seconde(s)';
 
 ?>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 
 <plugin target="file" ext="txt,c,h">
-	<name>text</name>
+	<name>Text</name>
 	<description>Affichage du contenu du fichier</description>
 	<author>hugo</author>
 	<version>1</version>

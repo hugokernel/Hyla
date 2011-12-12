@@ -29,8 +29,8 @@
 		Taille de l'archive : {COMPRESSED_SIZE}<br />
 		Taille de l'archive décompressé : {REAL_SIZE}<br />
 		Nombre de fichiers : {NBR_FILE}<br />
-		Status : {STATUS}<br />
-		Commentaires : {COMMENT}
+<!--		Status : {STATUS}<br />
+		Commentaires : {COMMENT}-->
 	</div>
 
 </div>

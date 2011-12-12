@@ -1,6 +1,48 @@
----------------------< ChangeLog Hyla >----------------------
+Hyla ChangeLog
 
-[VERSION 0.6.1]
+[Version 0.7.1]
+	- hugo
+		1&2 octobre 2006
+			* Correction de fautes d'orthographes
+			* BUG: Un problème de droits est corrigé lié au renommage ou déplacement des objets
+			* BUG: L'arborescence était erronée lorsqu'aucun dossier était présent dans le répertoire de partage
+		29 septembre 2006
+			* ADD: Ajout de liens dans l'administration vers le site, la doc...
+			* BUG: Correction d'un problème d'affichage dans l'administration qui inversait les droits d'édition et d'ajout
+			* BUG: Correction d'un bug de césure des entités html dans les descriptions
+
+[Version 0.7.0]
+	- hugo
+		26 septembre 2006
+			* Correction d'un problème qui affchait une erreur lors du déplacement d'un répertoire vide
+			* Dans le choix du répertoire de destination dans l'action "Déplacer", on n'affiche plus les répertoire interdits
+		24&25 septembre 2006
+			* Correction d'un problème empêchant l'utilisation d'arborescence comportant des répertoires nommés "0"
+			* Le téléchargement de répertoires se fait dorénavant en "tar", beaucoup plus léger en ressource, évite ainsi des timeout
+			* Si on consulte une image de grande taille alors que l'extension GD n'est pas chargée, on affiche l'image brute sans redimensionnement
+			* Suppression de la constante de configuration ROOT_URL
+			* L'administration possède maintenant une zone "maintenance" permettant de purger le cache et de synchroniser la base de données
+		20 septembre 2006
+			* Correction d'un bug qui empéchait la recherche de masque dans les noms de répertoires
+			* Il est maintenant possible de générer des diaporamas
+			* Lorsqu'un fichier n'a pas de plugin approprié, il est possible d'en choisir un dans une liste un plugin
+		18 septembre 2006
+			* Le nom des plugin n'est plus "case sensitive"
+			* En plaçant une image (icon.png) dans le répertoire d'un "plugin répertoire", cette dernière sera utilisée comme icone du répertoire
+			* Possiblité de mettre des liens dans les descriptions
+			* Dans l'édition d'un objet, il est possible d'être redirigé directement vers l'objet une fois ce dernier édité
+			* Les archives tar et tar.gz sont dorénavant supportés grâve au libairies de PhpConcept ( http://www.phpconcept.net/ )
+		15 septembre 2006
+			* Correction d'un problème dans la pagination des répertoires
+			* Plus de mysql_pconnect, remplacé par mysql_connect car pose problème chez certain hébergeur
+			* Nettoyage dans le code
+			* Possibilité de trier par catégorie (Photos, Documents...) et par taille
+			* Un nouveau thème est disponible, il s'agit de "spirit"
+			* Amélioration dans l'administration pour changer de thème et de plugin par défaut (pour les répertoires) beaucoup plus simplement
+			* Lorsqu'un objet n'est pas lisible, on affiche l'erreur
+			* Il est dorénavant possible d'afficher une arborescence des répertoires
+
+[Version 0.6.1]
 	- hugo
 		21 juillet 2006
 			* Correction d'un bug dans l'envoie de fichier anonyme lorsque l'on était pas dans la racine
@@ -10,7 +52,7 @@
 			* Correction d'un problème lorsqu'une authentification échouait
 			* Dans le plugin galerie, on génère des images ayant la taille de la constante THUMB_SIZE_X
 
-[VERSION 0.6]
+[Version 0.6]
 	- hugo
 		18-20 juillet 2006 - Correction après test
 			* Un bug dans string::test est corrigé, cette fonction retournait une mauvaise valeur quand le premier caractère était un de ceux recherché
@@ -69,13 +111,13 @@
 			* L'envoie de fichier anonyme est dorénavant possible, il est également possible de recevoir une notification par mail dans ce cas
 			* Une erreur est affichée si on tente d'accéder à un objet non lisible
 			* La pagination existe dorénavant aussi dans les répertoires
-		1&2 juin 2006
+		1&2 mai 2006
 			* La fonction get_intelli_size est remplacée par get_human_size_reading
 			* Icones pour les swf
 			* Modification sur le template default, on affiche plus la racine par un . mais avec une image
 			* Résolution d'un petit souci qui affichait les mauvais précédent / suivant avec le plugin zenphoto
 
-[VERSION 0.4.1]
+[Version 0.4.1]
 	- hugo
 		31 mai 2006
 			* BUG: Correction d'un bug ralentissant l'affichage d'un répertoire car on allait chercher systématiquement les objets précédents, suivants...
@@ -83,7 +125,7 @@
 			* Le script d'installation ne renvoie plus de notice (passage en E_ERROR)
 			* Pour l'utilisation sur Windows, une fonction fnmatch de remplacement à été ajoutée
 
-[VERSION 0.4]
+[Version 0.4]
 	- hugo
 		29 mai 2006
 			* Le plugin mp3 se sert dorénavant du plugin flash de Neolao
@@ -107,7 +149,7 @@
 			* Dans l'édition d'un répertoire, il est maintenant possible de remettre le plugin par défaut
 			* Changement dans l'affichage des pages pour faciliter l'intégration du système de pagination
 
-[VERSION 0.2]
+[Version 0.2]
 	- hugo
 		5&8 mai 2006
 			* BUG: Correction d'un bug avec les fichiers venant du cache
@@ -134,7 +176,7 @@
 
 Le projet à été arrêté car il répondait aux attentes initiales et j'ai décidé de le reprendre avec beaucoup plus de fonctionnalités...
 
-[VERSION 0.1]
+[Version 0.1]
 	- hugo
 		18&20 janvier 2004
 			* Ajout d'un système de comptage de fichiers téléchargés

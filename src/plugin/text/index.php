@@ -25,15 +25,12 @@ class Plugin_text extends plugin {
 		parent::plugin();
 
 		$this->tpl->set_root(DIR_PLUGINS.'text');
-		$this->tpl->set_file(array(
-				'text'	 	=>	'text.tpl'));
+		$this->tpl->set_file('text', 'text.tpl');
 	}
 	
 	function aff() {
+		$this->tpl->set_var('CONTENT', htmlentities(file::getContent(get_directory(), ENT_QUOTES)));
 
-		$this->tpl->set_var(array(
-				'CONTENT'			=>	file::getContent(get_directory())));
-		
 		return $this->tpl->parse('OutPut', 'text');
 	}
 }

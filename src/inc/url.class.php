@@ -52,11 +52,11 @@ class url {
 		return url::_get($object, $tab, $act, $pact, $paff, false);
 	}
 
-	function getObj($object, $aff = '', $act = null, $pact = null, $paff = null) {
+	function getObj($object, $aff = null, $act = null, $pact = null, $paff = null) {
 		return url::_get($object, $aff, $act, $pact, $paff, true);
 	}
 
-	function getCurrentObj($aff = '', $act = null, $pact = null, $paff = null) {
+	function getCurrentObj($aff = null, $act = null, $pact = null, $paff = null) {
 		global $cobj;
 		$s = (isset($cobj->target) ? $cobj->file.'!'.$cobj->target : $cobj->file);
 		$s = $s ? $s : '/';
@@ -75,7 +75,7 @@ class url {
 	function _get($object, $aff = '', $act = null, $pact = null, $paff = null, $b = true) {
 
 		global $conf;
-		$s = ROOT_URL.'/index.php';		// ToDo: Remplacer par PHP_SELF ou autre...
+		$s = $_SERVER['PHP_SELF'];
 
 		if ($conf['url_scan'] == 'QUERY_STRING') {
 
@@ -86,7 +86,7 @@ class url {
 				foreach ($aff as $a) {
 					$s .= $a.'-';
 				}
-				$s = substr($s, 0, strlen($s) - 1);
+				$s = substr($s, 0, strlen($s) - 1);	// On enlève le - de fin
 			} else {
 				$s .= $aff ? '-'.$aff : null;
 			}
@@ -99,10 +99,11 @@ class url {
 
 			if ($act) {
 				if (is_array($act)) {
+					$s_a = null;
 					foreach ($act as $a) {
-						$s .= $a.'-';
+						$s_a .= $a.'-';
 					}
-					$s = substr($s, 0, strlen($s) - 1);
+					$s .= '&amp;act='.substr($s_a, 0, strlen($s_a) - 1);
 				} else {
 					$s .= '&amp;act='.$act;
 				}
@@ -129,7 +130,7 @@ class url {
 		if ($conf['url_scan'] == 'QUERY_STRING') {
 
 			if (array_key_exists('p', $_REQUEST)) {
-				@list($url->aff, $url->obj) = explode(',', $_REQUEST['p']);
+				@list($url->aff, $url->obj) = explode(',', $_REQUEST['p'], 2);
 			}
 
 			if (array_key_exists('act', $_REQUEST)) {
@@ -139,39 +140,29 @@ class url {
 			$url->act = explode('-', $url->act);
 			$url->aff = explode('-', $url->aff);
 
-//			$url->pact = explode('-', $url->pact);
-//			$url->paff = explode('-', $url->paff);
-
-/*
-			@list($aff, $object) = explode(',', $_REQUEST['aff']);
-			$aff = explode('-', $aff);
-*/
-
-//			$object = ($object) ? $object : $actobject;
-
 			$url->paff = isset($_REQUEST['paff']) ? $_REQUEST['paff'] : null;
 			$url->pact = isset($_REQUEST['pact']) ? $_REQUEST['pact'] : null;
 		}
-/*
-		else if ($this->_mode == 'PATH_INFO') {
-			$exp = preg_quote('#'.ROOT_URL, '/').'\/index.php\/(.*)#se';
-			preg_match($exp, $_SERVER['REQUEST_URI'], $match);
 
-			$slpos = strpos(@$match[1], '/');
-			if ($slpos) {
-				$aff = substr(@$match[1], 0, $slpos);
-				$object = substr(@$match[1], $slpos);
-			} else
-				$aff = @$match[1];
-
-			if (!$object)
-				$object = '/';
-		}
-*/
-
-//		$this->_current_obj = obj::getInfo($object);
-//		return $this->_current_obj;
 		return $url;
+	}
+
+	/*	Renvoie l'élément demandé
+	 */
+	function getAct($num) {
+		global $curl;
+		return isset($curl->act[$num]) ? $curl->act[$num] : null;
+	}
+
+	function getAff($num) {
+		global $curl;
+		return isset($curl->aff[$num]) ? $curl->aff[$num] : null;
+	}
+
+	function setAff($num, $val) {
+		global $curl;
+		$curl->aff[$num] = $val;
+		return $curl->aff[$num];
 	}
 }
 

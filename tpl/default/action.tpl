@@ -58,7 +58,6 @@
 					Choisissez le répertoire de destination :
 				</label>
 				<select name="mv_destination" id="mv_destination">
-					<option value="/">/</option>
 					<!-- BEGIN dir_move_occ --><option value="{DIR_NAME}">{DIR_NAME}</option><!-- END dir_move_occ -->
 				</select>
 			</p>

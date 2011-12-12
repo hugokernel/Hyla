@@ -59,14 +59,22 @@ switch ($aff) {
 		$tpl->set_var('FORM_MOVE', url::getCurrentObj('', 'move'));
 
 	case 'copy':
-		$tab = file::scanDir(FOLDER_ROOT);
+		$tab = file::scanDir(FOLDER_ROOT, $conf['view_hidden_file']);
+
+		// La racine
+		if ($cobj->path != '/' && file::downPath($cobj->file) != '/') {
+			$tpl->set_var('DIR_NAME', '/');
+			$tpl->parse('Hdldir_'.$aff.'_occ', 'dir_'.$aff.'_occ', true);
+		}
+
+		// Les autres répertoires
 		foreach ($tab as $occ) {
-			if ($occ == $cobj->path || ($occ{1} == '.' && !$conf['view_hidden_file']))
+			if ($occ == $cobj->path || ($cobj->type == TYPE_DIR && $occ == file::downPath($cobj->path) || ($occ{1} == '.' && !$conf['view_hidden_file'])))
 				continue;
 			$tpl->set_var('DIR_NAME', $occ);
 			$tpl->parse('Hdldir_'.$aff.'_occ', 'dir_'.$aff.'_occ', true);
 		}
-
+		unset($tab);
 		$tpl->set_var('ERROR', (isset($msg_error)) ? view_error($msg_error) : null);
 		$tpl->parse('Hdl'.$aff, $aff, true);
 		break;

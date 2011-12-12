@@ -38,8 +38,7 @@ class db
 
 	/*	Le constructeur...
 	 */
-	function db()
-	{
+	function db() {
 		$this->_db_host = null;
 		$this->_db_user = null;
 		$this->_db_pass = null;
@@ -53,43 +52,40 @@ class db
 	}
 
 	/*	Connection au serveur...
-		@param string $_db_host Serveur SQL
-		@param string $_db_user User
-		@param string $_db_pass Password
-		@param string $_db_base Base de données
+		@param	string	$_db_host	Serveur SQL
+		@param	string	$_db_user	User
+		@param	string	$_db_pass	Password
 	 */
-	function connect($_db_host, $_db_base, $_db_user, $_db_pass)
-	{
+	function connect($_db_host, $_db_user, $_db_pass) {
+
 		$this->_db_host = $_db_host;
 		$this->_db_user = $_db_user;
 		$this->_db_pass = $_db_pass;
-		$this->_db_base = $_db_base;
 		
 		//extension_loaded('mysql');
 		
 		// Connexion à la base de données
-		if (@!defined(ID_BDD))
-		{
-			if (!$this->_id_bdd = mysql_pconnect($this->_db_host, $this->_db_user, $this->_db_pass))
-				trigger_error(__('Couldn\'t connect to sql server !'), E_USER_ERROR);
-			else
-				define('ID_BDD', $this->_id_bdd);
-
-			// Sélection de la base de données
-			$db = mysql_select_db($this->_db_base, $this->_id_bdd);
-			if (!$db)
-				trigger_error(__('Unable to use database &laquo; %s &raquo;', $this->_db_base), E_USER_ERROR);
-		}
-		else
-			$this->_id_bdd = ID_BDD;
+		if (!$this->_id_bdd = mysql_connect($this->_db_host, $this->_db_user, $this->_db_pass))
+			trigger_error(__('Couldn\'t connect to sql server !'));
 
 		return $this->_id_bdd;
 	}
 
+	/*	Sélection de la base de données
+		@param	string	$_db_base	Base de données
+	 */
+	function select($_db_base) {
+		$this->_db_base = $_db_base;
+
+		$db = mysql_select_db($this->_db_base, $this->_id_bdd);
+		if (!$db)
+			trigger_error(__('Unable to use database &laquo; %s &raquo;', $this->_db_base));
+		return $db;
+	}
+
 	/*	Fermeture de la base de données
 	 */
-	function close($_id_bdd = null)
-	{
+	function close($_id_bdd = null) {
 		if ($_id_bdd == null)
 			$_id_bdd = $this->_id_bdd;
 		if (!$ret = mysql_close($this->_id_bdd))
@@ -99,15 +95,16 @@ class db
 
 	/*	Exécution d'une requête
 	 */
-	function execQuery($qry, $_id_bdd = null)
-	{
+	function execQuery($qry, $_id_bdd = null) {
 		$this->_nbr_query++;
 
 		if (!$_id_bdd)
 			$_id_bdd = $this->_id_bdd;
 		$this->_last_query = $qry;
 		$this->_id_query = mysql_query($qry, $_id_bdd);
-			
+		
+//echo '<hr>'.$qry.'<hr>';
+
 		return $this->_id_query;
 	}
 
@@ -133,8 +130,7 @@ class db
 
 	/*	Retourne une ligne de résultat sous la forme d'un tableau associatif
 	 */
-	function fetchArray($_id_query = null)
-	{
+	function fetchArray($_id_query = null) {
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
 		return mysql_fetch_array($_id_query);
 	}
@@ -148,16 +144,14 @@ class db
 
 	/*	Retourne le nombre de ligne d'un résultat
 	 */
-	function getNumRows($_id_query = null)
-	{
+	function getNumRows($_id_query = null) {
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
 		return mysql_num_rows($_id_query);
 	}
 
 	/*	Efface le résultat de la mémoire
 	 */
-	function freeResult($_id_query)
-	{
+	function freeResult($_id_query) {
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
 		return mysql_free_result($_id_query);
 	}

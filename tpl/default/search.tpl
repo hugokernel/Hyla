@@ -1,5 +1,6 @@
+
 <fieldset>
-	<legend><img src="{DIR_TEMPLATE}/img/Find-Files1.png" align="middle" width="32" height="32" alt="Disque dûr" /> Recherche </legend>
+	<legend><img src="{DIR_TEMPLATE}/img/Find-Files1.png" align="middle" width="32" height="32" alt="Disque dûr" /> Recherche dans &laquo; {OBJECT} &raquo;  </legend>
 
 	<form method="post" name="form_upload" action="{FORM_SEARCH}">
 		<p>
@@ -17,20 +18,22 @@
 		<input type="submit" name="Submit" value="Rechercher" />
 		<p>
 			<a href="#comment" name="comment" onclick="swap_couche('1');"><img src="{DIR_TEMPLATE}/img/FAQ.png" width="32" height="32" alt="Voir / Cacher l'info" /> Info</a>
-			<blockquote id="Layer1" style="display: none;" class="info">
-				<p>Quelques exemples d'utilisation :</p>
-				<ul>
-					<li>Pour effectuer une recherche de tous les fichiers jpg, vous pouvez taper ceci : <strong>*.jpg</strong></li>
-					<li>Chercher les fichiers mp3 finissant par "libres" ou "libre" : <strong>*libre[s].mp3</strong></li>
-				</ul>
-			</blockquote>
 		</p>
+		<blockquote id="Layer1" style="display: none;" class="info">
+			<p>Quelques exemples d'utilisation :</p>
+			<ul>
+				<li>Pour effectuer une recherche de tous les fichiers jpg, vous pouvez taper ceci : <strong>*.jpg</strong></li>
+				<li>Chercher les fichiers mp3 finissant par "libres" ou "libre" : <strong>*libre[s].mp3</strong></li>
+			</ul>
+		</blockquote>
 	</form>
 	{ERROR}
 	<!-- BEGIN result -->
 	<hr />
 	
-	Voici le(s) résultat(s) de la recherche sur le terme &laquo; <b>{WORD}</b> &raquo; :
+	<p>
+		Voici le(s) résultat(s) de la recherche sur le terme &laquo; <b>{WORD}</b> &raquo; :
+	</p>
 	
 	<div class="table">
 		<table width="100%">

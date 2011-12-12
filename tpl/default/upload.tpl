@@ -1,9 +1,9 @@
-
 {MSG}
 
 <p>
-Taille maximale d'un fichier : <strong>{MAX_FILESIZE}</strong>
+	Taille maximale d'un fichier : <strong>{MAX_FILESIZE}</strong>
 </p>
+
 <select name="sort" onchange="location.href='{URL_UPLOAD}&amp;file=' + this.options[this.selectedIndex].value">
 	<option selected="selected">Nombre de fichiers à ajouter...</option>
 	<option value="1">&nbsp;1</option>
@@ -49,5 +49,5 @@ Taille maximale d'un fichier : <strong>{MAX_FILESIZE}</strong>
 </fieldset>
 <br />
 <!-- END form_upload -->
-	<input type="submit" name="Submit" value="Envoyer" />
+<input type="submit" name="Submit" value="Envoyer" />
 </form>

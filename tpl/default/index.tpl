@@ -4,12 +4,15 @@
 
 <title>{OBJECT} {TITLE}</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel="stylesheet" type="text/css" media="screen,projection" title="Défault" href="{DIR_TEMPLATE}/default.css" />
+
+<link rel="stylesheet" type="text/css" media="screen,projection" title="Défaut" href="{DIR_TEMPLATE}/default.css" />
+<link rel="alternate stylesheet" type="text/css" media="screen" title="Cacher l'arborescence" href="{DIR_TEMPLATE}/no-tree.css" />
 
 <link rel="shortcut icon" type="image/x-icon" href="img/icon.png" />
 <link rel="icon" type="image/png" href="img/icon.png"/>
 
 <script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/lib.js"></script>
+<script language="javascript" type="text/javascript" src="{DIR_TEMPLATE}/styleswitcher.js"></script>
 
 </head>
 <body>
@@ -18,14 +21,12 @@
 	<h3>
 		{OBJECT_URL}
 	</h3>
-	{DOWNLOAD_COUNT}
+	<span id="download">{DOWNLOAD_COUNT}</span>
 </div>
 
-{OBJ}
-
-{STRDBG}
-
-<br />
+<div id="main">
+	{OBJ}
+</div>
 
 {TOOLBAR}
 

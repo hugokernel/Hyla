@@ -22,39 +22,22 @@
 
 class string
 {
-	/*	Renvoie le nombre de mots demandé dans une phrase
-		@param	string	$str La phrase
-	 	@param	int		$nbr_word Nombre de mots souhaités
-	 */
-	function cutWord($str, $nbr_word) {
-		$tab_word = array();
-		$tab_word = explode(' ', $str);
-		for ($i = 0, $word = null; $i < $nbr_word; $i++)
-			$word .= $tab_word[$i].' ';
-		return $word;
-	}
-
 	/*	Coupe un mot ou une phrase et rajoute des '...'
-		@param	string	$str Chaine à couper
-	 	@param	int		$size Taille de la coupe
-		@param	string	$end Tronquer avec ce string
+		@param	string	$str		Chaine à couper
+	 	@param	int		$size		Taille de la coupe
+		@param	string	$end		Tronquer avec cette chaine
+		@param	bool	$entities	S'occuper des entités html
 	 */
-	function cut($str, $size = 25, $end = '...') {
+	function cut($str, $size = 25, $end = '...', $entities = true) {
+		if ($entities)
+			$str = html_entity_decode($str, ENT_QUOTES);
+
 		if (strlen($str) > $size)
 			$str = substr($str, 0, $size - strlen($end)).$end;
-	
-		return $str;
-	}
 
-	/*	On ne tient pas compte des accents !
-		@param	string	$str Chaine de caractères !
-		@param	bool	$_lower Si à true, renvoie la chaine en miniscule
-	 */
-	function skipAccent($str, $_lower = false) {
-		$str = ($_lower) ? strtolower($str) : $str;
-		$tofind = "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ";
-		$replac = "AAAAAAaaaaaaOOOOOOooooooEEEEeeeeCcIIIIiiiiUUUUuuuuyNn";
-		return strtr($str, $tofind, $replac);
+		if ($entities)
+			$str = htmlentities($str, ENT_QUOTES);
+		return $str;
 	}
 
 	/*	Recherche une chaine de caractère dans un ensemble de caractères (strpbrk en php5)
@@ -77,24 +60,34 @@ class string
 	/*	Format une chaine comme il faut !
 		@param	string	$string	La chaine à formater
 		@param	bool	$n		Accepter les retour chariot ou non
+		@param	bool	$url	"Déformater" les urls ou non
 	 */
-	function format($string, $n = true) {
-//		$string = htmlspecialchars($string, ENT_QUOTES);
+	function format($string, $n = true, $url = false) {
+
 		$string = htmlentities($string, ENT_QUOTES);
 
 		// Le nl2br rajoute un retour chariot après le <br /> donc :
 		$string = ($n) ? eregi_replace("\r\n|\n", '<br />', $string) : eregi_replace("\r\n|\n", ' ', $string);
+
+		if ($url) {
+			$_format = create_function('$tab', 'return \'<a href="\'.$tab[0].\'">\'.string::cut($tab[0], 60).\'</a>\';');
+			$string = preg_replace_callback('#([a-zA-Z]+://[/]*)([a-zA-Z0-9\-_\.]+[:0-9]*(/[a-zA-Z0-9\-/\._\?=\&\,\;\#\!\%\:\@\/]+)?[/]*)#', $_format, $string);
+			$string = preg_replace('/([a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4})/', '<a href="mailto:$0">$1</a>', $string);
+		}
 
 		return $string;
 	}
 
 	/*	Opération inverse de formatString
 		@param	string	$string	La chaine à "déformater"
+		@param	bool	$n		Convertir les <br> en saut
+		@param	bool	$url	"Déformater" les urls ou non
 	 */
-	function unFormat($string, $n = true) {
-		if ($n)
-			$string = eregi_replace("<br />|<br>", "\n", $string);
-
+	function unFormat($string) {
+		$string = eregi_replace("<br />|<br>", "\n", $string);
+		// ToDo: passer le code ci-dessous dans une seule exp. reg.
+		$string = preg_replace('/<.*href="mailto:?(.*:\/\/)?([^ \/]*)([^ >"]*)"?[^>]*>(.*)(<\/a>)/', '$4', $string);
+		$string = preg_replace('/<.*href="?(.*:\/\/)?([^ \/]*)([^ >"]*)"?[^>]*>(.*)(<\/a>)/', '$1$2$3', $string);
 		return $string;
 	}
 }

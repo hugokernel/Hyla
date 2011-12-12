@@ -42,7 +42,7 @@ class Plugin_image extends plugin {
 		$tab = graphic::getImageInfo(get_directory());
 
 		// Calcul des tailles possibles par rapport à la taille de l'image et de la taille de la miniature par défaut
-		if ($tab['sizex'] > $thumb_size) {
+		if ($tab['sizex'] > $thumb_size && extension_loaded('gd')) {
 
 			$act = $val = null;
 
@@ -69,7 +69,7 @@ class Plugin_image extends plugin {
 				'AFF_SIZE_1_1'		=>	url::getCurrentObj(null, null, null, 'size:1/1'),
 				'OBJECT'			=>	url::getCurrentObj(),
 				'OBJECT_DOWNLOAD'	=>	url::getObj($this->cobj->file.(!empty($this->cobj->target) ? '!'.$this->cobj->target : null), 'download'),
-				'OBJECT_MINI'		=>	$thumb_size ? url::getCurrentObj(array('mini', $thumb_size)) : url::getObj($this->cobj->file.(!empty($this->cobj->target) ? '!'.$this->cobj->target : null), 'download'),
+				'OBJECT_MINI'		=>	($thumb_size && extension_loaded('gd')) ? url::getCurrentObj(array('mini', $thumb_size)) : url::getObj($this->cobj->file.(!empty($this->cobj->target) ? '!'.$this->cobj->target : null), 'download'),
 
 				'IMAGE_X'			=>	$tab['sizex'],
 				'IMAGE_Y'			=>	$tab['sizey'],

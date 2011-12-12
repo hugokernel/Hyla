@@ -25,22 +25,14 @@
  	| /!\ ATTENTION, pas de slash ou anti slash de fin ! |
  	+----------------------------------------------------+
  */
-define('FOLDER_ROOT', '');
-
-
-/*	L'emplacement de Hyla après le nom de domaine (sans slash de fin !)
-	Ex: http://ifile.free.fr/				-> mettez ''
-	Ex: http://ifile.free.fr/ifile/			-> mettez '/ifile'
-	Ex: http://ifile.free.fr/data/ifile		-> mettez '/data/ifile'
- */
-define('ROOT_URL', '');
+define('FOLDER_ROOT', '/var/www');
 
 
 /*	+---------------------------------+
 	| Connection à la base de données |
 	+---------------------------------+
  */
-define('SQL_HOST',	'');
+define('SQL_HOST',	'localhost');
 define('SQL_BASE',	'');
 define('SQL_USER',	'');
 define('SQL_PASS',	'');

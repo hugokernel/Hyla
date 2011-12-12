@@ -35,7 +35,7 @@ class file
 		// Récupération et création du premier répertoire de destination
 		if ($var) {
 			$folder_dest = $folder_dest.(($folder_dest{strlen($folder_dest) - 1} == '/') ? null : '/').file::getLastDir($folder_origin);
-			mkdir($folder_dest, $dir_chmod);
+			$ret += mkdir($folder_dest, $dir_chmod);
 			$var = false;
 		}
 
@@ -127,44 +127,63 @@ class file
 	/*	Retourne un tableau contenant l'arborescence du repertoire spécifié
 		@param	string	$_folder_root	Le répertoire racine
 		@param	string	$_folder		Sous répertoire
+		@param	bool	$hidden			Renvoie ou non les objets cachés
 	 */
-	function scanDir($_folder_root, $_folder = null) {
-		static $tab_dir;
+	function scanDir($_folder_root, $hidden = true, $_folder = null) {
+		static $tab_dir = null;
+		static $cmpt = 0;
+		$cmpt++;
 
 		$hdl = dir($_folder_root.$_folder);
 		if ($hdl) {
 			while (false !== ($_occ = $hdl->read())) {
 				if ($_occ != '.' && $_occ != '..' && is_dir($_folder_root.$_folder.'/'.$_occ)) {
-					$tab_dir[] = $_folder.'/'.$_occ;
-					file::scanDir($_folder_root, $_folder.'/'.$_occ);
+					if ($_occ{0} != '.' || $hidden) {
+						$tab_dir[] = $_folder.'/'.$_occ.'/';
+						file::scanDir($_folder_root, $hidden, $_folder.'/'.$_occ);
+					}
 				}
 			}
 			$hdl->close();
 		}
-		return $tab_dir;
+
+		if ($cmpt == 1) {
+			$tab = $tab_dir;
+			$tab_dir = null;
+		}
+		$cmpt--;
+		return $tab;
 	}
 
 	/*	Les fichiers matchant l'expression régulière sont stockés dans un tableau
-		@param string $folder Répertoire root pour le scan
-		@param string $exp L'expression régulière
-		@param boolean $recurs Faire ça récursivement
-		@param string $base Répertoire de base
-		@param boolean $scandir Scanner aussi le nom des répertoire
+		@param	string	$folder		Répertoire pour le scan (finissant par un '/')
+		@param	string	$exp		L'expression régulière
+		@param	boolean	$recurs		Faire ça récursivement
+		@param	string	$base		Répertoire de base
+		@param	boolean	$scandir	Scanner aussi le nom des répertoire
+		@param	bool	$hidden		Renvoie ou non les objets cachés
 	 */
-	function searchFile($folder, $exp, $recurs = true, $base = null, $scandir = false) {
-		static $tab_file;
-		
+	function searchFile($folder, $exp, $recurs = true, $base = null, $scandir = false, $hidden = false) {
+		static $tab_file = null;
+		static $cmpt = 0;
+		$cmpt++;
+
 		if (!$tab_file && $folder == '/')
-				$folder = null;
+			$folder = null;
 		
 		$hdl = dir($base.$folder);
 		if ($hdl) {
-			while (false !== ($_occ = $hdl->read())) {			
-				if (is_dir($base.$folder.'/'.$_occ) && $_occ != '.' && $_occ != '..' && $recurs) {
+			while (false !== ($_occ = $hdl->read())) {
+				if ($_occ{0} == '.' && !$hidden) {
+					continue;
+				}
+				if (is_dir($base.$folder.'/'.$_occ) && $_occ != '.' && $_occ != '..') {
 					 if ($scandir && fnmatch(strtolower($exp), strtolower($_occ))) {
 						$tab_file[] = $folder.'/'.$_occ.'/';
 					}
-					file::searchFile($folder.'/'.$_occ, $exp, $recurs, $base);
+
+					if ($recurs)
+						file::searchFile($folder.'/'.$_occ, $exp, $recurs, $base, $scandir, false);
 				} else if (is_file($base.$folder.'/'.$_occ) && $_occ != '.' && $_occ != '..') {					 if (fnmatch(strtolower($exp), strtolower($_occ))) {
 						$tab_file[] = $folder.'/'.$_occ;
 					}
@@ -172,7 +191,14 @@ class file
 			}
 			$hdl->close();
 		}
-		return $tab_file;
+
+
+		if ($cmpt == 1) {
+			$tab = $tab_file;
+			$tab_file = null;
+		}
+		$cmpt--;
+		return $tab;
 	}
 	
 	/*	Retourne l'extension d'un fichier
@@ -354,7 +380,7 @@ class file
 
 		$p = ($exist && substr(PHP_OS, 0, 3) == 'WIN') ? null : '/';
 		foreach($dirs_out as $k => $v) {
-			if ($v)
+			if (isset($v))
 				$p .= $v.'/';
 		}
 		

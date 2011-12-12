@@ -45,48 +45,51 @@ class Plugin_gallery extends plugin { // implements _plugin {
 
 		$tab = $this->obj->getDirContent($this->cobj->file, $sort, $start);
 		
-		// Listage de répertoire
-		$size = sizeof($tab);
-		for ($i = 0, $cmpt = 1; $i < $size; $i++, $cmpt++) {			
+		if ($tab) {
+
+			// Listage de répertoire
+			$size = sizeof($tab);
+			for ($i = 0, $cmpt = 1; $i < $size; $i++, $cmpt++) {			
 		
-			if ($tab[$i]->name == '..') {
-				$cmpt--;
-				continue;
-			}
+				if ($tab[$i]->name == '..') {
+					$cmpt--;
+					continue;
+				}
 
-			$this->tpl->set_var('Hdlgallery_line_img');
-			$this->tpl->set_var('Hdlgallery_line_other');
-			$this->tpl->set_var('Hdlgallery_comment');
+				$this->tpl->set_var('Hdlgallery_line_img');
+				$this->tpl->set_var('Hdlgallery_line_other');
+				$this->tpl->set_var('Hdlgallery_comment');
 			
-			$this->tpl->set_var('ACTION',	(is_file(FOLDER_ROOT.'/'.$tab[$i]->path)) ? 'dl' : 'list');
-			$this->tpl->set_var(array(
-					'FILE_ICON'			=>	$tab[$i]->icon,
-					'FILE_NAME'			=>	$tab[$i]->name,
-					'FILE_SIZE'			=>	get_human_size_reading($tab[$i]->size),
-					'PATH'				=>	url::getObj($tab[$i]->file),
-					'OBJECT_MINI'		=>	url::getObj($tab[$i]->file, 'mini'),
-					'NBR_COMMENT'		=>	$tab[$i]->info->nbr_comment,
-					'FILE_DESCRIPTION'	=>	($tab[$i]->info->description) ? string::cut(eregi_replace("<br />", " ", $tab[$i]->info->description), 90) : __('No description !')
-					));
+				$this->tpl->set_var('ACTION',	(is_file(FOLDER_ROOT.'/'.$tab[$i]->path)) ? 'dl' : 'list');
+				$this->tpl->set_var(array(
+						'FILE_ICON'			=>	$tab[$i]->icon,
+						'FILE_NAME'			=>	$tab[$i]->name,
+						'FILE_SIZE'			=>	get_human_size_reading($tab[$i]->size),
+						'PATH'				=>	url::getObj($tab[$i]->file),
+						'OBJECT_MINI'		=>	url::getObj($tab[$i]->file, 'mini'),
+						'NBR_COMMENT'		=>	$tab[$i]->info->nbr_comment,
+						'FILE_DESCRIPTION'	=>	($tab[$i]->info->description) ? string::cut(eregi_replace("<br />", " ", $tab[$i]->info->description), 90) : __('No description !')
+						));
 			
-			if ($tab[$i]->info->nbr_comment)
-				$this->tpl->parse('Hdlgallery_comment', 'gallery_comment', true);
+				if ($tab[$i]->info->nbr_comment)
+					$this->tpl->parse('Hdlgallery_comment', 'gallery_comment', true);
 
-			if ($tab[$i]->extension == 'jpg' || $tab[$i]->extension == 'jpeg' || $tab[$i]->extension == 'gif' || $tab[$i]->extension == 'png')
-				$this->tpl->parse('Hdlgallery_line_img', 'gallery_line_img', true);
-			else
-				$this->tpl->parse('Hdlgallery_line_other', 'gallery_line_other', true);
+				if ($tab[$i]->extension == 'jpg' || $tab[$i]->extension == 'jpeg' || $tab[$i]->extension == 'gif' || $tab[$i]->extension == 'png')
+					$this->tpl->parse('Hdlgallery_line_img', 'gallery_line_img', true);
+				else
+					$this->tpl->parse('Hdlgallery_line_other', 'gallery_line_other', true);
 
-			$this->tpl->parse('Hdlgallery_line', 'gallery_line', true);
+				$this->tpl->parse('Hdlgallery_line', 'gallery_line', true);
 
-			if (!($cmpt % 4)) {
-				$this->tpl->parse('Hdlgal', 'gal', true);
-				$this->tpl->set_var('Hdlgallery_line');
-			}		}
+				if (!($cmpt % 4)) {
+					$this->tpl->parse('Hdlgal', 'gal', true);
+					$this->tpl->set_var('Hdlgallery_line');
+				}			}
 
-		$this->tpl->parse('Hdlgal', 'gal', true);
+			$this->tpl->parse('Hdlgal', 'gal', true);
 
-		return $this->tpl->parse('OutPut', 'gallery');
+			return $this->tpl->parse('OutPut', 'gallery');
+		}
 	}
 }
 

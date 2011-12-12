@@ -19,10 +19,68 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
+require 'src/lib/pclerror.lib.php';
+require 'src/lib/pcltrace.lib.php';
+require 'src/lib/pcltar.lib.php';
 require 'src/lib/pclzip.lib.php';
 
 class archive {
+
+	/*	Retourne le type d'une archive
+		@param	string	$file	Le nom de l'archive	
+	 */
+	function getType($file) {
+		$size = strlen($file);		// ToDo: Remplacer par unpack pour lire l'entête des fichiers
+		$type = (substr($file, $size - 6, $size) == 'tar.gz') ? 'tar.gz' : file::getExtension($file);
+		return $type;
+	}
+
+	/*	Liste les fichiers contenus dans une archive
+		@param	string	$file	L'archive
+	 */
+	function listContent($file) {
+		$ret = null;
+
+		$type = archive::getType($file);
+		switch ($type) {
+			case 'zip':
+				$zip = new PclZip($file);
+				$ret = $zip->listContent();
+				break;
+
+			case 'tar':
+			case 'gz':
+			case 'tar.gz':
+				$ret = PclTarList($file);
+				break;
+		}
+
+		return $ret;
+	}
+
+	/*	Extrait les fichiers
+		@param	string	$file	L'archive
+		@param	string	$dest	Le répertoire de destination
+	 */
+	function extract($file, $dest) {
+		$ret = false;
+
+		$type = archive::getType($file);
+		switch ($type) {
+			case 'zip':
+				$zip = new PclZip($file);
+				$ret = $zip->extract($dest);
+				break;
+
+			case 'tar':
+			case 'gz':
+			case 'tar.gz':
+				$ret = PclTarExtract($file, $dest);
+				break;
+		}
+
+		return $ret;
+	}
 
 
 	/*	Créé une archive contenant tous les fichiers d'un répertoire
@@ -36,10 +94,6 @@ class archive {
 		$hdl = dir($path);
 		if ($hdl) {
 			$str = null;
-
-//			require_once('src/lib/zip.lib.php');
-//			$zip = new zipfile();
-
 			while (false !== ($occ = $hdl->read())) {
 
 				// Si on a un fichier caché...
@@ -47,21 +101,15 @@ class archive {
 					continue;
 
 				if (is_file($path.$occ)) {
-					$str .= $path.$occ.',';
-/*					$str = $path.$occ;
-					$content = file::getContent($str);
-					$zip->addfile($content, $occ);
-*/
+					$str[] = $path.$occ;
+//					$str .= $path.$occ.',';
 				}
 			}
-
-//			$content = $zip->file();
-//			echo 'var: '.$content;
-//			file::putContent('/var/www/gal/archive.zip', $content);
-
-
+/*
 			$zip = new PclZip($archive);
 			$out = $zip->create($str, PCLZIP_OPT_REMOVE_PATH, $path);
+*/
+			$out = PclTarCreate($archive, $str, 'tar', null, $path);
 		}
 
 		return $out;
@@ -74,8 +122,7 @@ class archive {
 
 		$ret = array('prev' => null, 'next' => null);
 
-		$this->zip = new PclZip($archive);
-		$tab = $this->zip->listContent();
+		$tab = archive::listContent($archive);
 
 		$size = sizeof($tab);
 		for ($i = 0, $prev = 0, $fprev = false; $i < $size; $i++) {

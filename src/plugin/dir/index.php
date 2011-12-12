@@ -34,107 +34,97 @@ class Plugin_dir extends plugin {
 				));
 	}
 	
-	function act() {
-	}
-	
 	function aff($aff) {
 
 		global $sort, $start, $conf;
 
-		$sort = (isset($_SESSION['sess_sort'])) ? $_SESSION['sess_sort'] : $conf['sort_config'];
-		$grp = (isset($_SESSION['sess_grp'])) ? $_SESSION['sess_grp'] : $conf['group_by_sort'];
-
-		if (isset($aff)) {
-			$tab = array(
-					'0' => SORT_DEFAULT,
-					'1' => SORT_ALPHA | SORT_FOLDER_FIRST,
-					'2' => SORT_ALPHA_R | SORT_FOLDER_FIRST,
-					'3' => SORT_ALPHA_EXT | SORT_FOLDER_FIRST,
-					'4' => SORT_ALPHA_EXT_R | SORT_FOLDER_FIRST,
-					'5' => SORT_ALPHA,
-					'6' => SORT_ALPHA_R,
-					'7' => SORT_ALPHA_EXT,
-					'8' => SORT_ALPHA_EXT_R);
-			list($act, $value) = explode(':', $aff[0]);
-			if ($act == 'sort') {
-				if ($value > 0) {
-					$sort = (isset($tab[$value]) ? $tab[$value] : $sort);
-					$_SESSION['sess_sort'] = $sort;
-				}
-			}
-
-			if (isset($aff[1])) {
-				list($act, $value) = explode(':', $aff[1]);
-				if ($act == 'grp' && $value == 'ok') {
-					$grp = 1;
-					$_SESSION['sess_grp'] = $grp;
-				}
-			} else {
-				$grp = 0;
-				$_SESSION['sess_grp'] = $grp;
-			}
-		}
+		$sort = $_SESSION['sess_sort'];
+		$grp = $_SESSION['sess_grp'];
 
 		switch ($sort) {
 			case SORT_DEFAULT:
-			case SORT_ALPHA | SORT_FOLDER_FIRST:
-			case SORT_ALPHA_R | SORT_FOLDER_FIRST:
 			case SORT_ALPHA:
+			case SORT_ALPHA | SORT_FOLDER_FIRST:
+				$header_value = 'return $tab[$i]->name{0};';
+				break;				
 			case SORT_ALPHA_R:
+			case SORT_ALPHA_R | SORT_FOLDER_FIRST:
 				$header_value = 'return $tab[$i]->name{0};';
 				break;
-			case SORT_ALPHA_EXT | SORT_FOLDER_FIRST:
-			case SORT_ALPHA_EXT_R | SORT_FOLDER_FIRST:
 			case SORT_ALPHA_EXT:
-			case SORT_ALPHA_EXT_R:
+			case SORT_ALPHA_EXT | SORT_FOLDER_FIRST:
 				$header_value = 'return $tab[$i]->extension;';
 				break;
-		}
-
-		if ($grp == 1) {
-			$this->tpl->set_var('CHECKED', ' checked="checked"');
+			case SORT_ALPHA_EXT_R:
+			case SORT_ALPHA_EXT_R | SORT_FOLDER_FIRST:
+				$header_value = 'return $tab[$i]->extension;';
+				break;
+			case SORT_ALPHA_CAT:
+			case SORT_ALPHA_CAT | SORT_FOLDER_FIRST:
+				$header_value = 'return $tab[$i]->cat;';
+				break;
+			case SORT_ALPHA_CAT_R:
+			case SORT_ALPHA_CAT_R | SORT_FOLDER_FIRST:
+				$header_value = 'return $tab[$i]->cat;';
+				break;
+			case SORT_SIZE:
+			case SORT_SIZE | SORT_FOLDER_FIRST:
+				$header_value = 'return get_human_size_reading($tab[$i]->size, 0);';
+				break;
+			case SORT_SIZE_R:
+			case SORT_SIZE_R | SORT_FOLDER_FIRST:
+				$header_value = 'return get_human_size_reading($tab[$i]->size, 0);';
+				break;
 		}
 
 		$tab = $this->obj->getDirContent($this->cobj->file, $sort, $start);
 
-		// Listage de répertoire
-		$size = sizeof($tab);
-		for($i = 0, $last = null, $last_type = null; $i < $size; $i++) {
-			$this->tpl->set_var('Hdlline_header');
-			$this->tpl->set_var('Hdlline_content');
-			$this->tpl->set_var('Hdlline_comment');
+		if ($tab) {
+			// Listage de répertoire
+			$size = sizeof($tab);
+			for($i = 0, $last = null, $last_type = null; $i < $size; $i++) {
+				$this->tpl->set_var('Hdlline_header');
+				$this->tpl->set_var('Hdlline_content');
+				$this->tpl->set_var('Hdlline_comment');
 
-			$this->tpl->set_var(array(
-					'OBJECT'			=>	url::getObj($this->cobj->file),
-					'FILE_ICON'			=>	$tab[$i]->icon,
-					'FILE_NAME'			=>	$tab[$i]->name,
-					'FILE_SIZE'			=>	($tab[$i]->type == TYPE_FILE) ? get_human_size_reading($tab[$i]->size) : '&nbsp;',
-					'PATH_DOWNLOAD'		=>	url::getObj($tab[$i]->file, 'download'),
-					'PATH_INFO'			=>	url::getObj($tab[$i]->file),
-					'FILE_DESCRIPTION'	=>	string::cut(eregi_replace("<br />", " ", $tab[$i]->info->description), 90),
-					'NBR_COMMENT'		=>	$tab[$i]->info->nbr_comment));
-
-			if ($tab[$i]->info->nbr_comment) {
-				$this->tpl->parse('Hdlline_comment', 'line_comment', true);
-			}
-
-			if ($grp == 1) {
-				$rupt = eval($header_value);
 				$this->tpl->set_var(array(
-						'HEADER_VALUE'		=>	(($tab[$i]->type == TYPE_DIR) ? 'Répertoire(s)' : 'Fichier(s) '),
-						'HEADER_INFO_VALUE'	=>	(($tab[$i]->type == TYPE_FILE) ? $rupt : null)));
-				$bool = (($tab[$i]->type == 1) && ((SORT_FOLDER_FIRST | $sort) && $last_type == $tab[$i]->type));
-				if (!$bool && ($last_type != $tab[$i]->type || strtolower($last) != strtolower($rupt))) {
-					$this->tpl->parse('Hdlline_header', 'line_header', true);	
-					$last = $rupt;
-					$last_type = $tab[$i]->type;
-				}
-			}
-			$this->tpl->parse('Hdlline_content', 'line_content', true);
-			$this->tpl->parse('Hdlline', 'line', true);
-		}
+						'OBJECT'			=>	url::getObj($this->cobj->file),
+						'FILE_ICON'			=>	$tab[$i]->icon,
+						'FILE_NAME'			=>	$tab[$i]->name,
+						'FILE_SIZE'			=>	($tab[$i]->type == TYPE_FILE) ? get_human_size_reading($tab[$i]->size) : '&nbsp;',
+						'PATH_DOWNLOAD'		=>	url::getObj($tab[$i]->file, 'download'),
+						'PATH_INFO'			=>	url::getObj($tab[$i]->file),
+						'FILE_DESCRIPTION'	=>	string::cut(eregi_replace("<br />", " ", string::unFormat($tab[$i]->info->description)), 90),
+						'NBR_COMMENT'		=>	$tab[$i]->info->nbr_comment,
+						));
 
-		return $this->tpl->parse('OutPut', 'dir');
+				if ($tab[$i]->info->nbr_comment) {
+					$this->tpl->parse('Hdlline_comment', 'line_comment', true);
+				}
+
+				// Utilisé pour le groupage par catégorie
+				if ($grp == 1) {
+					$rupt = eval($header_value);
+					if ($sort & SORT_ALPHA_CAT || $sort & SORT_ALPHA_CAT_R)
+						$this->tpl->set_var('HEADER_INFO_VALUE', (($tab[$i]->type == TYPE_FILE) ? $rupt : __('Dir(s) ')));
+					else {
+						$this->tpl->set_var(array(
+								'HEADER_VALUE'		=>	(($tab[$i]->type == TYPE_DIR) ? __('Dir(s) ') : __('File(s) ')),
+								'HEADER_INFO_VALUE'	=>	(($tab[$i]->type == TYPE_FILE) ? $rupt : null)));
+					}
+					$bool = (($tab[$i]->type == 1) && ((SORT_FOLDER_FIRST | $sort) && $last_type == $tab[$i]->type));
+					if (!$bool && ($last_type != $tab[$i]->type || strtolower($last) != strtolower($rupt))) {
+						$this->tpl->parse('Hdlline_header', 'line_header', true);	
+						$last = $rupt;
+						$last_type = $tab[$i]->type;
+					}
+				}
+				$this->tpl->parse('Hdlline_content', 'line_content', true);
+				$this->tpl->parse('Hdlline', 'line', true);
+			}
+
+			return $this->tpl->parse('OutPut', 'dir');
+		}
 	}
 }
 

@@ -32,6 +32,7 @@ if (isset($_POST['lg_name'])) {
 			redirect('', (isset($_SESSION['sess_url']) ? $_SESSION['sess_url'] : url::getObj($cobj->file)), __('You are now authenticated !'));
 			$_SESSION['sess_url'] = null;
 			$_SESSION['sess_cuser'] = serialize($res);
+			$_SESSION['sess_clogin'] = $res->name;
 			system::end();
 		}
 		unset($usr, $res);

@@ -32,6 +32,8 @@ class plugin
 	var $lst;
 	var $obj;
 	var $cobj;
+
+	var $plugin_name;
 	
 	function plugin() {
 
@@ -46,7 +48,22 @@ class plugin
 		
 		$this->obj = &$obj;
 		$this->cobj = $cobj;
+
+		$this->plugin_name = null;
 	}
+
+	/*	Sauve une variable dans la session courante
+	 */
+	function saveVar($name, $value) {
+		return $_SESSION['sess_'.$this->plugin_name.'_'.$name] = $value;
+	}
+
+	/*	Récupère une variable de la session courante
+	 */
+	function getVar($name) {
+		return $_SESSION['sess_'.$this->plugin_name.'_'.$name];
+	}
+
 }
 
 ?>

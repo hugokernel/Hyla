@@ -63,7 +63,6 @@ class graphic {
 			header('Content-type: image/'.$tab[0]);
 //			header('location: '.$cache_path);
 			readfile($cache_path);
-			//echo $cache_path;
 		} else {
 			$fnt = 'imagecreatefrom'.$tab[0];
 			if (function_exists($fnt)) {

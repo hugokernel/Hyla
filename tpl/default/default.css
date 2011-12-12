@@ -6,7 +6,7 @@ body {
 }
 
 a {
-	color: #00F;
+	color: #00C;
 	font-style: normal;
 	text-decoration: none;
 }
@@ -15,6 +15,39 @@ a:hover {
 	color: #000;
 	font-style: normal;
 	text-decoration: none;
+}
+
+#tree {
+	float: left;
+	overflow: auto;
+	width: 15%;
+	height: 50%;
+}
+
+#tree a {
+	color: #111;
+}
+
+#tree ul {
+	padding-left: 10px;
+	margin-left: 10px;
+}
+
+#tree li {
+	list-style-type: none;
+}
+
+#content {
+	float: right;
+	width: 81%;
+	margin-left: 1%;
+	margin-right: 1%;
+}
+
+#content-no_tree {
+	margin-left: 2%;
+	margin-right: 2%;
+	width: 96%;
 }
 
 
@@ -41,9 +74,6 @@ a:hover {
 	border-bottom: 1px solid #BBB;
 }
 
-.table {
-	margin: 10px 5%;
-}
 
 .table .header {
 	padding: 10px;
@@ -51,7 +81,7 @@ a:hover {
 	font-size: 110%;
 }
 
-.table .header-info {
+.header-info {
 	font-size: 115%;
 	font-weight: bold;
 }
@@ -80,7 +110,6 @@ a:hover {
 .error {
 	color: red;
 	background: #FCC;
-//	font-size: 90%;
 	font-weight: bold;
 	padding: 5px;
 	margin: 5px;
@@ -96,10 +125,8 @@ h4 {
 
 
 fieldset {
+	padding: 10px;
 	margin: 0px;
-}
-
-fieldset, body > div > a {
 	font-size: 80%;
 }
 
@@ -109,17 +136,37 @@ fieldset, body > div > a {
 	text-align: left;
 }
 
-
-.footer {
+.sort {
+	padding: 2% 0 2% 0;
 	clear: both;
 }
 
-.footer > fieldset > a {
-	padding: 2px;
-	border: 1px solid transparent;
+#toolbar {
+	margin-top: 2%;
+	clear: both;
 }
 
-.footer > fieldset > a:hover {
+/*
+#toolbar > fieldset > ul {
+	list-style-type: none;
+	list-style-image: none;
+}
+
+#toolbar > fieldset > ul > li {
+	margin: 0;
+	margin-right: 5px;
+	padding: 10px;
+	display:inline;
+}
+*/
+
+#toolbar > fieldset > a {
+	padding: 2px;
+	border: 1px solid transparent;
+	margin-right: 10px;
+}
+
+#toolbar > fieldset > a:hover {
 	background: #EEE;
 	border: 1px solid #BBB;
 }
@@ -137,7 +184,6 @@ fieldset, body > div > a {
 textarea{
 	width: 100%;
 	border: 1px solid #CCC;
-/*	padding: 0px;*/
 	background: #FFE;
 }
 
@@ -181,7 +227,7 @@ legend {
 
 #form_misc {
 	padding: 40px;
-	width: 50%;
+	width: 100%;
 }
 
 .comment_line {
@@ -244,6 +290,11 @@ img {
 	margin-right: 10%;
 }
 
+.help {
+	margin-left: 5%;
+	font-style: italic;
+}
+
 th {
 	background: #CCC;
 }
@@ -271,11 +322,6 @@ th {
 }
 
 
-.help {
-	margin-left: 5%;
-	font-style: italic;
-}
-
 
 .action {
 	width: 80%;
@@ -284,29 +330,13 @@ th {
 }
 
 #main {
-/*	float: left;*/
-	width: 80%;
+	width: 90%;
 
-	margin-left: 10%;
-	margin-right: 10%;
-
-/*	margin: 2%;*/
-/*	padding: 10px;*/
-
-/*	background: #EFEFEF;
-	border: 1px solid #CCC;
-*/
+	margin-left: 5%;
+	margin-right: 5%;
 }
 
-/*
-#main fieldset {
-/*	padding: 10px;*-/
-}
 
-#main fieldset label {
-	font-weight: bold;
-}
-*/
 
 
 #sidebar {
@@ -341,16 +371,12 @@ th {
 
 .gallery {
 	width: 100%;
-/*	margin-left: 5%;
-	margin-right: 5%;
-*/
 	text-align: center;
 }
 
 
 
 .gallery td {
-/*	padding: 20px;*/
 	background: #EEE;
 	border: 1px solid #CCC;
 	font-size: 80%;
@@ -376,16 +402,6 @@ th {
 	padding: 5%;
 }
 
-/*
-.gal_line {
-	display: inline;
-}
-
-.gallery > div {
-	background: #CCC;
-}
-*/
-
 
 .gallery fieldset {
 	border: 0px;
@@ -398,9 +414,6 @@ th {
 	background: #DDD;
 }
 
-.gallery img {
-	/*border: 3px black solid;*/
-}
 
 
 .gallery > .img1 {
@@ -411,12 +424,31 @@ th {
 	margin-right: 50%;
 }
 
+/*	Plugin Php, text
+ */
+.textbox {
+	background: #FFF;
+	text-align: left;
+	padding: 10px;
+}
 
 
 /*	Zenphoto
  */
+#zenphoto {
+	text-align: left;
+	margin-left: 5%;
+	margin-right: 5%;
+	width: 90%;
+}
 
-.imagethumb a {
+#zenphoto .header-info {
+	clear: both;
+	margin: 0%;
+	padding: 2% 0% 0% 0%;
+}
+
+#zenphoto .imagethumb a {
 	display: block;
 	padding: 10px;
 	margin: 6px;
@@ -429,29 +461,12 @@ th {
 	width: 120px;
 }
 
-.imagethumb a:hover {
+#zenphoto .imagethumb a:hover {
 	border: 1px solid #62A0BF;
 	background: #F4F9FB;
 }
 
-.imagethumb {
+#zenphoto .imagethumb {
 	float: left;
 }
-
-
-#mainzen {
-	text-align: left;
-	margin-left: 10%;
-	margin-right: 10%;
-	width: 80%;
-/*
-	background: #fff;
-	padding: 20px 30px 70px;
-	border-top: 1px solid #E6E6DF;
-	border-right: 1px solid #E6E6DF;
-	border-bottom: 5px solid #E6E6DF;
-	border-left: 1px solid #E6E6DF;
-*/
-}
-
 

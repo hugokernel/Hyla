@@ -1,5 +1,5 @@
 <!-- BEGIN current_comment -->
-<a name="comment"><a href="#comment" onclick="swap_couche('comment');"><img src="{DIR_TEMPLATE}/img/comment.png" width="32" height="32" alt="Voir / Cacher les commentaires" /> {COMMENT_NBR} commentaire(s)</a></a>
+<a href="#comment" name="comment" onclick="swap_couche('comment');"><img src="{DIR_TEMPLATE}/img/comment.png" width="32" height="32" alt="Voir / Cacher les commentaires" /> {COMMENT_NBR} commentaire(s)</a>
 <div id="Layercomment" style="display: none;">
 	<div id="comment">
 		<!-- BEGIN comment_line -->	
@@ -44,23 +44,21 @@
 <!-- END current_comment -->
 
 <!-- BEGIN last_comment -->
-<div id="main">
-	<h2>Liste des derniers commentaires</h2>
-	<div id="comment">
-		<p>
-			{MSG}
-		</p>
-		<!-- BEGIN last_comment_line -->
-		<div class="comment_line">
-			<div class="comment_info">
-				<a href="{PATH_INFO}"><img src="{FILE_ICON}" width="32" height="32" border="0" align="middle" alt="Infos" /></a> {PATH_FORMAT}
-				{DATE} - <a href="{MAIL}">{AUTHOR}</a> <a href="{URL}">{URL}</a>
-			</div>
-			<div class="comment_content">
-				{COMMENT}
-			</div>
+<h2>Liste des derniers commentaires</h2>
+<div id="comment">
+	<p>
+		{MSG}
+	</p>
+	<!-- BEGIN last_comment_line -->
+	<div class="comment_line">
+		<div class="comment_info">
+			<a href="{PATH_INFO}"><img src="{FILE_ICON}" width="32" height="32" border="0" align="middle" alt="Infos" /></a> {PATH_FORMAT}
+			{DATE} - <a href="{MAIL}">{AUTHOR}</a> <a href="{URL}">{URL}</a>
 		</div>
-		<!-- END last_comment_line -->	
+		<div class="comment_content">
+			{COMMENT}
+		</div>
 	</div>
+	<!-- END last_comment_line -->	
 </div>
 <!-- END last_comment -->

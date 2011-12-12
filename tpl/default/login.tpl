@@ -1,6 +1,5 @@
 
-<div id="main">
-	<form method="post" name="form_upload" action="{PAGE_LOGIN}">
+<form method="post" name="form_upload" action="{PAGE_LOGIN}">
 	<fieldset>
 		<legend><img src="{DIR_TEMPLATE}/img/Lock-Screen.png" align="middle" width="32" height="32" alt="Login" /> Authentification</legend>		{ERROR}
 		<p>
@@ -15,5 +14,4 @@
 
 		<input type="submit" name="Submit" value="Envoyer" />
 	</fieldset>
-	</form>
-</div>
+</form>

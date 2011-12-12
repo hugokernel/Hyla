@@ -49,7 +49,7 @@ $prefix = PREFIX_TABLE;
 
 <body>
 
-<img src="img/hyla.png" width="100" height="100" alt="Logo Hyla : La rainette verte" />
+<a href="http://www.digitalspirit.org/hyla/"><img src="img/hyla.png" width="100" height="100" alt="Logo Hyla : La rainette verte" /></a>
 
 <h1>Installation de &laquo; Hyla <?php echo HYLA_VERSION; ?> &raquo; </h1>
 <hr />
@@ -122,6 +122,11 @@ if (preg_match('#\.free\.fr#i', $_SERVER['SERVER_NAME']))
 	</ul>
 
 <?php
+if (preg_match('#\.free\.fr#i', $_SERVER['SERVER_NAME']))
+	echo '<blockquote class="info">Attention, pour les utilisateurs de free.fr, il vous sera impossible de supprimer des répertoires car free empêche l\'exécution de la fonction rmdir, vous devrez pas conséquent le faire par vos propres moyens, par exemple, grâce à un programme ftp.</blockquote>';
+?>
+
+<?php
 
 if ($notice) {
 ?>
@@ -159,6 +164,7 @@ else
 
 	#	Création du fichier de configuration
 	case '3':
+		session_destroy();
 		if (test_config()) {
 ?>
 	<h3>Création du fichier de configuration ( <?php echo $conf_file; ?> )</h3>
@@ -176,35 +182,13 @@ else
 				Il s'agit du chemin complet depuis la racine sans slash ( / ) de fin
 				<br />
 				Ex:	/var/www/data
-			</p>
-		</fieldset>
-		<br />
-		<fieldset>
-			<legend>L'emplacement de Hyla après le nom de domaine :</legend>
-			<p>
-				<input name="root_url" id="root_url" size="100" maxlength="255" value="<?php
-
-$root_url = dirname($_SERVER['PHP_SELF']);
-$size = (strlen($root_url) - 1);
-if ($root_url{$size} == '/') {
-	$root_url = substr($root_url, 0, $size);
-}
-echo $root_url;
-
-
-$sql_server = null;
-$sql_user = null;
-if (preg_match('#([^\/]+)\.free\.fr#i', $_SERVER['SERVER_NAME'], $match)) {
-	$sql_server = 'sql.free.fr';
-	$sql_user = $match[1];
-}
-
-?>" type="text" />
-			</p>
-			<p class="help">
-				Ex: http://ifile.free.fr/				-> ne mettez rien <br />
-				Ex: http://ifile.free.fr/ifile/			-> mettez /ifile<br />
-				Ex: http://ifile.free.fr/data/ifile		-> mettez /data/ifile
+				<p>
+					<strong>
+						Il est vivement recommandé de <span style="color: red">ne pas laissé le répertoire de Hyla en partage</span> car un visiteur malicieu
+						pourrait explorer l'arborescence de Hyla et découvrir les informations contenues dans le fichier &laquo; conf/config.inc.php &raquo;
+						Si vous décidez par la suite de changer de répertoire, éditez le fichier &laquo; conf/config.inc.php &raquo; et éditez la clef FOLDER_ROOT.
+					</strong>
+				</p>
 			</p>
 		</fieldset>
 		<br />
@@ -238,14 +222,8 @@ if (preg_match('#([^\/]+)\.free\.fr#i', $_SERVER['SERVER_NAME'], $match)) {
 	#	Test connection
 	case '4':
 		if (test_config()) {
-?>
-	<h3>Test de connection à la base de données</h3>
-
-<?php
-//			DBUG($_POST);
 
 			$folder_root = $_POST['folder_root'];
-			$root_url = $_POST['root_url'];
 
 			$sql_host = $_POST['sql_host'];
 			$sql_user = $_POST['sql_user'];
@@ -257,23 +235,45 @@ if (preg_match('#([^\/]+)\.free\.fr#i', $_SERVER['SERVER_NAME'], $match)) {
 			if ($folder_root{$size} == '/') {
 				$folder_root = substr($folder_root, 0, $size);
 			}
-			$size = (strlen($root_url) - 1);
-			if ($root_url{$size} == '/') {
-				$root_url = substr($root_url, 0, $size);
+
+			if ($folder_root == dirname($_SERVER['SCRIPT_FILENAME'])) {
+?>
+		<p>
+			<strong>Avertissement !</strong>
+			<br />
+			Vous avez laissé comme répertoire à lister la racine de Hyla, un utilisateur malicieu pourrait lire le fichier &laquo; conf/config.inc.php &raquo; et,
+			y découvrir les login et mot de passe de connection à la base de données.
+			Si vous décidez par la suite de changer de répertoire, éditez le fichier &laquo; conf/config.inc.php &raquo; et éditez la clef FOLDER_ROOT.
+		</p>
+<?php
 			}
+
+?>
+	<h3>Test de connection à la base de données</h3>
+
+<?php
+
 
 			/*	Connection à la base
 			 */
 			$bdd =& new db();
-			if (!$bdd->connect($sql_host, $sql_base, $sql_user, $sql_pass)) {
+			if (!$bdd->connect($sql_host, $sql_user, $sql_pass)) {
 ?>
 	<blockquote class="error">
-		Impossible de se connecter au serveur SQL !
+		Impossible de se connecter au serveur SQL &laquo; <?php echo $sql_host; ?> &raquo; !
 	</blockquote>
 <?php
 			} else {
 
-				$bdd->close();
+				if (!$bdd->select($sql_base)) {
+?>
+	<blockquote class="error">
+		Impossible de sélectionner la base de données &laquo; <?php echo $sql_base; ?> &raquo; !
+	</blockquote>
+<?php
+				} else {
+
+					$bdd->close();
 ?>
 	<ul>
 		<li>Connection au serveur SQL réussi : <?php get_html_result(true); ?></li>
@@ -310,14 +310,6 @@ $var_file =
 define('FOLDER_ROOT', '$folder_root');
 
 
-/*	L'emplacement de Hyla après le nom de domaine (sans slash de fin !)
-	Ex: http://ifile.free.fr/				-> mettez ''
-	Ex: http://ifile.free.fr/ifile/			-> mettez '/ifile'
-	Ex: http://ifile.free.fr/data/ifile		-> mettez '/data/ifile'
- */
-define('ROOT_URL', '$root_url');
-
-
 /*	+---------------------------------+
 	| Connection à la base de données |
 	+---------------------------------+
@@ -348,7 +340,7 @@ define('SQL_PASS',	'$sql_pass');
 				}
 
 			}
-
+		}
 ?>
 	<hr />
 <?php
@@ -372,7 +364,7 @@ define('SQL_PASS',	'$sql_pass');
 <?php
 		include $conf_file;
 		$bdd =& new db();
-		if ($bdd->connect(SQL_HOST, SQL_BASE, SQL_USER, SQL_PASS)) {
+		if ($bdd->connect(SQL_HOST, SQL_USER, SQL_PASS) && $bdd->select(SQL_BASE)) {
 
 $var_query[0]['desc'] = 'Création de la table &laquo; '.$prefix.'object &raquo; ';
 $var_query[0]['query'] = "
@@ -412,7 +404,7 @@ CREATE TABLE `{$prefix}comment` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs COMMENT='Table des commentaires des objets' ;
 ";
 
-$var_query[3]['desc'] = 'Insertion de donnéess dans la table &laquo; '.$prefix.'users &raquo; ';
+$var_query[3]['desc'] = 'Insertion de données dans la table &laquo; '.$prefix.'users &raquo; ';
 $var_query[3]['query'] = "
 INSERT INTO `{$prefix}users` ( `usr_id` , `usr_name` , `usr_password_hash` , `usr_perm` )
 VALUES (
@@ -471,7 +463,7 @@ NULL , 'Anonymous', '', '1'
 			include $conf_file;
 
 			$bdd =& new db();
-			if ($bdd->connect(SQL_HOST, SQL_BASE, SQL_USER, SQL_PASS)) {
+			if ($bdd->connect(SQL_HOST, SQL_USER, SQL_PASS) && $bdd->select(SQL_BASE)) {
 				$username = trim($_POST['usr_login']);
 				$password = trim($_POST['usr_password']);
 				$password = crypt($password, CRYPT_SALT);
@@ -513,7 +505,7 @@ if ($error) {
 ?>
 	<form method="post" name="form_user" action="?etape=6">
 		<fieldset>
-			<legend>Connection à la base de données :</legend>
+			<legend>Création d'un utilisateur :</legend>
 			<p>
 				<label for="usr_login">Nom d'utilisateur :</label>
 				<input name="usr_login" id="usr_login" size="20" maxlength="255" value="<?php echo $username; ?>" type="text" />
@@ -539,13 +531,26 @@ if ($error) {
 	<p>
 		Hyla est maintenant installé !
 		<br />
-		Vous devez supprimé le fichier install.php, une fois ceci fait, vous pourrez vous connecter dans l'administration et finir de paramétrer Hyla :
+		Vous devez <strong>supprimé le fichier install.php</strong>, une fois ceci fait, vous pourrez vous connecter dans l'administration et finir de paramétrer Hyla :
 		<a href="index.php?p=page-admin">Administration</a>
 <?php
 if (preg_match('#\.free\.fr#i', $_SERVER['SERVER_NAME']))
 	echo '<blockquote class="info">Attention, pour les utilisateurs de free.fr, le système de cache utilisé sur les serveurs de free peut garder en mémoire install.php même une fois celui ci supprimé !</blockquote>';
 ?>
 	</p>
+
+	<hr />
+
+	<p>
+		Et n'oubliez pas :
+	</p>
+
+	<ul>
+		<li><a href="http://www.digitalspirit.org/hyla/">Le site officiel de Hyla</a>
+		<li><a href="http://www.digitalspirit.org/hyla/?aff=doc">La documentation</a>
+		<li><a href="http://www.digitalspirit.org/forums/viewforum.php?id=11">Le forum dédié</a>
+		<li><a href="http://www.digitalspirit.org/hyla/?aff=faq">Les questions les plus fréquemment posées</a>
+	</ul>
 
 <?php
 		break;
@@ -557,13 +562,20 @@ if (preg_match('#\.free\.fr#i', $_SERVER['SERVER_NAME']))
 	<h3>Bienvenue dans l'installation d'Hyla</h3>
 
 	<p>
-		Hyla est un gestionnaire de fichier, simple, léger, extensible, capable de générer des galeries photos et respectueux des standards en vigueur sur le web.
+		Merci d'avoir choisi Hyla, un gestionnaire de fichiers, simple, léger, extensible, capable de générer des galeries photos et bien plus encore... il est notamment respectueu des standards en vigueur sur le web.
+	</p>
+
+	<p>
+		Afin de vous aider, vous pouvez consulter la <a href="http://www.digitalspirit.org/hyla/?aff=doc">documentation en ligne</a>.
 	</p>
 	<p>
-		Ce script vous permettra de l'installer sur votre serveur en suivant les étapes indiquées.
+		N'hésitez pas à faire part de votre problème quel qu'il soit concernant Hyla sur <a href="http://www.digitalspirit.org/forums/viewforum.php?id=11">le forum dédié</a>.
 	</p>
+
 	<hr />
 	<p>
+		Ce script vous permettra de l'installer sur votre serveur en suivant les étapes indiquées.
+		<br />
 		<a href="?etape=2">Commencer l'installation</a>
 	</p>
 <?php

@@ -1,5 +1,14 @@
 
-<div id="mainzen">
+<div id="zenphoto">
+
+	<!-- BEGIN gallery -->
+
+	<!-- BEGIN gallery_line_cat -->
+	<p class="header-info">
+		{HEADER_INFO_VALUE}
+	</p>
+	<!-- END gallery_line_cat -->
+
 	<!-- BEGIN gallery_line -->
 	<div class="image">
 		<!-- BEGIN gallery_line_img -->
@@ -15,4 +24,7 @@
 		<!-- END gallery_line_other -->
 	</div>
 	<!-- END gallery_line -->
+
+	<!-- END gallery -->
+
 </div>

@@ -38,8 +38,6 @@ class Plugin_archive extends plugin {
 		$this->tpl->set_file('archive', 'archive.tpl');
 		$this->tpl->set_block('archive', array(
 				'zipfile'	=>	'Hdlzipfile'));
-		
-		$this->zip = new PclZip($this->cobj->realpath);
 	}
 	
 	function act($act = null) {
@@ -51,8 +49,8 @@ class Plugin_archive extends plugin {
 
 			test_perm(ADD_FILE);
 
-			$this->zip = new PclZip($this->cobj->realpath);
-			$out = $this->zip->extract(file::formatPath(FOLDER_ROOT.$this->cobj->path));		// ToDo : Voir souci avec file::formatPath
+			$out = archive::extract($this->cobj->realpath, file::formatPath(FOLDER_ROOT.$this->cobj->path));
+
 			$this->_act = $act;
 			$this->_act_result = 0;
 
@@ -70,39 +68,34 @@ class Plugin_archive extends plugin {
 	
 	function aff($paff) {
 
-		if (($list = $this->zip->listContent()) == 0) {
-			system::end("Error : ".$this->zip->errorInfo(true));
-		}
-			
-		for ($size = 0, $i = 0; $i < sizeof($list); $i++) {
-			$size += $list[$i]['size'];
-			if (!$list[$i]['folder']) {
-				$this->tpl->set_var(array(
-						'FILE_ICON'			=>	get_icon(file::getExtension(basename($list[$i]['filename']))),
-						'FILE_NAME'			=>	$list[$i]['filename'],
-						'FILE_URL'			=>	url::getObj($this->cobj->file.'!'.$list[$i]['filename']),
-						'FILE_SIZE'			=>	get_human_size_reading($list[$i]['size']),
-						'PATH_DOWNLOAD'		=>	url::getObj($this->cobj->file.'!'.$list[$i]['filename'], 'download')
-						));
-		  		$this->tpl->parse('Hdlzipfile', 'zipfile', true);
-		  	}
-		}
-		
-		$prop = $this->zip->properties();
+		$list = archive::listContent($this->cobj->realpath);
 
-  		$this->tpl->set_var(array(
-				'ACT_EXTRACT'		=>	url::getCurrentObj('', '', 'extract'),
-				'RAPPORT'			=>	(($this->_act_result_ok) ? view_status(__('%s extracted files', $this->_act_result_ok)) : null).(($this->_act_result_error) ? view_error(__('%s error during extraction', $this->_act_result_error)) : null),
-  				'COMMENT'			=>	$prop['comment'],
-  				'NBR_FILE'			=>	$prop['nb'],
-  				'STATUS'			=>	$prop['status'],
-  				'COMPRESSED_SIZE'	=>	get_human_size_reading(filesize($this->cobj->realpath)),
-  				'REAL_SIZE'			=>	get_human_size_reading($size),
-  				'OBJECT'			=>	url::getCurrentObj()
-  				));
+		if ($list) {
+			for ($size = 0, $i = 0; $i < sizeof($list); $i++) {
+				$size += $list[$i]['size'];
+				if (!$list[$i]['folder']) {
+					$this->tpl->set_var(array(
+							'FILE_ICON'			=>	get_icon(file::getExtension(basename($list[$i]['filename']))),
+							'FILE_NAME'			=>	$list[$i]['filename'],
+							'FILE_URL'			=>	url::getObj($this->cobj->file.'!'.$list[$i]['filename']),
+							'FILE_SIZE'			=>	get_human_size_reading($list[$i]['size']),
+							'PATH_DOWNLOAD'		=>	url::getObj($this->cobj->file.'!'.$list[$i]['filename'], 'download')
+							));
+			  		$this->tpl->parse('Hdlzipfile', 'zipfile', true);
+			  	}
+			}
 
-		unset($this->zip);
-		
+	  		$this->tpl->set_var(array(
+					'ACT_EXTRACT'		=>	url::getCurrentObj('', '', 'extract'),
+					'RAPPORT'			=>	(($this->_act_result_ok) ? view_status(__('%s extracted files', $this->_act_result_ok)) : null).(($this->_act_result_error) ? view_error(__('%s error during extraction', $this->_act_result_error)) : null),
+	  				'NBR_FILE'			=>	sizeof($list),
+	  				'COMPRESSED_SIZE'	=>	get_human_size_reading(filesize($this->cobj->realpath)),
+	  				'REAL_SIZE'			=>	get_human_size_reading($size),
+	  				'OBJECT'			=>	url::getCurrentObj()
+	  				));
+		} else
+			echo __('Error');
+
 		return $this->tpl->parse('OutPut', 'archive');
 	}
 }

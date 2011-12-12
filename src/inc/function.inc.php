@@ -76,6 +76,7 @@ function view_error($msg) {
 		$tpl->set_block('misc', array(
 				'error'			=>	'Hdlerror',
 				'status'		=>	'Hdlstatus',
+				'sort'			=>	'Hdlsort',
 				'toolbar'		=>	'Hdltoolbar'
 				));
 		$tpl->set_var('ERROR', $msg);
@@ -94,6 +95,7 @@ function view_status($msg) {
 		$tpl->set_block('misc', array(
 				'error'			=>	'Hdlerror',
 				'status'		=>	'Hdlstatus',
+				'sort'			=>	'Hdlsort',
 				'toolbar'		=>	'Hdltoolbar'
 				));
 		$tpl->set_var('STATUS', $msg);
@@ -176,13 +178,25 @@ function load_config() {
 	$conf['view_hidden_file']	= $tab['view_hidden_file'];
 	$conf['download_counter']	= $tab['download_counter'];
 
-	$conf['dir_default_plugin']	= $tab['default_plugin'] ? $tab['default_plugin'] : 'Dir';
+	$conf['dir_default_plugin']	= $tab['default_plugin'] ? strtolower($tab['default_plugin']) : 'dir';
 
 	$conf['view_toolbar']		= $tab['view_toolbar'];
 
+	$conf['view_tree']			= $tab['view_tree'];
+
 	$conf['url_scan']			= $tab['url_scan'];
 
-	$sort_tab = array(0	=> SORT_DEFAULT, 1 => SORT_ALPHA, 2 => SORT_ALPHA_R, 3 => SORT_ALPHA_EXT, 4 => SORT_ALPHA_EXT_R);
+	$sort_tab = array(
+			0 => SORT_DEFAULT,
+			1 => SORT_ALPHA,
+			2 => SORT_ALPHA_R,
+			3 => SORT_ALPHA_EXT,
+			4 => SORT_ALPHA_EXT_R,
+			5 => SORT_ALPHA_CAT,
+			6 => SORT_ALPHA_CAT_R,
+			7 => SORT_SIZE,
+			8 => SORT_SIZE_R,
+			);
 	$conf['sort_config'] = $sort_tab[$tab['sort']];
 
 	if ($tab['folder_first'])
@@ -211,6 +225,14 @@ function get_icon($ext) {
 	$ret = (!array_key_exists($ext, $tab_icon)) ? $tab_icon['?']['icon'] : $tab_icon[$ext]['icon'];
 	$dir = (!array_key_exists('dir', $tab_icon)) ? $tab_icon['?']['dir'] : $tab_icon[$ext]['dir'];
 	return $dir.$ret;
+}
+
+/*	Renvoie la catégorie du fichier selon l'extension
+ */
+function get_cat($ext) {
+	global $tab_icon;
+	$cat = (!array_key_exists($ext, $tab_icon)) ? $tab_icon['?']['cat'] : (array_key_exists('cat', $tab_icon[$ext]) ? $tab_icon[$ext]['cat'] : $tab_icon['?']['cat']);
+	return $cat;
 }
 
 /*	Retourne la taille d'un fichier de manière compréhensible (original trouvée sur www.php.net)
@@ -274,6 +296,53 @@ function format($_url, $current = true) {
 		$ret .= ' ! '.$obj->target;
 
 	return $ret;
+}
+
+/*	Génère l'arborescence du répertoire
+ */
+function get_tree() {
+
+	global $conf, $obj, $cobj;
+
+	$tab = file::scanDir(FOLDER_ROOT, $conf['view_hidden_file']);
+
+	$tab = $obj->getDirContent('/', null, 0, -1, $tab, false);
+
+	$var = "<ul>\n\t\t<li>\n\t\t\t<a href=\"".url::getObj('/').'" title="Revenir à la racine"><img src="'.DIR_TEMPLATE.'/img/home.png" width="32" height="32" border="0" align="middle" alt="Revenir à la racine" /></a>'."</li>\n";
+
+	foreach ($tab as $occ) {
+
+		$current = false;
+
+		if ($occ->path == $cobj->path)
+			$current = true;
+
+		$tst = explode('/', $occ->path);
+		$num = sizeof($tst) - 1;
+
+		if ($num > $last)
+			$var .= "<li><ul>\n\t";
+
+		if ($num < $last) {
+			for ($i = 0; $i < ($last - $num); $i++)
+				$var .= "</ul></li>\n";
+		}
+
+		$var .= "\t<li>\n";
+
+		if ($current) {
+			$var .= "\t\t\t<b><a href=\"".url::getObj($occ->file).'"><img src="'.$occ->icon.'" alt="" />'.$tst[$num - 1]."</a></b>\n";
+		} else {
+			$var .= "\t\t\t<a href=\"".url::getObj($occ->file).'"><img src="'.$occ->icon.'" alt="" />'.$tst[$num - 1]."</a>\n";
+		}
+
+		$var .= "\t\t</li>\n";
+		$last = $num;
+	}
+	$var .= "</ul></li>\n\t";
+	$var .= "\n</ul>\n";
+
+	return $var;
 }
 
 if (!function_exists('fnmatch')) {

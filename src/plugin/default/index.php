@@ -24,13 +24,26 @@ class Plugin_default extends plugin {	// implements _plugin { plugin implements 
 	function Plugin_default() {
 		parent::plugin();
 		$this->tpl->set_root(DIR_PLUGINS.'default');
-
 		$this->tpl->set_file(array(
 				'default'	 	=>	'default.tpl'));
+		$this->tpl->set_block('default', 'plugin_choice', 'Hdlplugin_choice');
 	}
 	
 	function aff() {
-		$this->tpl->set_var('OBJECT_DOWNLOAD', url::getCurrentObj('download'));
+		$tab = plugins::getFilePlugins();
+		$size = sizeof($tab);
+		for($i = 0, $last = null, $last_type = null; $i < $size; $i++) {
+			$this->tpl->set_var(array(
+					'PLUGIN_NAME'			=>	$tab[$i]['name'],
+					'PLUGIN_DESCRIPTION'	=>	$tab[$i]['description']
+					));
+			$this->tpl->parse('Hdlplugin_choice', 'plugin_choice', true);
+		}
+
+		$this->tpl->set_var(array(
+				'OBJECT'			=>	url::getCurrentObj(),
+				));
+
 		return $this->tpl->parse('OutPut', 'default');
 	}
 }

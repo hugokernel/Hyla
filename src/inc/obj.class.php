@@ -19,6 +19,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+require 'src/inc/archive.class.php';
 
 class tComment {
 	var $id;
@@ -59,6 +60,8 @@ class tFile {
 	var $extension;		// L'extension du fichier
 	var $realpath;		// Le chemin depuis la racine du système /!\ ATTENTION /!\ Pour des raisons de sécurité, ce chemin ne doit jamais être montré au connecté
 
+	var $cat;			// La catégorie du fichier (image, document...)
+
 	var $size;			// La taille du fichier !
 	var $icon;			// L'icone correspondante au type du fichier
 
@@ -76,6 +79,8 @@ class tFile {
 		$this->target = null;
 		$this->extension = null;
 		$this->realpath = null;
+
+		$this->cat = null;
 
 		$this->size = null;
 		$this->icon = null;
@@ -142,7 +147,6 @@ class obj {
 		$dir = file::getRealDir($name, $this->_folder_root);
 
 		if ($dir) {
-
 			if ($target) {
 				$obj->type = TYPE_ARCHIVE;
 				$obj->path = $dir;
@@ -154,7 +158,7 @@ class obj {
 				$obj->icon = get_icon($obj->extension);
 
 				if ($pnext) {
-					$ret = archive::getPrevNext($obj->realpath, $obj->target);
+					$ret = $this->getPrevNext($obj);		// ToDo : Static ou non
 					$obj->prev = ($ret['prev'] ? obj::getInfo($name.'!'.$ret['prev'], false, false) : null);
 					$obj->next = ($ret['next'] ? obj::getInfo($name.'!'.$ret['next'], false, false) : null);
 				}
@@ -166,6 +170,9 @@ class obj {
 				$obj->file = $obj->path.$obj->name;
 				$obj->extension = file::getExtension($obj->name);
 				$obj->realpath = $this->_folder_root.$obj->file;
+
+				$obj->cat = get_cat($obj->extension);
+
 				$obj->size = filesize($this->_folder_root.$obj->file);
 
 				if ($data) {
@@ -198,7 +205,7 @@ class obj {
 				$obj->icon = get_icon($obj->extension);
 
 				if ($pnext) {
-					$ret = $this->getPrevNext($obj->path, $obj->file);
+					$ret = $this->getPrevNext($obj);		// ToDo : Static ou non
 					$obj->prev = ($ret['prev'] ? obj::getInfo($ret['prev'], false, false) : null);
 					$obj->next = ($ret['next'] ? obj::getInfo($ret['next'], false, false) : null);
 				}
@@ -206,9 +213,9 @@ class obj {
 			} else if (is_dir($this->_folder_root.$name)) {
 
 				$obj->type = TYPE_DIR;
-				$obj->path = $dir;
-				$obj->name = basename($this->_folder_root.$name);									// TODO: est-ce bien d'utiliser basename en lieu et place de getRealFile ?
-				$obj->file = ($obj->path == '/') ? $obj->path : $obj->path.'/';
+				$obj->path = ($dir == '/') ? $dir : $dir.'/';
+				$obj->name = basename($this->_folder_root.$name);		// ToDo: est-ce bien d'utiliser basename en lieu et place de getRealFile ?
+				$obj->file = $obj->path;
 				$obj->realpath = $this->_folder_root.$obj->file;
 
 				if ($data) {
@@ -224,7 +231,10 @@ class obj {
 					$obj->info->plugin = strtolower($tab['obj_plugin'] ? $tab['obj_plugin'] : null);	//DIR_DEFAULT_PLUGIN); -> On met null, c'est mieux pour le par défaut !
 				}
 
-				$obj->icon = ($obj->info->plugin == 'gallery' || $conf['dir_default_plugin'] == 'Gallery') ? 'img/mimetypes/gallery.png' : get_icon('.');
+//				$obj->icon = ($obj->info->plugin == 'gallery' || $conf['dir_default_plugin'] == 'Gallery') ? 'img/mimetypes/gallery.png' : get_icon('.');
+				$icon = DIR_PLUGINS.(($obj->info->plugin) ? $obj->info->plugin.'/' : '').DIR_ICON;
+				$obj->icon = (file_exists($icon)) ? $icon : DIR_PLUGINS.strtolower($conf['dir_default_plugin']).'/'.DIR_ICON;
+//				 = ($obj->info->plugin == 'gallery' || $conf['dir_default_plugin'] == 'Gallery') ? 'img/mimetypes/gallery.png' : get_icon('.');
 			}
 		}
 
@@ -242,54 +252,54 @@ class obj {
 */
 
 	/*	Renvoie un tableau contenant les nom des fichiers précédent et suivant en tenant compte du tri
-		@param	string	$path	Le chemin
-		@param	string	$name	Le nom de l'objet
+		@param	string	$obj		L'objet
+		@param	string	$archive	Spécifie si l'objet est dans une archive
 	 */
-	function getPrevNext($path, $name) {
+	function getPrevNext($obj) {
 
 		$ret = array('prev' => null, 'next' => null);
 
-		$tab = obj::_getDirContent($path, $this->_folder_root);
-
-		// Et maintenant, on tri les données
-		if ($this->_tri & SORT_ALPHA || $this->_tri & SORT_ALPHA_R)
-			usort($tab, array($this, '__sort_alpha'));
-		else if ($this->_tri & SORT_ALPHA_EXT || $this->_tri & SORT_ALPHA_EXT_R)
-			usort($tab, array($this, '__sort_ext'));	
-
-		$size = sizeof($tab);
-		for ($i = 0, $prev = null; $i < $size; $i++) {
-			if ($tab[$i] == $name) {
-				$ret['prev'] = $prev;
-				$ret['next'] = (($i + 1 >= $size) ? null : $tab[++$i]);
-				break;
+		if ($obj->type == TYPE_ARCHIVE) {
+			$ret = archive::getPrevNext($obj->realpath, $obj->target);
+		} else {
+			$this->_tri = (isset($_SESSION['sess_sort'])) ? $_SESSION['sess_sort'] : $conf['sort_config'];	// ToDo : Remplacez $_SESSION[... par une variable de classe
+			$tab = $this->getDirContent($obj->path, $this->_tri, 0, -1, -1, false);
+			$size = sizeof($tab);
+			for ($i = 0, $prev = null; $i < $size; $i++) {
+				if ($tab[$i]->file == $obj->file) {
+					$ret['prev'] = $prev->file;
+					$ret['next'] = (($i + 1 >= $size) ? null : $tab[++$i]->file);
+					break;
+				}
+				$prev = $tab[$i];
 			}
-			$prev = $tab[$i];
 		}
+
 		return $ret;
 	}
 
 	/*	Renvoie un tableau contenant toutes les informations sur un dossier ainsi que les fichiers et dossiers contenu dedans
-		@param	string	$name	Le nom de l'objet
-		@param	int		$tri	Le tri à appliquer
-		@param	int		$start	A partir d'oû on commence à compter
-		@param	int		$nbr	Le nombre d'occurence à afficher
-		@param	array	$tab	Tableau de données
+		@param	string	$name		Le nom de l'objet
+		@param	int		$tri		Le tri à appliquer
+		@param	int		$start		A partir d'oû on commence à compter
+		@param	int		$nbr		Le nombre d'occurence à afficher (si 0, config par défaut, si -1, affiche tout)
+		@param	array	$tab		Tableau de données
+		@param	bool	$comment	Renvoie les commentaires
 	 */
-	function getDirContent($name, $tri = null, $start = 0, $nbr = 0, $tab = null) {
+	function getDirContent($name, $tri = null, $start = 0, $nbr = 0, $tab = -1, $comment = true) {
 		
 		global 	$bdd, $conf;
 
 		if ($tri)
 			$this->_tri = $tri;
 
-		if (!$nbr)
+		if ($nbr == 0)
 			$nbr = $conf['nbr_obj'];
 
 		$arr = array();
 
-		//	Récupère les fichiers et répertoire du système de fichiers
-		if (!$tab) {
+		//	Récupère les fichiers et répertoire du système de fichiers - Todo: C'est pas beau ce -1 !!
+		if ($tab == -1) {
 			$tab = obj::_getDirContent($name, $this->_folder_root);
 		}
 
@@ -300,7 +310,7 @@ class obj {
 
 		$s_c = " WHERE comment_object = '$name' ";
 		foreach ($tab as $occ) {
-			$s_c .= 'OR comment_object = \''.addslashes($occ).'\' ';
+			$s_c .= 'OR comment_object = \''.$this->_prefix.addslashes($occ).'\' ';
 		}
 
 		// On récupère les infos des objets en BDD
@@ -309,35 +319,44 @@ class obj {
 				$s_o
 				GROUP 	BY obj_object
 				ORDER	BY obj_object ASC";
-
 		if (!$var = $bdd->execQuery($sql))
-			trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
+			trigger_error($bdd->getErrorMsg(), E_USER_ERROR);
 		for ($i = 0; $res = $bdd->nextTuple($var); $i++) {
 			$a[$res['obj_object']]['description'] = $res['obj_description'];
-			$a[$res['obj_object']]['plugin'] = $res['obj_plugin'];
+			$a[$res['obj_object']]['plugin'] = strtolower($res['obj_plugin']);
 		}
 
-		$sql = "SELECT	comment_object, COUNT(comment_author) as nbr_comment
-				FROM	{$this->_comment_table}
-				$s_c
-				GROUP 	BY comment_object
-				ORDER	BY comment_object ASC";
-		if (!$var = $bdd->execQuery($sql))
-			trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
-		for ($i = 0; $res = $bdd->nextTuple($var); $i++) {
-			$a[$res['comment_object']]['nbr_comment'] = $res['nbr_comment'];
+		if ($comment) {
+			$sql = "SELECT	comment_object, COUNT(comment_author) as nbr_comment
+					FROM	{$this->_comment_table}
+					$s_c
+					GROUP 	BY comment_object
+					ORDER	BY comment_object ASC";
+			if (!$var = $bdd->execQuery($sql))
+				trigger_error($bdd->getErrorMsg(), E_USER_ERROR);
+			for ($i = 0; $res = $bdd->nextTuple($var); $i++) {
+				$a[$res['comment_object']]['nbr_comment'] = $res['nbr_comment'];
+			}
 		}
 
 		// On mixe les données provenant du système de fichiers et de la base de données
 		$i = 0;
 		foreach ($tab as $occ) {
 			$tab[$i] = obj::getInfo($occ, false, false);
-//			if (@$a[@$tab[$i]->file]['description'] || @$a[@$tab[$i]->file]['nbr_comment'] || @$a[@$tab[$i]->file]['plugin']) {
 			if ((isset($a[$this->_prefix.$tab[$i]->file]['description']) || isset($a[$this->_prefix.$tab[$i]->file]['nbr_comment']) || isset($a[$this->_prefix.$tab[$i]->file]['plugin']))) {
 				$tab[$i]->info->description = $a[$this->_prefix.$tab[$i]->file]['description'];
 				$tab[$i]->info->plugin = $a[$this->_prefix.$tab[$i]->file]['plugin'];
-				$tab[$i]->icon = ($tab[$i]->type == TYPE_DIR) ? (($a[$this->_prefix.$tab[$i]->file]['plugin'] == 'gallery' || $conf['dir_default_plugin'] == 'Gallery') ? 'img/mimetypes/gallery.png' : get_icon('.')) : $tab[$i]->icon;		// TODO: ATTENTION: gallery.png en dur
+
+				if ($tab[$i]->type == TYPE_DIR) {
+					$icon = DIR_PLUGINS.$tab[$i]->info->plugin.'/'.DIR_ICON;
+					$tab[$i]->icon = (($tab[$i]->info->plugin) ? (file_exists($icon) ? $icon : get_icon('.')) : DIR_PLUGINS.$conf['dir_default_plugin'].'/'.DIR_ICON);
+				}
+
 				$tab[$i]->info->nbr_comment = isset($a[$this->_prefix.$tab[$i]->file]['nbr_comment']) ? $a[$this->_prefix.$tab[$i]->file]['nbr_comment'] : null;
+			} else {
+				if ($tab[$i]->type == TYPE_DIR) {
+					$tab[$i]->icon = DIR_PLUGINS.($tab[$i]->info->plugin ? $tab[$i]->info->plugin.'/' : '').$conf['dir_default_plugin'].'/'.DIR_ICON;
+				}
 			}
 			$i++;
 		}
@@ -346,24 +365,30 @@ class obj {
 		if ($tri & SORT_ALPHA || $tri & SORT_ALPHA_R)
 			usort($tab, array($this, '_sort_alpha'));
 		else if ($tri & SORT_ALPHA_EXT || $tri & SORT_ALPHA_EXT_R)
-			usort($tab, array($this, '_sort_ext'));		
+			usort($tab, array($this, '_sort_ext'));
+		else if ($tri & SORT_ALPHA_CAT || $tri & SORT_ALPHA_CAT_R)
+			usort($tab, array($this, '_sort_cat'));
+		else if ($tri & SORT_SIZE || $tri & SORT_SIZE_R)
+			usort($tab, array($this, '_sort_size'));
 
 		// Et on affiche uniquement certain
-		$cmpt = 0;
-		$tab_out = array();
-		$size = sizeof($tab);
-		$this->_nbr_object = $size;
-		if ($start)
-			$start = ($start >= $this->_nbr_object) ? (($this->_nbr_object - $nbr < 0) ? 0 : $this->_nbr_object - $nbr) : $start;
-		for ($i = 0, $c = 0; $i < $size; $i++) {
-			if ($i >= $start) {
-				$tab_out[$c++] = &$tab[$i];
-				$cmpt++;
-			}
+		if ($nbr != -1) {
+			$tab_out = array();
+			$this->_nbr_object = sizeof($tab);
 
-			if ($nbr && $cmpt >= $nbr)
-				break;
-		}
+			if ($start)
+				$start = ($start >= $this->_nbr_object) ? (($this->_nbr_object - $nbr < 0) ? 0 : $this->_nbr_object - 1/* - $nbr*/) : $start;
+			for ($i = 0, $c = 0, $cmpt = 0; $i < $this->_nbr_object; $i++) {			// ToDo : Nettoyer, Optimiser le code ici
+				if ($i >= $start) {
+					$tab_out[$c++] = &$tab[$i];
+					$cmpt++;
+				}
+
+				if ($nbr && $cmpt >= $nbr)
+					break;
+			}
+		} else
+			$tab_out = $tab;
 
 		return $tab_out;
 	}
@@ -452,8 +477,10 @@ class obj {
 				}
 			}
 			$cobj->info->plugin = $plugin;
-			if ($cobj->type == TYPE_DIR)
-				$cobj->icon = ($plugin == 'gallery' || $conf['dir_default_plugin'] == 'Gallery') ? 'img/mimetypes/gallery.png' : get_icon('.');	// TODO: ATTENTION, mieux vaut le mettre dans act.php
+			if ($cobj->type == TYPE_DIR) {
+				$icon = DIR_PLUGINS.$plugin.'/'.DIR_ICON;
+				$cobj->icon = (($plugin) ? (file_exists($icon) ? $icon : get_icon('.')) : DIR_PLUGINS.$conf['dir_default_plugin'].'/'.DIR_ICON);
+			}
 		}
 	}
 
@@ -488,8 +515,7 @@ class obj {
 	 */
 	function addDownload() {
 		global $cobj;
-		$sql = "SELECT obj_id FROM {$this->_object_table} WHERE obj_object = '{$cobj->file}'";
-//		if ($cobj->info->dcount && !$var = $this->_bdd->execQuery($sql))
+		$sql = "SELECT obj_id, obj_dcount FROM {$this->_object_table} WHERE obj_object = '{$cobj->file}'";
 		if (!$var = $this->_bdd->execQuery($sql))
 			trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
 		else {
@@ -502,7 +528,8 @@ class obj {
 				if (!$var = $this->_bdd->execQuery($sql))
 					trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
 			} else {
-				$sql = "UPDATE {$this->_object_table} SET obj_dcount = obj_dcount + 1 WHERE obj_object = '{$cobj->file}'";
+				$tab['obj_dcount']++;
+				$sql = "UPDATE {$this->_object_table} SET obj_dcount = {$tab['obj_dcount']} WHERE obj_object = '{$cobj->file}'";
 				if (!$var = $this->_bdd->execQuery($sql))
 					trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
 			}
@@ -628,6 +655,45 @@ class obj {
 		return $ret;
 	}
 
+	/*	Effectue une synchronisation de la base de données
+	 */
+	function syncBdd() {
+
+		$tab = array();
+
+		$qry = null;
+		$cmpt_total = $cmpt = 0;
+
+		$tab_qry = array('select'	=>	array("SELECT obj_object as object FROM {$this->_object_table}", "SELECT comment_object as object FROM {$this->_comment_table}"),
+						 'delete'	=>	array("DELETE FROM {$this->_object_table} WHERE ", "DELETE FROM {$this->_comment_table} WHERE "));
+
+		$size = sizeof($tab_qry['select']);
+		for ($i = 0; $i < $size; $i++) {
+			$str = null;
+			$cmpt = 0;
+
+			if (!$var = $this->_bdd->execQuery($tab_qry['select'][$i]))
+				trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
+			for ($y = 0; $res = $this->_bdd->nextTuple($var); $y++) {
+				if (!file_exists($this->_folder_root.$res['object'])) {
+					$objn = ($i) ? ' comment_object ' : ' obj_object ';
+					$str .= ($cmpt ? 'OR ' : '').$objn.' = \''.addslashes($res['object']).'\' ';
+					$cmpt++;
+				}
+			}
+
+			$cmpt_total += $cmpt;
+
+			if ($str) {
+				$qry = $tab_qry['delete'][$i].$str;
+				if (!$ret = $this->_bdd->execQuery($qry))
+					trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
+			}
+		}
+
+		return $cmpt_total;
+	}
+
 	/*	Renvoie le contenu d'un répertoire trié comme on veut
 		@access	 private
 	 */
@@ -643,7 +709,7 @@ class obj {
 				if ($folder == '/' && $occ{0} == '.' && isset($occ{1}) && $occ{1} == '.')
 					continue;
 
-				if ($occ == '.')
+				if ($occ == '.' || $occ == '..')  ## Si on veut afficher les .. dans les répertoires, ça se passe ici !
 					continue;
 
 				// Si on a un fichier caché...
@@ -727,83 +793,42 @@ class obj {
 		return $ret;
 	}
 
-
-
-	/*	/!\ TODO : Le code ci dessous doit disparaitre et être merger avec le code au dessus !
-	 */
-
-
-
-	/*	Tri les répertoires en premier
+	/*	Tri sur les catégories
 		@access private
 	 */
-	function __sort_folder_first($a, $b) {
-		$ret = 0;
-
-		$bas_a = basename($a);
-		$bas_b = basename($b);
-
-		if ($bas_a == '..' || $bas_a == '.' )
-			$ret = -1;
-
-		if ($bas_b == '..' || $bas_b == '.')
-			$ret = 1;
-
-		if (!$ret && $this->_tri & SORT_FOLDER_FIRST) {
-			if (is_dir($this->_folder_root.$a) && is_dir($this->_folder_root.$b)) {
-				$ret = strcmp(strtolower($a), strtolower($b));
-				if ($this->_tri & SORT_ALPHA_R)
-					$ret = ($ret == 1) ? -1 : 1;
-			} else {
-				if (is_dir($this->_folder_root.$a))
-					$ret = -1;
-				if (is_dir($this->_folder_root.$b))
-					$ret = 1;
-			}
-		}
-		return $ret;
-	}
-
-	/*	Tri sur les noms
-		@access private
-	 */
-	function __sort_alpha($a, $b) {
-		$ret = $this->__sort_folder_first($a, $b);
+	function _sort_cat($a, $b) {
+		$ret = $this->_sort_folder_first($a, $b);
 		if (!$ret) {
-			if ($this->_tri & SORT_ALPHA_R) {
-				$c = $a;
-				$a = $b;
-				$b = $c;
-			}
-			return strcmp(strtolower(basename($a)), strtolower(basename($b)));
-		}
-		return $ret;
-	}
-
-	/*	Tri sur les extensions
-		@access private
-	 */
-	function __sort_ext($a, $b) {
-		$ret = $this->__sort_folder_first($a, $b);
-		if (!$ret) {
-			if ($this->_tri & SORT_ALPHA_EXT_R) {
+			if ($this->_tri & SORT_ALPHA_CAT_R) {
 				$c = $a;
 				$a = $b;
 				$b = $c;
 			}
 
-			$a = strtolower($a);
-			$b = strtolower($b);
-
-			$a_ext = file::getExtension($a);
-			$b_ext = file::getExtension($b);
-
-			if (!strcmp($a_ext, $b_ext))
-				return strcmp(basename($a), basename($b));
+			if (!strcmp($a->cat, $b->cat))
+				return strcmp(basename($a->name), basename($b->name));
 			else
-				return strcmp($a_ext, $b_ext);
+				return strcmp($a->cat, $b->cat);
+		}
+		return $ret;
+	}
 
-//			return strcmp(strtolower(file::getExtension($a)), strtolower(file::getExtension($b)));
+	/*	Tri sur les tailles
+		@access private
+	 */
+	function _sort_size($a, $b) {
+		$ret = $this->_sort_folder_first($a, $b);
+		if (!$ret) {
+			if ($this->_tri & SORT_SIZE_R) {
+				$c = $a;
+				$a = $b;
+				$b = $c;
+			}
+
+			if ($a->size == $b->size)
+				$ret = strcmp(basename($a->name), basename($b->name));
+			else
+				$ret = ($a->size < $b->size) ? -1 : 1;
 		}
 		return $ret;
 	}

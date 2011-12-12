@@ -1,5 +1,5 @@
 <div class="plugin">
-	<div style="text-align: left;">
+	<div class="textbox">
 		{CONTENT}
 	</div>
 </div>

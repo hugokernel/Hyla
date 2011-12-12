@@ -44,17 +44,18 @@ $tpl->set_block('edit', array(
 $tpl->set_block('misc', array(
 		'error'				=>	'Hdlerror',
 		'status'			=>	'Hdlstatus',
-		'action_rename'	=>	'Hdlaction_rename',
+		'sort'				=>	'Hdlsort',
+		'action_rename'		=>	'Hdlaction_rename',
 		'action_mkdir'		=>	'Hdlaction_mkdir',
 		'action_del'		=>	'Hdlaction_del',
 		'action_addfile'	=>	'Hdlaction_addfile',
 		'action_edit'		=>	'Hdlaction_edit',
-		'action_comment'	=>	'Hdlaction_comment',
 		'action_move'		=>	'Hdlaction_move',
 		'action_copy'		=>	'Hdlaction_copy',
+		'aff_slideshow'		=>	'Hdlaff_slideshow',
 		'aff_login'	 		=>	'Hdlaff_login',
 		'aff_logout'		=>	'Hdlaff_logout',
-		'aff_admin'		=>	'Hdlaff_admin',
+		'aff_admin'			=>	'Hdlaff_admin',
 		'toolbar'			=>	'Hdltoolbar',
 		));
 
@@ -71,9 +72,10 @@ $tpl->set_block('obj', array(
 		'dir_pagination'	=>	'Hdldir_pagination',
 		'previous_page'		=>	'Hdlprevious_page',
 		'next_page'			=>	'Hdlnext_page',
-		'pagination'		=>	'Hdlpagination'
+		'pagination'		=>	'Hdlpagination',
+		'tree'				=>	'Hdltree',
+		'no_tree'			=>	'Hdlno_tree'
 		));
-
 
 $var_tpl = null;
 $start = null;
@@ -87,7 +89,8 @@ function get_directory() {
 }
 
 
-$aff = (@$curl->aff[0] == 'obj') ? @$curl->aff[1] : @$curl->aff[0];
+//$aff = (@$curl->aff[0] == 'obj') ? @$curl->aff[1] : @$curl->aff[0];
+$aff = (url::getAff(0) == 'obj') ? url::getAff(1) : url::getAff(0);
 
 if ($aff != 'login')
 	$_SESSION['sess_url'] = null;
@@ -97,7 +100,7 @@ switch ($aff) {
 	#	Cas spécial : Ne nécessite pas l'affichage de l'objet courant et de ces actions courante
 	case 'page':
 
-		switch (@$curl->aff[1]) {
+		switch (url::getAff(1)) {
 
 			#	Affichage des derniers commentaires
 			case 'lastcomment':
@@ -121,12 +124,14 @@ switch ($aff) {
 
 				$tpl->parse('Hdllast_comment', 'last_comment', true);
 				$var_tpl .= $tpl->parse('OutPut', 'comment');
+				$title = __('Last comment');
 				break;
 
 			#	Administration
 			case 'admin':
 				test_perm(ADMIN);
 				include('src/admin.php');
+				$title = __('Administration');
 				break;
 
 			default:
@@ -186,13 +191,14 @@ switch ($aff) {
 				$status = true;
 				break;
 
-			#	On "zip" le répertoire et on l'envoie
+			#	On "tar" le répertoire et on l'envoie
 			case TYPE_DIR:
 				$file = null;
 				if (!cache::getArchivePath($cobj->file, $file)) {
-					$out = archive::createFromDir(dirname($_SERVER['SCRIPT_FILENAME']).'/'.$file.'.zip', $cobj->realpath);
+					$file = dirname($_SERVER['SCRIPT_FILENAME']).'/'.$file.'.tar';
+					$out = archive::createFromDir($file, $cobj->realpath);
 					if ($out) {
-						file::sendFile(dirname($_SERVER['SCRIPT_FILENAME']).'/'.$file.'.zip');
+						file::sendFile($file);
 						$status = true;
 					} else
 						redirect(__('Error'), file::downPath(url::getObj($cobj->path)), __('Dir is probably empty or not readable !'));
@@ -202,9 +208,9 @@ switch ($aff) {
 			#	On extrait le fichier et on l'envoie
 			case TYPE_ARCHIVE:
 				$file = null;
+
 				if (!cache::getFilePath($cobj->file, $file)) {
-					$zip = new PclZip($cobj->realpath);
-					$out = $zip->extract($file);
+					archive::extract($cobj->realpath, $file);
 				}
 
 				// Si le fichier n'est pas trouvé dans l'archive : Erreur !
@@ -231,12 +237,11 @@ switch ($aff) {
 		if ($cobj->type == TYPE_ARCHIVE) {
 			$file = null;
 			if (!cache::getFilePath($cobj->file, $file)) {
-				$zip = new PclZip(FOLDER_ROOT.$cobj->file);
-				$out = $zip->extract($file.'/'.basename($cobj->file));
+				archive::extract(FOLDER_ROOT.$cobj->file, $file.'/'.basename($cobj->file));
 			}
 		}
 
-		graphic::image_resize(get_directory(), (!@empty($curl->aff[2]) ? $curl->aff[2] : THUMB_SIZE_X), 0);
+		graphic::image_resize(get_directory(), (url::getAff(2) ? url::getAff(2) : THUMB_SIZE_X), 0);
 		system::end();
 		break;
 
@@ -272,15 +277,17 @@ switch ($aff) {
 
 	#	Affichage de l'objet
 	case 'start':
-		$start = @$curl->aff[2];
+		$start = url::getAff(2);
 		$_SESSION['sess_start'] = $start;
 	default:
 	case 'obj':
 
 		$curl->aff[0] = 'obj';
 
+		$force_plugin = (url::getAct(0) == 'force') ? url::getAct(1) : null;
+
 		if (!is_readable($cobj->realpath))
-			$msg_error = __('Object not readable !');
+			$var_tpl = view_error(__('Object not readable !'));
 		else {
 			// Chargement d'un plugin...
 			$plugins = new plugins();
@@ -294,8 +301,7 @@ switch ($aff) {
 			} else if ($cobj->type == TYPE_ARCHIVE) {
 
 				if (!cache::getFilePath($cobj->file, $file)) {
-					$zip = new PclZip($cobj->realpath);
-					$out = $zip->extract($file);
+					archive::extract($cobj->realpath, $file);
 				}
 
 				// Si le fichier n'est pas trouvé dans l'archive : Erreur !
@@ -311,25 +317,10 @@ switch ($aff) {
 					system::end();
 				}
 
-		/*	Oui, il serait possible de faire du récursif et ainsi pouvoir se balader dans un zip contenu dans un zip ...
-			... mais bon, y'a d'autre priorité pour le moment
-		 */
-	/*
-		$tab_a = explode('!', $cobj->target);
-		if ($tab_a) {
-	
-			foreach ($tab_a as $y) {
-				$zip = new PclZip(dirname($_SERVER['SCRIPT_FILENAME']).'/'.$file.'/'.$y);
-				$file = cache::getFilePath($obj->file.'/'.$y);
-				$out = $zip->extract($file);
-			}
-		}
-	*/
-
 				$plugins->search();
 			}
 
-			$var_tpl .= $plugins->load();
+			$var_tpl .= $plugins->load($force_plugin);
 
 			//	Les commentaires sont uniquement pour les fichiers
 			if ($cobj->type == TYPE_FILE && ($cuser->perm & ADD_COMMENT)) {
@@ -375,11 +366,11 @@ switch ($aff) {
 
 $tpl->set_var(array(
 		'DOWNLOAD_COUNT'	=>	$cobj->info->dcount ? $cobj->info->dcount.__(' download') : null,
-		'DESCRIPTION'		=>	($aff != 'lastcomment') ? (isset($cobj->info->description) ? $cobj->info->description : __('No description !')) : __('Last comments'),
+		'DESCRIPTION'		=>	($aff != 'lastcomment') ? (!empty($cobj->info->description) ? $cobj->info->description : __('No description !')) : __('Last comments'),
 		'FILE_ICON'			=>	$cobj->icon,
 		'OBJECT'			=>	$cobj->file,
 		'PATH'				=>	$cobj->path,
-		'ERROR'				=>	view_error($msg_error),
+		'ERROR'				=>	'PAF TOTO PAF'.view_error($msg_error),
 		));
 
 // La pagination
@@ -397,7 +388,9 @@ if ($cobj->type == TYPE_FILE || $cobj->type == TYPE_ARCHIVE) {
 			'PREV_PATH'			=>	url::getObj(($cobj->type == TYPE_ARCHIVE) ? $cobj->prev->file.'!'.$cobj->prev->target : $cobj->prev->file),
 			'NEXT_PATH'			=>	url::getObj(($cobj->type == TYPE_ARCHIVE) ? $cobj->next->file.'!'.$cobj->next->target : $cobj->next->file),
 			'PREV_FILE_ICON'	=>	$cobj->prev->icon,
-			'NEXT_FILE_ICON'	=>	$cobj->next->icon));
+			'NEXT_FILE_ICON'	=>	$cobj->next->icon
+			));
+
 	$tpl->parse('Hdlpagination', 'pagination', true);
 
 } else if ($cobj->type == TYPE_DIR && $aff != 'search') {
@@ -414,42 +407,126 @@ if ($cobj->type == TYPE_FILE || $cobj->type == TYPE_ARCHIVE) {
 			$tpl->set_var('PREV_PATH' , url::getObj($cobj->path, array('start', $page)));
 		}
 
-		if ($start < ($nbr_obj - 10))
+		if ($start < ($nbr_obj - $conf['nbr_obj'])) {
 			$tpl->parse('Hdldir_next_page', 'dir_next_page', true);
 			$tpl->set_var('NEXT_PATH' , url::getObj($cobj->path, array('start', $start + $conf['nbr_obj'])));
-	}
+		}
 
-	$tpl->parse('Hdldir_pagination', 'dir_pagination', true);
+		$tpl->parse('Hdldir_pagination', 'dir_pagination', true);
+	}
 }
 
 
+/*	Affichage de l'objet, de l'arbre, du tri...
+ */
+if (url::getAff(0) == 'obj') {
 
-if (@$curl->aff[0] == 'obj') {
-	$tpl->set_var('CONTENT', $var_tpl);
+	if ($cobj->type == TYPE_DIR) {
+
+		switch ($sort) {
+			case SORT_ALPHA:
+			case SORT_ALPHA | SORT_FOLDER_FIRST:
+				$tpl->set_var('SELECT_SORT_1', 'selected="selected"');
+				break;
+			case SORT_ALPHA_R:
+			case SORT_ALPHA_R | SORT_FOLDER_FIRST:
+				$tpl->set_var('SELECT_SORT_2', 'selected="selected"');
+				break;
+			case SORT_ALPHA_EXT:
+			case SORT_ALPHA_EXT | SORT_FOLDER_FIRST:
+				$tpl->set_var('SELECT_SORT_3', 'selected="selected"');
+				break;
+			case SORT_ALPHA_EXT_R:
+			case SORT_ALPHA_EXT_R | SORT_FOLDER_FIRST:
+				$tpl->set_var('SELECT_SORT_4', 'selected="selected"');
+				break;
+			case SORT_ALPHA_CAT:
+			case SORT_ALPHA_CAT | SORT_FOLDER_FIRST:
+				$tpl->set_var('SELECT_SORT_5', 'selected="selected"');
+				break;
+			case SORT_ALPHA_CAT_R:
+			case SORT_ALPHA_CAT_R | SORT_FOLDER_FIRST:
+				$tpl->set_var('SELECT_SORT_6', 'selected="selected"');
+				break;
+			case SORT_SIZE:
+			case SORT_SIZE | SORT_FOLDER_FIRST:
+				$tpl->set_var('SELECT_SORT_7', 'selected="selected"');
+				break;
+			case SORT_SIZE_R:
+			case SORT_SIZE_R | SORT_FOLDER_FIRST:
+				$tpl->set_var('SELECT_SORT_8', 'selected="selected"');
+				break;
+			case SORT_DEFAULT:
+			case SORT_DEFAULT | SORT_FOLDER_FIRST:
+				$tpl->set_var('SELECT_SORT_0', 'selected="selected"');
+				break;
+			default:
+				$tpl->set_var('SELECT_SORT', 'selected="selected"');
+				break;
+		}
+
+		if ($grp == 1)
+			$tpl->set_var('GRP_CHECKED', ' checked="checked"');
+
+		if ($sort & SORT_FOLDER_FIRST)
+			$tpl->set_var('FFIRST_CHECKED', ' checked="checked"');
+
+		$tpl->set_var('OBJECT', url::getObj($cobj->file));
+
+		// Affichage ou non de la barre de tri
+		if ($var_tpl	&& url::getAff(1) != 'search'
+						&& url::getAff(1) != 'lastcomment'
+						&& url::getAff(1) != 'login'
+						&& url::getAff(1) != 'edit'
+						&& url::getAff(1) != 'upload'
+						&& url::getAff(1) != 'move'
+						&& url::getAff(1) != 'rename'
+						&& url::getAff(1) != 'mkdir'
+						) {			// ToDo: C'est franchement pas beau "le tout en dûr"
+//		if ($var_tpl && !url::getAff(1)) {
+			$var_tpl .= $tpl->parse('Hdlsort', 'sort', true);
+		}
+
+		// Si le plugin n'a rien retourné
+		$tpl->set_var('CONTENT', (!$var_tpl && $cobj->type == TYPE_DIR) ? __('The are no file !') : $var_tpl);
+
+		// Affichage ou non de l'arborescence
+		if ($conf['view_tree'])
+			$tpl->set_var('TREE_ELEM', get_tree());
+
+		if ($conf['view_tree'])
+			$tpl->parse('Hdltree', 'tree', true);
+		else
+			$tpl->parse('Hdlno_tree', 'no_tree', true);
+	} else {
+		$tpl->set_var('CONTENT', $var_tpl);
+		$tpl->parse('Hdlno_tree', 'no_tree', true);
+	}
+
 	$var_tpl = $tpl->parse('Hdlobj', 'obj', true);
 }
 
 $tpl->set_var(array(
-		'URL_EDIT'		=>	url::getObj($cobj->file, 'edit'),
-		'URL_UPLOAD'	=>	url::getObj($cobj->file, 'upload'),
+		'URL_DOWNLOAD'	=>	url::getCurrentObj('download'),
+		'URL_EDIT'		=>	url::getCurrentObj('edit'),
+		'URL_UPLOAD'	=>	url::getCurrentObj('upload'),
 //		'URL_COPY'		=>	url::getObj($cobj->file, 'copy'),
 		'URL_MOVE'		=>	url::getCurrentObj('move'),
-		'URL_RENAME'	=>	url::getObj($cobj->file, 'rename'),
+		'URL_RENAME'	=>	url::getCurrentObj('rename'),
 		'URL_DEL'		=>	url::getCurrentObj('', 'del'),
 		'URL_SEARCH'	=>	url::getObj($cobj->path, 'search'),
 		'URL_LOGIN'		=>	url::getCurrentObj('login'),
-		'URL_MKDIR'		=>	url::getObj($cobj->file, 'mkdir'),
-		'URL_LOGOUT'	=>	url::getObj($cobj->file, '', 'logout'),
+		'URL_MKDIR'		=>	url::getCurrentObj('mkdir'),
+		'URL_LOGOUT'	=>	url::getCurrentObj('', 'logout'),
 		'URL_ADMIN'		=>	url::getPage('admin'),
 		'URL_COMMENT'	=>	url::getPage('lastcomment'),
 		));
-
 
 /*	Génération de la barre d'outils
  */
 if ($cuser->id == ANONYMOUS_ID)
 	$tpl->parse('Hdlaff_login', 'aff_login', true);
-if (@$curl->aff[0] != 'page') {
+if (url::getAff(0) != 'page') {
 	if ($conf['view_toolbar'] || $conf['anonymous_add_file'] || $cuser->perm & ADD_FILE)
 		$tpl->parse('Hdlaction_addfile', 'action_addfile', true);
 	if ($conf['view_toolbar'] || $cuser->perm & EDIT_FILE)
@@ -467,14 +544,23 @@ if (@$curl->aff[0] != 'page') {
 		if ($conf['view_toolbar'] || $cuser->perm & ($cobj->type == TYPE_DIR ? DEL_DIR : DEL_FILE))
 			$tpl->parse('Hdlaction_del', 'action_del', true);
 	}
+
+	// Diaporama
+	if ($cobj->type == TYPE_DIR) {
+		$tpl->set_var('URL_SLIDESHOW', url::getCurrentObj(null, array('force', 'slideshow')));
+		$tpl->parse('Hdlaff_slideshow', 'aff_slideshow', true);
+	}
 }
-if ($cuser->id != ANONYMOUS_ID)
+if ($cuser->id != ANONYMOUS_ID) {
+	$tpl->set_var('USER_NAME', $_SESSION['sess_clogin']);
 	$tpl->parse('Hdlaff_logout', 'aff_logout', true);
+}
 
 if ($cuser->perm & ADMIN)
 	$tpl->parse('Hdlaff_admin', 'aff_admin', true);
 
 
+$tpl->set_var('Hdlsort');
 $tpl->parse('Hdltoolbar', 'toolbar', true);
 $var_tpl_toolbar = $tpl->parse('Hdlmisc', 'misc', true);
 
@@ -487,9 +573,9 @@ $tpl->set_var(array(
 		'TOOLBAR'			=>	$var_tpl_toolbar,
 		'OBJECT'			=>	($cobj->type == TYPE_ARCHIVE) ? $cobj->file.'!'.$cobj->target : $cobj->file,
 		'OBJ'				=>	$var_tpl,
-		'TITLE'				=>	$conf['title'],
+		'TITLE'				=>	$title.' '.$conf['title'],
 		'HYLA_VERSION'		=>	HYLA_VERSION,
-		'DEBUG'				=>	__('%s query executed in %s seconds', $bdd->getNbrQuery(), round($totaltime, 4)),
+		'DEBUG'				=>	__('%s sql query executed in %s seconds', $bdd->getNbrQuery(), round($totaltime, 4)),
 		));
 
 $tpl->pparse('OutPut', 'index');

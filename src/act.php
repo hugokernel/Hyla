@@ -36,7 +36,7 @@ function test_perm($niv) {
 		// Merci de procédé à une authentification
 		redirect(__('Error'), url::getCurrentObj('login'), __('Thank you for authenticate you'));
 		system::end();
-	} else if (!($cuser->perm & $niv)) {
+	} else if (($cuser->perm & $niv) != $niv) {
 		// Interdit !
 		redirect(__('Error'), url::getCurrentObj(), __('You cannot use this functionality !'));
 		system::end();
@@ -44,7 +44,62 @@ function test_perm($niv) {
 }
 
 
-switch ($curl->act[0]) {
+/*	Gestion des paramètres de visualisation, tri...
+ */
+$param = $_REQUEST['param'];
+
+
+$sort = (isset($_SESSION['sess_sort'])/* && !empty($_SESSION['sess_sort'])*/) ? $_SESSION['sess_sort'] : $conf['sort_config'];
+$grp = (isset($_SESSION['sess_grp'])) ? $_SESSION['sess_grp'] : $conf['group_by_sort'];
+$ffirst = (isset($_SESSION['sess_ffirst'])) ? $_SESSION['sess_ffirst'] : $conf['folder_first'];
+
+if (isset($param)) {
+	$tab = array(
+			'-1'=> -1,
+			'0' => SORT_DEFAULT,
+			'1' => SORT_ALPHA,
+			'2' => SORT_ALPHA_R,
+			'3' => SORT_ALPHA_EXT,
+			'4' => SORT_ALPHA_EXT_R,
+			'5' => SORT_ALPHA_CAT,
+			'6' => SORT_ALPHA_CAT_R,
+			'7' => SORT_SIZE,
+			'8' => SORT_SIZE_R,
+			);
+	$grp = $ffirst = $sort = 0;
+	foreach ($param as $occ) {
+		list($act, $value) = explode(':', $occ);
+		if ($act == 'sort') {
+			if ($value == -1)
+				$sort = $conf['sort_config'];
+			if ($value > 0)
+				$sort = (isset($tab[$value]) ? $tab[$value] : $sort);
+			continue;
+		}
+
+		if ($act == 'grp' && $value == 'ok') {
+			$grp = 1;
+			continue;
+		}
+
+		if ($act == 'ffirst' && $value == 'ok') {
+			$ffirst = 1;
+			continue;
+		}
+	}
+
+	if ($ffirst)
+		$sort |= SORT_FOLDER_FIRST;
+}
+
+$_SESSION['sess_sort'] = $sort;
+$_SESSION['sess_grp'] = $grp;
+$_SESSION['sess_ffirst'] = $ffirst;
+
+
+/*	Gestion des actions
+ */
+switch (url::getAct(0)) {
 
 	#	On se déloggue !
 	case 'logout':
@@ -109,8 +164,15 @@ switch ($curl->act[0]) {
 	#	Modification description
 	case 'setdescription':
 		test_perm(EDIT_FILE);
-		$obj->setDescription($cobj->file, string::format($_POST['description']));
-		$cobj->info->description = stripslashes(string::format($_POST['description']));
+		$description = string::format($_POST['description'], true, true);
+		$obj->setDescription($cobj->file, $description);
+		$cobj->info->description = stripslashes($description);
+
+		if ($_POST['redirect'] == '1') {
+			redirect($cobj->file, url::getCurrentObj(), __('You will be redirected towards the object !'));
+			system::end();
+		}
+
 		break;
 
 	#	Modification plugin courant
@@ -122,14 +184,15 @@ switch ($curl->act[0]) {
 				$obj->setPlugin($cobj->file, null);
 			else {
 				// On vérifie que le plugin existe bien
-				$tab = plugins::getDirPlugins();
-				foreach ($tab as $occ) {
-					if (strtolower($occ['name']) == $plugin_name) {
-						$obj->setPlugin($cobj->file, $plugin_name);
-						break;
-					}
-				}
+				if (plugins::isValid($plugin_name))
+					$obj->setPlugin($cobj->file, $plugin_name);
 			}
+
+			if ($_POST['redirect'] == '1') {
+				redirect($cobj->file, url::getCurrentObj(), __('You will be redirected towards the object !'));
+				system::end();
+			}
+
 		}
 
 		break;
@@ -153,7 +216,7 @@ switch ($curl->act[0]) {
 		// Il ne doit pas y avoir de caractère interdit !
 		if (string::test($_POST['rn_newname'], UNAUTHORIZED_CHAR)) {
 			$msg_error = __('There are an invalid char in the file name, unauthorized char are : %s', UNAUTHORIZED_CHAR);
-			$curl->aff[1] = 'rename';
+			url::setAff(1, 'rename');
 			break;
 		}
 
@@ -161,7 +224,7 @@ switch ($curl->act[0]) {
 		$newname = ($cobj->type == TYPE_FILE) ? $cobj->path.$_POST['rn_newname'] : file::downPath($cobj->path).$_POST['rn_newname'];
 		if (file_exists(FOLDER_ROOT.$newname)) {
 			$msg_error = is_dir(FOLDER_ROOT.$_POST['rn_newname']) ? __('The dir already exists !') : __('The file already exists !');
-			$curl->aff[1] = 'rename';
+			url::setAff(1, 'rename');
 			break;
 		}
 
@@ -194,31 +257,31 @@ switch ($curl->act[0]) {
 		}
 
 		//	Si le répertoire de destination n'est pas valable
-		if (!file::getRealDir($_POST['mv_destination'], FOLDER_ROOT)) {
+		$dest_dir = file::getRealDir($_POST['mv_destination'], FOLDER_ROOT);
+		if (!$dest_dir) {
 			redirect(__('Error'), url::getCurrentObj(), __('An error occured during move !'));
 			system::end();
 		}
 
 		// On vérifie tout d'abord si l'objet de destination existe déjà
-		$dest = ($cobj->type == TYPE_FILE) ? ($_POST['mv_destination'] == '/' ? '/' : $_POST['mv_destination'].'/').$cobj->name :
-				($_POST['mv_destination'] == '/' ? '/' : $_POST['mv_destination'].'/').file::getLastDir($cobj->path);
-
+		$dest = ($cobj->type == TYPE_FILE) ? ($dest_dir == '/' ? '/' : $dest_dir.'/').$cobj->name :
+				($dest_dir == '/' ? '/' : $dest_dir.'/').file::getLastDir($cobj->path);
 		// On test si l'objet final existe déjà ou non
 		if (file_exists(FOLDER_ROOT.$dest)) {
 			$msg_error = is_dir(FOLDER_ROOT.$dest) ? __('The dir already exists !') : __('The file already exists !');
-			$curl->aff[1] = 'move';
+			url::setAff(1, 'move');
 			break;
 		}
 
 		// On vérifie que l'on essaie pas de copier le répertoire sur lui même !
-		if ($cobj->type == TYPE_DIR && file::getRealDir($_POST['mv_destination'], FOLDER_ROOT).'/' == $cobj->file) {
+		if ($cobj->type == TYPE_DIR && $dest_dir.'/' == $cobj->file) {
 			$msg_error = __('Impossible to move dir on him !');
-			$curl->aff[1] = 'move';
+			url::setAff(1, 'move');
 			break;
 		}
 
 		// Sinon, on déplace !
-		if ($ret = $obj->move($cobj->realpath, $_POST['mv_destination'])) {
+		if ($ret = $obj->move($cobj->realpath, $dest_dir)) {
 			$msg = view_status(__('%s objets was moved !', $ret));
 			$var = isset($_POST['mv_redirect']) ? url::getObj($dest) : url::getObj(($cobj->type == TYPE_DIR) ? file::downPath($cobj->path) : $cobj->path);
 		} else {
@@ -267,15 +330,15 @@ switch ($curl->act[0]) {
 		// Il ne doit pas y avoir de caractère interdit !
 		if (string::test($_POST['mk_name'], UNAUTHORIZED_CHAR)) {
 			$msg_error = __('There are an invalid char in the file name, unauthorized char are : %s', UNAUTHORIZED_CHAR);
-			$curl->aff[1] = 'mkdir';
+			url::setAff(1, 'mkdir');
 			break;
 		}
 
 		// On vérifie tout d'abord si l'objet de destination existe déjà
-		$dest = $cobj->path.($cobj->path == '/' ? null : '/').$_POST['mk_name'];
+		$dest = $cobj->path.$_POST['mk_name'];
 		if (file_exists(FOLDER_ROOT.$dest)) {
 			$msg_error = __('The dir already exists !');
-			$curl->aff[1] = 'mkdir';
+			url::setAff(1, 'mkdir');
 			break;
 		}
 

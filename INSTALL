@@ -5,8 +5,11 @@ vous   avez   2  possiblités  pour  installer  Hyla,  la  première   entièrem
 automatique  grâce au script d'installation et la seconde, manuellement mais qui
 n'est  franchement pas compliquée  (voir avertissement en bas).
 
-Utilisateurs  de  free.fr : n'oubliez  pas  de  créer  un  répertoire "sessions"
-à la RACINE de votre site !
+Notes pour les utilisateurs de free.fr :
+ * N'oubliez pas de créer un répertoire "sessions" à la RACINE de votre site!
+ * Sachez qu'il vous sera impossible de supprimer un répertoire car free empêche
+   l'exécution de la fonction rmdir sur ces serveurs, vous devrez pas conséquent
+   le faire par vos propres moyens (ftp...)
 
 Dans les 2 cas, que vous installiez Hyla par le biais du script d'installation
 ou manuellement, vous devez exécuter ces 2 tâches :
@@ -24,7 +27,7 @@ I. Puis, avec le script d'installation (méthode recommandée !)
 II.	Ou, manuellement (à  vos  risques  et  péril  si  vous  ne  changez  pas 
     le mot de passe par défaut, voir avertissement plus bas)
  3. Copiez le fichier conf/config.inc.default.php en conf/config.inc.php
-    et ouvrez éditez le correctement (tout est expliqué dans le fichier)
+    et éditez le correctement (tout est expliqué dans le fichier)
  4. Exécutez le script SQL d'installation dans src/db/mysql.sql
  5. Vous pouvez éventuellement éditer le fichier conf/hyla.ini
  6. ATTENTION :

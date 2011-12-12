@@ -28,7 +28,6 @@ require 'src/inc/users.class.php';
 require 'src/inc/file.class.php';
 require 'src/inc/obj.class.php';
 require 'src/inc/url.class.php';
-require 'src/inc/archive.class.php';
 require 'src/lib/template.inc';
 
 $starttime = system::chrono();
@@ -41,9 +40,11 @@ load_icon_info();
 /*	Connection à la base
  */
 $bdd =& new db();
-if (!$bdd->connect(SQL_HOST, SQL_BASE, SQL_USER, SQL_PASS))
+if (!$bdd->connect(SQL_HOST, SQL_USER, SQL_PASS))
 	system::end(__('Couldn\'t connect to sql server !'));
 
+if (!$bdd->select(SQL_BASE))
+	system::end(__('Unable to use database &laquo; %s &raquo;', SQL_BASE));
 
 /*	Chargement des infos de l'utilisateur courant
  */
@@ -67,11 +68,14 @@ $cobj = ($curl->aff[0] != 'page') ? $obj->getInfo($curl->obj) : new tFile;
 /*	On vérifie que le chemin est bon
  */
 if ($curl->aff[0] == 'obj' && $cobj->type == TYPE_UNKNOW) {
+
+//	echo DIR_ROOT.'conf/config.inc.php';
+//	system::end('For security reason, you must have ');
+
 	header('HTTP/1.x 404 Not Found');
 	redirect(__('Error'), '?', __('Object not found !'));
 	system::end();
 }
-
 
 /*	Traitement des actions suivi de l'affichage correspondant
  */

@@ -18,7 +18,20 @@
 
 <!--{ERROR}-->
 
-{CONTENT}
+<!-- BEGIN tree -->
+<div id="tree">
+	{TREE_ELEM}
+</div>
+<div id="content">
+	{CONTENT}
+</div>
+<!-- END tree -->
+
+<!-- BEGIN no_tree -->
+<div id="content-no-tree">
+	{CONTENT}
+</div>
+<!-- END no_tree -->
 
 <!-- BEGIN dir_pagination -->
 <div class="pagination" style="clear: both;">
