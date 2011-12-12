@@ -105,7 +105,7 @@ class file
 		return rmdir($dir);
 	}
 
-	/*	Si le fichier existe déjà dans la racine, retourne le nom du fichier préfixé d'une string le rendant unique
+	/*	Si le fichier existe déjà dans la racine, retourne le nom du fichier préfixé d'une chaine le rendant unique
 		@param	string	$name	Le nom du fichier
 		@param	string	$root	La racine
 	 */
@@ -155,7 +155,7 @@ class file
 		return $tab;
 	}
 
-	/*	Les fichiers matchant l'expression régulière sont stockés dans un tableau
+	/*	Les fichiers correspondant l'expression régulière sont stockés dans un tableau
 		@param	string	$folder		Répertoire pour le scan (finissant par un '/')
 		@param	string	$exp		L'expression régulière
 		@param	boolean	$recurs		Faire ça récursivement

@@ -43,18 +43,18 @@ $l10n['File correctly uploaded : %s']	= 'Fichier(s) correctement téléchargé(s) :
 $l10n['An unknown error occured during upload !']		= 'Une erreur inconnue est survenue, le fichier n\'a pas été copié !';
 
 $l10n['%s objets was moved !']				= 'Déplacement effectué : %s fichier(s) ou répertoire(s) déplacé(s) !';
-$l10n['An error occured during move !'] 	= 'Une erreur est survenu durant le déplacement de l\'objet !';
+$l10n['An error occured during move !'] 	= 'Une erreur est survenue durant le déplacement de l\'objet !';
 $l10n['Impossible to move the root']		= 'Impossible de déplacer la racine';
 $l10n['Impossible to move dir on him !']	= 'Impossible de déplacer le répertoire sur lui même !';
 
 $l10n['Impossible to rename the root']		= 'Impossible de renommer la racine';
 $l10n['The objet was renamed !']			= 'L\'objet à été renommé !';
-$l10n['An error occured during rename !']	= 'Une erreur est survenu durant le renommage de l\'objet !';
+$l10n['An error occured during rename !']	= 'Une erreur est survenue durant le renommage de l\'objet !';
 
 $l10n['There are an invalid char in the file name, unauthorized char are : %s']	= 'Il y a un caractère invalide dans le nom, les caractères interdits sont : %s';
 
 $l10n['Dir created !']	= 'Répertoire créé !';
-$l10n['An unknown error occured during dir creation !']	= 'Une erreur inconnues est survenue durant la création du répertoire !';
+$l10n['An unknown error occured during dir creation !']	= 'Une erreur inconnue est survenue durant la création du répertoire !';
 
 $l10n['The file already exists !']	= 'Le fichier existe déjà !';
 $l10n['The dir already exists !']	= 'Un répertoire portant le même nom existe déjà !';
@@ -96,7 +96,7 @@ Hyla est configuré pour envoyer un mail à chaque envoie de fichier anonyme.
 
 Un fichier anonyme à été envoyé, il s'agit de %s .
 
-Merci de ne pas répondre à ce mail !
+Merci de ne pas répondre à ce courriel !
 ";
 
 

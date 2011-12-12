@@ -2,7 +2,7 @@
 
 <plugin target="file" ext="">
 	<name>Default</name>
-	<description>Plugin utilisé lorsqu'aucun autre plugin n'est trouvé</description>
+	<description>Plugin utilisÃ© lorsqu'aucun autre plugin n'est trouvÃ©</description>
 	<author>hugo</author>
 	<version>1</version>
 </plugin>

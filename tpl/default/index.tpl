@@ -5,7 +5,7 @@
 <title>{OBJECT} {TITLE}</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
-<link rel="stylesheet" type="text/css" media="screen,projection" title="Défaut" href="{DIR_TEMPLATE}/default.css" />
+<link rel="stylesheet" type="text/css" media="screen,projection" title="Standard" href="{DIR_TEMPLATE}/default.css" />
 <link rel="alternate stylesheet" type="text/css" media="screen" title="Cacher l'arborescence" href="{DIR_TEMPLATE}/no-tree.css" />
 
 <link rel="shortcut icon" type="image/x-icon" href="img/icon.png" />

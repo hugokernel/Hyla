@@ -54,15 +54,15 @@ define('TABLE_USERS',	PREFIX_TABLE.'users');
 
 
 /*	/!\ Grain de sel pour le cryptage des mot de passe
-	Attention, si vous changez cette valeur après l'installation, il vous faudra changez tous les mots de passe
+	Attention, si vous changez cette valeur après l'installation, il vous faudra changer tous les mots de passe
  */
 define('CRYPT_SALT',	123456789);
 
-/*	+-------------------------------------------------------------------+
-	| ATTENTION, les valeurs en dessous ne doivent pas être changé !!!  |
-	| Il s'agit des constantes indispensable pour le bon fonctionnement |
-	| du moteur...                                                      |
-	+-------------------------------------------------------------------+
+/*	+---------------------------------------------------------------------+
+	| ATTENTION, les valeurs en dessous ne doivent pas être changées !!!  |
+	| Il s'agit des constantes indispensable pour le bon fonctionnement   |
+	| du moteur...                                                        |
+	+---------------------------------------------------------------------+
  */
 
 define('UNAUTHORIZED_CHAR', '\/:*?"<>|!');

@@ -40,6 +40,10 @@ if (basename($_SERVER['PHP_SELF']) != 'install.php') {
 
 define('DIR_ROOT', dirname($_SERVER['SCRIPT_FILENAME']).'/');
 
+if (!defined('ROOT_URL')) {
+	define('ROOT_URL', $_SERVER['PHP_SELF']);
+}
+
 require 'src/inc/define.php';
 require 'src/lib/class.ini.file.php';
 require 'src/inc/function.inc.php';
@@ -54,6 +58,6 @@ require FILE_L10N;
 
 define('DIR_TEMPLATE', 	DIR_TPL.$conf['name_template']);
 
-define('HYLA_VERSION',	'0.7.1');
+define('HYLA_VERSION',	'0.7.2');
 
 ?>

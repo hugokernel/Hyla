@@ -1,5 +1,15 @@
 Hyla ChangeLog
 
+[Version 0.7.2]
+	- hugo
+		13 octobre 2006
+			* Correction de fautes d'orthographes
+			* La constante de configuration ROOT_URL fait sa réapparition mais n'est plus obligatoire, si elle n'est pas définie, elle est remplacée par PHP_SELF
+			* Tous les fichiers info.xml sont encodés en UTF8
+			* Correction d'une faille de sécurité dans une librairie externe à Hyla
+			* Pour éviter les soucis avec l'interclassement, les objets sont dorénavant sauvegardés en "blob"
+			* Les fichiers des librairies PhpConcept ne contenaient pas des <?php mais des <? qui posait des problèmes pour les configurations strictes de PHP
+
 [Version 0.7.1]
 	- hugo
 		1&2 octobre 2006

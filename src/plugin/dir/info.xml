@@ -2,7 +2,7 @@
 
 <plugin target="dir">
 	<name>Dir</name>
-	<description>Listage de répertoire</description>
+	<description>Listage de rÃ©pertoire</description>
 	<author>hugo</author>
 	<version>1</version>
 </plugin>

@@ -2,7 +2,7 @@
 
 <plugin target="file" ext="png,jpg,jpeg,bmp,gif">
 	<name>Image</name>
-	<description>Affiche une images et ces informations liées</description>
+	<description>Affiche une images et ces informations liÃ©es</description>
 	<author>hugo</author>
 	<version>1</version>
 </plugin>

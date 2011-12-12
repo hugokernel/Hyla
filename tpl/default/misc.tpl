@@ -50,7 +50,7 @@
 		<!-- BEGIN aff_slideshow --><a href="#" title="Lancer un diaporama" onclick="window.open('{URL_SLIDESHOW}', 'Diaporama', 'width=900,height=800,left=0,top=0');"><img src="{DIR_TEMPLATE}/img/emblem-multimedia.png" align="middle" width="32" height="32" alt="Stylo" /> Diaporama</a><!-- END aff_slideshow -->
 		<!-- BEGIN aff_download --><a href="{URL_DOWNLOAD}" title="Télécharger"><img src="{DIR_TEMPLATE}/img/gnome-fs-bookmark.png" alt="Planète" align="middle" />Télécharger</a><!-- END aff_download -->
 
-		<!-- BEGIN action_edit --><a href="{URL_EDIT}" title="Editer l'objet courant"><img src="{DIR_TEMPLATE}/img/Editor.png" align="middle" width="32" height="32" alt="Stylo" /> Editer</a><!-- END action_edit -->
+		<!-- BEGIN action_edit --><a href="{URL_EDIT}" title="Éditer l'objet courant"><img src="{DIR_TEMPLATE}/img/Editor.png" align="middle" width="32" height="32" alt="Stylo" /> Éditer</a><!-- END action_edit -->
 		<!-- BEGIN action_addfile --><a href="{URL_UPLOAD}" title="De votre poste ou à distance"><img src="{DIR_TEMPLATE}/img/Floppy.png" align="middle" width="32" height="32" alt="Disquette" /> Ajouter un fichier</a><!-- END action_addfile -->
 		<!-- BEGIN action_copy --><a href="{URL_COPY}"><img src="{DIR_TEMPLATE}/img/emblem-documents.png" align="middle" width="32" height="32" alt="Disquette" /> Copier</a><!-- END action_copy -->
 		<!-- BEGIN action_move --><a href="{URL_MOVE}" title="Déplacer l'objet courant"><img src="{DIR_TEMPLATE}/img/gnome-dev-symlink.png" align="middle" width="32" height="32" alt="Doigt" /> Déplacer</a><!-- END action_move -->

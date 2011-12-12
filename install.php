@@ -310,6 +310,16 @@ $var_file =
 define('FOLDER_ROOT', '$folder_root');
 
 
+/*	L'emplacement de ifile après le nom de domaine (sans slash de fin !)
+	Ex: http://ifile.free.fr/				-> mettez ''
+	Ex: http://ifile.free.fr/ifile/			-> mettez '/ifile'
+	Ex: http://ifile.free.fr/data/ifile		-> mettez '/data/ifile'
+
+	Si ce champs est vide, la valeur de \$_SERVER['PHP_SELF'] sera utilisée
+ */
+//define('ROOT_URL', '');
+
+
 /*	+---------------------------------+
 	| Connection à la base de données |
 	+---------------------------------+
@@ -370,12 +380,12 @@ $var_query[0]['desc'] = 'Création de la table &laquo; '.$prefix.'object &raquo; 
 $var_query[0]['query'] = "
 CREATE TABLE `{$prefix}object` (
   `obj_id` int(4) unsigned NOT NULL auto_increment,
-  `obj_object` text,
+  `obj_object` blob,
   `obj_description` text,
   `obj_plugin` char(255) NOT NULL default '',
   `obj_dcount` int(4) unsigned NOT NULL default '0',
   PRIMARY KEY  (`obj_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs COMMENT='Table des objets du système de fichiers';
+) ENGINE=MyISAM COMMENT='Table des objets du système de fichiers';
 ";
 
 $var_query[1]['desc'] = 'Création de la table &laquo; '.$prefix.'users &raquo; ';
@@ -387,21 +397,21 @@ CREATE TABLE `{$prefix}users` (
   `usr_perm` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`usr_id`),
   UNIQUE KEY `usr_name` (`usr_name`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs COMMENT='Table des utilisateurs';
+) ENGINE=MyISAM COMMENT='Table des utilisateurs';
 ";
 
 $var_query[2]['desc'] = 'Création de la table &laquo; '.$prefix.'comment &raquo; ';
 $var_query[2]['query'] = "
 CREATE TABLE `{$prefix}comment` (
   `comment_id` int(4) unsigned NOT NULL auto_increment,
-  `comment_object` text,
+  `comment_object` blob,
   `comment_author` char(255) NOT NULL default '',
   `comment_mail` char(255) NOT NULL default '',
   `comment_url` char(255) NOT NULL default '',
   `comment_date` int(10) unsigned NOT NULL default '0',
   `comment_content` text,
   PRIMARY KEY  (`comment_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs COMMENT='Table des commentaires des objets' ;
+) ENGINE=MyISAM COMMENT='Table des commentaires des objets' ;
 ";
 
 $var_query[3]['desc'] = 'Insertion de données dans la table &laquo; '.$prefix.'users &raquo; ';

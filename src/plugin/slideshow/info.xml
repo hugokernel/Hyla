@@ -2,7 +2,7 @@
 
 <plugin target="experimental">
 	<name>SlideShow</name>
-	<description>Affichage d'images en plein écran</description>
+	<description>Affichage d'images en plein Ã©cran</description>
 	<author>hugo</author>
 	<version>1</version>
 </plugin>

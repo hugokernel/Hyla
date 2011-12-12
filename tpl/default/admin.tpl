@@ -14,10 +14,10 @@
 		<h3><a href="http://www.digitalspirit.org/hyla/">Hyla</a> {HYLA_VERSION} Copyright (c) 2004-2006 Charles Rincheval</h3>
 
 	<p>
-		Il est important de toujours avoir la dernière version d'Hyla pour palier à d'éventuel problème de sécurité et bien sûr disposer des dernières nouveautés !
+		Il est important de toujours avoir la dernière version d'Hyla pour palier à d'éventuels problèmes de sécurité et bien sûr disposer des dernières nouveautés !
 		<br />
 		<!-- BEGIN test_version -->
-			Tester si vous avez la dernière version en cliquant <a href="{TEST_VERSION}">sur ce lien</a>.
+			Testez si vous avez la dernière version en cliquant <a href="{TEST_VERSION}">sur ce lien</a>.
 			<br />
 			{STATUS_VERSION}
 		<!-- END test_version -->
@@ -39,13 +39,13 @@
 		</p>
 		<ul>
 			<li>Bibliothèque GD (pour manipuler les images) : <strong>{EXTENSION_GD}</strong></li>
-			<li>Bibliothèques EXIF (pour lire les données EXIF contenu dans certaine image) : <strong>{EXTENSION_EXIF}</strong></li>
+			<li>Bibliothèques EXIF (pour lire les données EXIF contenues dans certaine images) : <strong>{EXTENSION_EXIF}</strong></li>
 		</ul>
 		<p>
 			Droits en écriture :
 		</p>
 		<ul>
-			<li>Fichier conf ( &laquo; {FILE_INI} &raquo; ) : <strong>{ACCESS_FILE_INI}</strong></li>
+			<li>Fichier de configuration ( &laquo; {FILE_INI} &raquo; ) : <strong>{ACCESS_FILE_INI}</strong></li>
 			<li>Cache ( &laquo; {DIR_CACHE} &raquo; ) : <strong>{ACCESS_DIR_CACHE}</strong></li>
 			<li>Fichiers anonymes ( &laquo; {DIR_ANON} &raquo; ) : <strong>{ACCESS_DIR_ANON}</strong></li>
 		</ul>
@@ -82,10 +82,10 @@
 			</label>
 			<input type="text" name="conf_webmaster_mail" id="conf_webmaster_mail" size="25" value="{WEBMASTER_MAIL}" />
 			<p class="help">
-				C'est à ce mail que seront envoyés les notifications (ajout de fichiers anonymes...)
+				Les notifications (ajout de fichiers anonymes...) seront envoyées à cette adresse.
 			</p>
 			<label for="conf_template">
-				Le template par défaut :
+				Le modèle (template) par défaut :
 			</label>
 			<select name="conf_template" id="conf_template">
 				<!-- BEGIN aff_conf_template -->
@@ -93,62 +93,62 @@
 				<!-- END aff_conf_template -->
 			</select>
 			<p class="help">
-				Il s'agit du répertoire dans (tpl/) contenant le template définissant l'apparence.
+				Il s'agit du répertoire dans (tpl/) contenant le modèle définissant l'apparence.
 			</p>
 			<label for="conf_lng">
 				Langue :
 			</label>
 			<input type="text" name="conf_lng" id="conf_lng" size="8" value="{LNG}" />
 			<p class="help">
-				La langue, assurez-vous qu'un répertoire contenant les fichiers adéquates se trouvent bien dans le répertoire l10n/ .
+				Assurez-vous qu'un répertoire contenant les fichiers adéquates se trouvent bien dans le répertoire l10n/ .
 			</p>
 			<label for="conf_title">
 				Titre navigateur :
 			</label>
 			<input type="text" name="conf_title" id="conf_title" size="25" value="{TITLE}" />
 			<p class="help">
-				Il s'agit du texte mis entre les balises "title" qui apparaitra sur la barre de titre du navigateur.
+				Il s'agit du texte mis entre les balises "title" qui apparaîtra sur la barre de titre du navigateur.
 			</p>
 		</div>
 	</fieldset>
 	<br />
 	<fieldset>
-		<legend><a href="#" onclick="swap_couche('filedir');">Ajout de fichiers et répertoires</a></legend>
+		<legend><a href="#" onclick="swap_couche('filedir');">Ajout de fichiers et de répertoires</a></legend>
 		<div id="Layerfiledir" style="display: none;">
 			<label for="conf_file_chmod">
-				Les droits à attribuer aux fichiers uploadés :
+				Droits à attribuer aux fichiers envoyés :
 			</label>
 			<input type="text" name="conf_file_chmod" id="conf_file_chmod" size="8" value="{FILE_CHMOD}" />
 			<p class="help">
 				Il est fortement recommandé pour des raisons de sécurité évidente de laiser la valeur par défaut !
 			</p>
 			<label for="conf_dir_chmod">
-				Les droits à attribuer aux répertoires créés :
+				Droits à attribuer aux répertoires créés :
 			</label>
 			<input type="text" name="conf_dir_chmod" id="conf_dir_chmod" size="8" value="{DIR_CHMOD}" />
 			<p class="help">
-				Il est fortement recommandé pour des raisons de sécurité évidente de laisser la valeur par défaut !
+				Il est fortement recommandé pour des raisons de sécurité évidentes de laiser la valeur par défaut !
 			</p>
 			<label for="conf_anonymous_add_file">
-				Autoriser l'ajout de fichier anonyme :
+				Faut-il autoriser l'ajout de fichiers anonymes :
 			</label>
 			<select name="conf_anonymous_add_file" id="conf_anonymous_add_file">
 				<option value="false" {CONF_ANONYMOUS_ADD_FILE_0}>Non</option>
 				<option value="true" {CONF_ANONYMOUS_ADD_FILE_1}>Oui</option>
 			</select>
 			<p class="help">
-				En autorisant l'envoie de fichiers anonyme, toute personne non authentifiée pourra envoyer des fichiers,
+				En autorisant l'envoi de fichiers anonyme, toute personne non authentifiée pourra envoyer des fichiers,
 				ils seront placés dans un lieu accessible uniquement par un usager connecté et ayant les droits d'administrer ces derniers.
 			</p>
 			<label for="conf_send_mail">
-				Envoyer un mail lors de l'envoie d'un fichier anonyme :
+				Faut-il envoyer un courriel lors de l'envoi d'un fichier anonyme :
 			</label>
 			<select name="conf_send_mail" id="conf_send_mail">
 				<option value="false" {CONF_SEND_MAIL_0}>Non</option>
 				<option value="true" {CONF_SEND_MAIL_1}>Oui</option>
 			</select>
 			<p class="help">
-				A chaque fichier anonyme envoyé, vous recevrez une notification par courriel.
+				Pour chaque fichier anonyme envoyé, vous recevrez une notification par courriel.
 			</p>
 		</div>
 	</fieldset>
@@ -157,7 +157,7 @@
 		<legend><a href="#" onclick="swap_couche('list');">Listage de répertoires</a></legend>
 		<div id="Layerlist" style="display: none;">
 			<label for="conf_sort">
-				Le tri par défaut :
+				Tri par défaut :
 			</label>
 			<select name="conf_sort" id="conf_sort">
 				<option value="0" {CONF_SORT_0}>&nbsp;Ordre par défaut (dépend du système de fichiers)</option>
@@ -171,7 +171,7 @@
 				<option value="8" {CONF_SORT_8}>&nbsp;Taille + / -</option>
 			</select>
 			<p class="help">
-				Défini l'ordre ou seront affiché les fichiers et répertoires.
+				Ce tri définit l'ordre d'affichage des fichiers et des répertoires.
 			</p>
 			<label for="conf_folder_first">
 				Mettre les répertoires en premier ?
@@ -181,7 +181,7 @@
 				<option value="true" {CONF_FOLDER_FIRST_1}>Oui</option>
 			</select>
 			<p class="help">
-				Affiche les répertoires en premier.
+				Faut-il mettre les répertoires en premier ?
 			</p>
 			<label for="conf_group_by_sort">
 				Grouper par critère de tri :
@@ -192,10 +192,10 @@
 			</select>
 			<p class="help">
 				Si le tri courant est alphabétique, les fichiers commençant par la lettre A seront groupés ensemble,
-				suivi des fichiers commençant la lettre B, et ainsi de suite...et cela de manière dynamique, par rapport au critère de tri.
+				suivis des fichiers commençant par la lettre B, et ainsi de suite...et cela de manière dynamique, par rapport au critère de tri.
 			</p>
 			<label for="conf_nbr_obj">
-				Nombre d'objet par page :
+				Nombre d'objets par page :
 			</label>
 			<input type="text" name="conf_nbr_obj" id="conf_nbr_obj" size="3" value="{NBR_OBJ}" />
 			<p class="help">
@@ -214,10 +214,10 @@
 
 <!--			<input type="text" name="conf_default_plugin" id="conf_default_plugin" size="15" value="{DIR_DEFAULT_PLUGIN}" />-->
 			<p class="help">
-				Spécifiez ici le plugin par défaut à utiliser, ainsi, si vous désirez générer uniquement des galerie photos avec le plugin zenphoto, choisissez "zenphoto".
+				Spécifiez ici le plugin par défaut à utiliser, ainsi, si vous désirez générer uniquement des galeries photos avec le plugin zenphoto, choisissez "zenphoto".
 			</p>
 			<label for="conf_view_hidden_file">
-				Afficher les fichiers cachés ou non :
+				Faut-il afficher les fichiers cachés :
 			</label>
 			<select name="conf_view_hidden_file" id="conf_view_hidden_file">
 				<option value="false" {CONF_VIEW_HIDDEN_FILE_0}>Non</option>
@@ -233,7 +233,7 @@
 		<legend><a href="#" onclick="swap_couche('misc');">Divers</a></legend>
 		<div id="Layermisc" style="display: none;">
 			<label for="conf_download_counter">
-				Activer le compteur de téléchargement :
+				Faut-il activer le compteur de téléchargement :
 			</label>
 			<select name="conf_download_counter" id="conf_download_counter">
 				<option value="no" {CONF_DOWNLOAD_COUNTER_0}>Non</option>
@@ -243,7 +243,7 @@
 				 Cette option vous permet de compter les téléchargements et non les visualisations.
 			</p>
 			<label for="conf_view_toolbar">
-				Toujours voir les actions :
+				Faut-il toujours voir les actions :
 			</label>
 			<select name="conf_view_toolbar" id="conf_view_toolbar">
 				<option value="false" {CONF_VIEW_TOOLBAR_0}>Non</option>
@@ -253,14 +253,14 @@
 				Permet d'afficher les liens vers les actions de la barre d'outils même lorsque l'on n'est pas connecté
 			</p>
 			<label for="conf_view_tree">
-				Afficher l'arborescence des répertoires :
+				Faut-il afficher l'arborescence des répertoires :
 			</label>
 			<select name="conf_view_tree" id="conf_view_tree">
 				<option value="false" {CONF_VIEW_TREE_0}>Non</option>
 				<option value="true" {CONF_VIEW_TREE_1}>Oui</option>
 			</select>
 			<p class="help">
-				Permet d'afficher tous les répertoires en arborescence.
+				Ceci permet d'afficher tous les répertoires sous forme d'arborescence.
 			</p>
 		</div>
 	</fieldset>
@@ -503,7 +503,7 @@
 			<li>
 				<a href="{ADMIN_PAGE_MAINTENANCE_PURGE}">Vider le cache</a>
 				<p class="help">
-					Supprime tous les fichiers "cache", utile si des erreurs de lecture d'archives se produisent
+					Supprime tous les fichiers "cache", utile si des erreurs de lecture d'archives se produisent.
 				</p>
 				<p>
 					{PURGE_RAPPORT}
@@ -512,7 +512,7 @@
 			<li>
 				<a href="{ADMIN_PAGE_MAINTENANCE_SYNC}">Lancer une synchronisation</a>
 				<p class="help">
-					Si vous supprimer des fichiers ou des répertoires sans passer par l'interface de Hyla (ftp...), il peut être utile d'effectuer une synchronisation
+					Si vous supprimez des fichiers ou des répertoires sans passer par l'interface de Hyla (ftp...), il peut être utile d'effectuer une synchronisation
 					de la base de données avec le système de fichiers.
 				</p>
 				<p>

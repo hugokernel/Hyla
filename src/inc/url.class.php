@@ -75,7 +75,7 @@ class url {
 	function _get($object, $aff = '', $act = null, $pact = null, $paff = null, $b = true) {
 
 		global $conf;
-		$s = $_SERVER['PHP_SELF'];
+		$s = ROOT_URL;
 
 		if ($conf['url_scan'] == 'QUERY_STRING') {
 

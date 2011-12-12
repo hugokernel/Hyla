@@ -28,6 +28,16 @@
 define('FOLDER_ROOT', '/var/www');
 
 
+/*	L'emplacement de ifile après le nom de domaine (sans slash de fin !)
+	Ex: http://ifile.free.fr/				-> mettez ''
+	Ex: http://ifile.free.fr/ifile/			-> mettez '/ifile'
+	Ex: http://ifile.free.fr/data/ifile		-> mettez '/data/ifile'
+
+	Vous pouvez laisser ce champs vide, la valeur de $_SERVER['PHP_SELF'] sera alors utilisée
+ */
+//define('ROOT_URL', '');
+
+
 /*	+---------------------------------+
 	| Connection à la base de données |
 	+---------------------------------+

@@ -42,7 +42,7 @@ $tpl->set_block('upload', array(
 if (ini_get('allow_url_fopen'))
 	$tpl->parse('Hdlfrom_url', 'from_url', true);
 
-// Un envoie à été fait...
+// Un envoi à été fait...
 if (isset($_POST['Submit'])) {
 
 	$ierror = 0;

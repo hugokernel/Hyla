@@ -2,7 +2,7 @@
 
 <plugin target="dir">
 	<name>ZenPhoto</name>
-	<description>Affichage d'une galerie d'images avec le même rendu que Zenphoto</description>
+	<description>Affichage d'une galerie d'images avec le mÃªme rendu que Zenphoto</description>
 	<author>hugo</author>
 	<version>1</version>
 </plugin>

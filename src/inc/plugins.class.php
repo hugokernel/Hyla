@@ -77,16 +77,15 @@ class plugins {
 		$xfile = DIR_PLUGINS.$file.'/info.xml';
 		if (file_exists($xfile)) {
 			$xml =& new XPath($xfile);
-			// /plugin[contains(@target,"file")
-//			$res = $xml->match('/plugin/*');	//[contains(@ext,"'.$this->cobj->extension.'")]/*');
 			$res = $xml->match('/plugin[contains(@ext,"'.$this->cobj->extension.'")]/*');
 			if ($res) {
 				$this->info = array(
-					'dir'			=>	$file,
-					'name'			=>	$xml->getData('/plugin/name'),
-					'description'	=>	$xml->getData('/plugin/description'),
-					'author'		=>	$xml->getData('/plugin/author'),
-					'version'		=>	$xml->getData('/plugin/version'));
+						'dir'			=>	$file,
+						'name'			=>	utf8_decode($xml->getData('/plugin/name')),
+						'description'	=>	utf8_decode($xml->getData('/plugin/description')),
+						'author'		=>	utf8_decode($xml->getData('/plugin/author')),
+						'version'		=>	utf8_decode($xml->getData('/plugin/version'))
+						);
 				$ret = true;
 			}
 		}
@@ -134,10 +133,11 @@ class plugins {
 					if ($res) {
 						$tab[] = array(
 							'dir'			=>	$xfile,
-							'name'			=>	$xml->getData('/plugin/name'),
-							'description'	=>	$xml->getData('/plugin/description'),
-							'author'		=>	$xml->getData('/plugin/author'),
-							'version'		=>	$xml->getData('/plugin/version'));
+							'name'			=>	utf8_decode($xml->getData('/plugin/name')),
+							'description'	=>	utf8_decode($xml->getData('/plugin/description')),
+							'author'		=>	utf8_decode($xml->getData('/plugin/author')),
+							'version'		=>	utf8_decode($xml->getData('/plugin/version'))
+							);
 					}
 				}
 			}

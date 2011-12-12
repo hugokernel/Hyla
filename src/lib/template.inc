@@ -201,8 +201,7 @@ class Template
       echo "<p><b>Template:</b> root = $root, unknowns = $unknowns</p>\n";
     }
 
-	// hugo, le 26/09/2006
-	$dir = dirname($_SERVER['PHP_SELF']);
+	$dir = dirname(ROOT_URL);
 	$this->set_var('DIR_TEMPLATE', ($dir == '/') ? $root : $dir.'/'.$root);
 
     $this->set_root($root);

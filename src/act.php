@@ -33,7 +33,7 @@ function test_perm($niv) {
 	global $cobj, $cuser;
 	if (($cuser->id == ANONYMOUS_ID) && !($cuser->perm & $niv)) {
 		$_SESSION['sess_url'] = $_SERVER['REQUEST_URI'];
-		// Merci de procédé à une authentification
+		// Merci de procéder à une authentification
 		redirect(__('Error'), url::getCurrentObj('login'), __('Thank you for authenticate you'));
 		system::end();
 	} else if (($cuser->perm & $niv) != $niv) {
@@ -135,7 +135,7 @@ switch (url::getAct(0)) {
 
 		unset($usr);
 
-		// Les champs indispensables sont remplis ?
+		// Les champs indispensables sont-ils remplis ?
 		if ($val) {
 			if ($_POST['cm_site'] == 'http://')
 				$_POST['cm_site'] = null;

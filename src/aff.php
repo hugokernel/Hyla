@@ -191,7 +191,7 @@ switch ($aff) {
 				$status = true;
 				break;
 
-			#	On "tar" le répertoire et on l'envoie
+			#	On "tar" le répertoire et on l'envoi
 			case TYPE_DIR:
 				$file = null;
 				if (!cache::getArchivePath($cobj->file, $file)) {
@@ -205,7 +205,7 @@ switch ($aff) {
 				}
 				break;
 
-			#	On extrait le fichier et on l'envoie
+			#	On extrait le fichier et on l'envoi
 			case TYPE_ARCHIVE:
 				$file = null;
 
