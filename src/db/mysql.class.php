@@ -1,25 +1,23 @@
 <?php
 /*
-	This file is part of iFile
+	This file is part of Hyla
 	Copyright (c) 2004-2006 Charles Rincheval.
 	All rights reserved
 
-	iFile is free software; you can redistribute it and/or modify it
+	Hyla is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published
 	by the Free Software Foundation; either version 2 of the License,
 	or (at your option) any later version.
 
-	iFile is distributed in the hope that it will be useful, but
+	Hyla is distributed in the hope that it will be useful, but
 	WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with iFile; if not, write to the Free Software
+	along with Hyla; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-require_once 'src/inc/error.class.php';
 
 class db
 {
@@ -70,21 +68,17 @@ class db
 		//extension_loaded('mysql');
 		
 		// Connexion à la base de données
-		if (!@constant('ID_BDD') && !@defined(ID_BDD))
+		if (@!defined(ID_BDD))
 		{
-			if (!$this->_id_bdd = @mysql_pconnect($this->_db_host, $this->_db_user, $this->_db_pass)) {
-				error::log(__FILE__, __LINE__, MSG_ERROR_SQL_CONNECT);
-				exit;
-			}
+			if (!$this->_id_bdd = mysql_pconnect($this->_db_host, $this->_db_user, $this->_db_pass))
+				trigger_error(__('Couldn\'t connect to sql server !'), E_USER_ERROR);
 			else
 				define('ID_BDD', $this->_id_bdd);
 
 			// Sélection de la base de données
-			$db = @mysql_select_db($this->_db_base, $this->_id_bdd);
-			if (!$db) {
-				error::log(__FILE__, __LINE__, MSG_ERROR_SQL_SELECT_BDD);
-				exit;
-			}
+			$db = mysql_select_db($this->_db_base, $this->_id_bdd);
+			if (!$db)
+				trigger_error(__('Unable to use database &laquo; %s &raquo;', $this->_db_base), E_USER_ERROR);
 		}
 		else
 			$this->_id_bdd = ID_BDD;
@@ -98,8 +92,8 @@ class db
 	{
 		if ($_id_bdd == null)
 			$_id_bdd = $this->_id_bdd;
-		if (!$ret = @mysql_close($this->_id_bdd))
-			error::log(__FILE__, __LINE__, MSG_ERROR_SQL_CLOSE);
+		if (!$ret = mysql_close($this->_id_bdd))
+			trigger_error(__('Couldn\'t close connection to sql server !'), E_USER_ERROR);
 		return $ret;
 	}
 
@@ -112,12 +106,8 @@ class db
 		if (!$_id_bdd)
 			$_id_bdd = $this->_id_bdd;
 		$this->_last_query = $qry;
-		$this->_id_query = @mysql_query($qry, $_id_bdd);
-		
-		// Affichage des requêtes pour le debug...
-		if (ERROR_REPORT == 5)
-			error::log(null, null, null, '<i>'.$this->_nbr_query.':</i> '.$qry);
-		
+		$this->_id_query = mysql_query($qry, $_id_bdd);
+			
 		return $this->_id_query;
 	}
 
@@ -138,7 +128,7 @@ class db
 	 */
 	function reset() {
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-		return @mysql_data_seek($_id_query, 0);
+		return mysql_data_seek($_id_query, 0);
 	}
 
 	/*	Retourne une ligne de résultat sous la forme d'un tableau associatif
@@ -146,14 +136,14 @@ class db
 	function fetchArray($_id_query = null)
 	{
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-		return @mysql_fetch_array($_id_query);
+		return mysql_fetch_array($_id_query);
 	}
 
 	/*	Retourne une ligne de résultat sous la forme d'un tableau associatif
 	 */
 	function fetchAssoc($_id_query = null) {
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-		return @mysql_fetch_assoc($_id_query);
+		return mysql_fetch_assoc($_id_query);
 	}
 
 	/*	Retourne le nombre de ligne d'un résultat
@@ -161,7 +151,7 @@ class db
 	function getNumRows($_id_query = null)
 	{
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-		return @mysql_num_rows($_id_query);
+		return mysql_num_rows($_id_query);
 	}
 
 	/*	Efface le résultat de la mémoire
@@ -169,7 +159,7 @@ class db
 	function freeResult($_id_query)
 	{
 		$_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-		return @mysql_free_result($_id_query);
+		return mysql_free_result($_id_query);
 	}
 
 	/*	Retourne l'identifiant généré par la dernière requête INSERT
@@ -177,17 +167,20 @@ class db
 	function getInsertID($_id_bdd = null) {
 		if (!$_id_bdd)
 			$_id_bdd = $this->_id_bdd;
-		return @mysql_insert_id($_id_bdd);
+		return mysql_insert_id($_id_bdd);
 	}
 
 	/*	Retourne le numéro d'erreur et l'erreur
 	 */
-	function getError()
-	{
-		$error['message'] = @mysql_error($this->_id_bdd);
-		$error['code'] = @mysql_errno($this->_id_bdd);
+	function getError() {
+		$error['message'] = mysql_error($this->_id_bdd);
+		$error['code'] = mysql_errno($this->_id_bdd);
 		$error['query'] = $this->_last_query;
 		return $error;
+	}
+
+	function getErrorMsg() {
+		return mysql_error($this->_id_bdd);
 	}
 }
 

@@ -84,53 +84,58 @@ class iniFile
 		}
 	}
 	
-	/*
-	Static method that puts ini vars in constants or returns array
-	*/
-	function read($file,$return=false)
+	/*	Renvoie un tableau avec le même format que parse_ini_file
+		Modifié par hugo, le 29 juin 2006
+	 */
+	function read($file, $section = false)
 	{
 		if (!file_exists($file)) {
-			trigger_error('No config file',E_USER_ERROR);
-			exit;
+			trigger_error('No config file', E_USER_ERROR);
 		}
 		
 		$f = file($file);
 		
-		if ($return) {
-			$res = array();
-		}
-		
-		foreach ($f as $v)
+		$res = array();		
+		$sect = null;
+
+		foreach ($f as $line)
 		{
-			$v = trim ($v);
-			if (substr($v,0,1) != ';' && $v != '') {
-				$p = strpos($v,'=');
-				$K = (string) trim(substr($v,0,$p));
-				$V = (string) trim(substr($v,($p+1)));
-				
-				if (substr($V,0,1) == '"' && substr($V,-1) == '"') {
-					$V = substr(substr($V,1),0,-1);
-				}
-				
-				if ($V === 'yes' || $V === 'true' || $V === '1') {
-					$V = true;
-				}
-				
-				if ($V === 'no' || $V === 'false' || $V === '0') {
-					$V = false;
-				}
-				
-				if ($return) {
-					$res[$K] = $V;
-				} elseif (!defined($K)) {
-					define($K,$V);
-				}
+			$line = trim($line);
+			if ($line{0} == ';' || $line == '')
+				continue;
+
+			if ($line{0} == '[') {
+				if ($section)
+					$sect = trim(substr($line, 1, strpos($line, ']') - 1));
+				continue;
+			}
+
+			list($key, $value) = explode('=', $line);
+
+			$key = trim($key);
+			$value = trim($value);
+
+			if ($value{0} == '"' && $value{sizeof($value) - 1} == '"') {
+				$value = substr($value, 1, -1);
+			}
+
+			$val = strtolower($value);
+			if ($val == 'yes' || $val == 'true' || $val == '1') {
+				$value = true;
+			}
+
+			if ($val == 'no' || $val == 'false' || $val == '0') {
+				$value = true;
+			}
+
+			if ($sect) {
+				$res[$sect][$key] = $value;
+			} else {
+				$res[$key] = $value;
 			}
 		}
-		
-		if ($return) {
-			return $res;
-		}
+	
+		return $res;
 	}
 }
 

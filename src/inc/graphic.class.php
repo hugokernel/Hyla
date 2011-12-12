@@ -1,21 +1,21 @@
 <?php
 /*
-	This file is part of iFile
+	This file is part of Hyla
 	Copyright (c) 2004-2006 Charles Rincheval.
 	All rights reserved
 
-	iFile is free software; you can redistribute it and/or modify it
+	Hyla is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published
 	by the Free Software Foundation; either version 2 of the License,
 	or (at your option) any later version.
 
-	iFile is distributed in the hope that it will be useful, but
+	Hyla is distributed in the hope that it will be useful, but
 	WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with iFile; if not, write to the Free Software
+	along with Hyla; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
@@ -31,27 +31,23 @@ class graphic {
 
 		$ret['sizex'] = $tab[0];
 		$ret['sizey'] = $tab[1];
-		$ret['exif'] = exif_read_data($img);
+		$ret['exif'] = null;
+
+		// Si l'extension Exif est présente
+		if (extension_loaded('exif')) {
+			$type = exif_imagetype($img);
+			if ($type == IMAGETYPE_JPEG || $type == IMAGETYPE_TIFF_II || $type == IMAGETYPE_TIFF_MM) {
+				$ret['exif'] = exif_read_data($img);
+			}
+		}
 
 		return $ret;
 	}
-	
-	/*	Cette fonction renvoie une miniature de l'image,
-		si elle existe pas (la miniature) on la créé !
-		@param string $name Nom de l'image
-		@param string $path Emplacement
-	 */
-	/*
-	function getMini($name, $path, $size_x, $size_y) {
-		//graphic::image_resize($name, );
-	}
-	*/
 	
 	/*	Redimension d'image
 		@param string $img L'image
 		@param int $size_x Largeur de l'image voulu
 		@param int $size_y Longeur de l'image voulu
-		@param string $name Créer la miniature contenant l'image
 	 */
 	function image_resize($img, $size_x, $size_y = 0) {
 		$ret = false;
@@ -61,18 +57,17 @@ class graphic {
 	    	$tab[0] = 'jpeg';
 
 		if (cache::getImagePath($img, $size_x, $size_y, $cache_path)) {
-
 			header("Last-Modified: " . gmdate("D, d M Y H:i:s", mktime (0,0,0,1,1,2000)) . " GMT");
 			header("Expires: Mon, 26 Jul 2040 05:00:00 GMT");
 			header("Cache-Control: max-age=10000000, s-maxage=1000000, proxy-revalidate, must-revalidate");
 			header('Content-type: image/'.$tab[0]);
-			header('location: '.$cache_path);
-//			readfile($cache_path);
-echo $cache_path;
+//			header('location: '.$cache_path);
+			readfile($cache_path);
+			//echo $cache_path;
 		} else {
+			$fnt = 'imagecreatefrom'.$tab[0];
+			if (function_exists($fnt)) {
 
-		    $fnt = 'imagecreatefrom'.$tab[0];
-		    if (function_exists($fnt)) {
 				$img_src = $fnt($img);
 				
 				$size_x_src = imagesx($img_src);
@@ -93,10 +88,8 @@ echo $cache_path;
 				$img_dst = imagecreatetruecolor($size_x, $size_y);	
 				imagecopyresized($img_dst, $img_src, 0, 0, 0, 0, $size_x, $size_y, $size_x_src, $size_y_src);
 			
-			
 				$fnt = 'image'.$tab[0];
 				if (function_exists($fnt)) {
-
 					header('Content-type: image/'.$tab[0]);
 					$fnt($img_dst);
 					$ret = true;

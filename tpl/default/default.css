@@ -2,6 +2,7 @@
 body {
 /*	font-family: Verdana, Arial, Helvetica, sans-serif;*/
 	font-family: Bitstream Vera Sans, sans-serif;
+	background: white;
 }
 
 a {
@@ -15,6 +16,18 @@ a:hover {
 	font-style: normal;
 	text-decoration: none;
 }
+
+
+.tab {
+	border: 1px solid #999;
+}
+.tab td {
+	padding: 1px;
+	margin: 1px;
+	border: 1px solid #999;
+}
+
+
 
 .line {
 	background: transparent;
@@ -57,9 +70,10 @@ a:hover {
 }
 
 .status {
+	background: #FFF;
 	padding: 5px;
 	margin: 5px;
-	-moz-border-radius: 15px;
+	-moz-border-radius: 10px;
 	border: 2px #AAA dashed;
 }
 
@@ -70,7 +84,7 @@ a:hover {
 	font-weight: bold;
 	padding: 5px;
 	margin: 5px;
-	-moz-border-radius: 15px;
+	-moz-border-radius: 10px;
 }
 
 h4 {
@@ -165,18 +179,19 @@ legend {
 }
 
 
-
-.comment_line {
-	margin: 5px;
-	padding: 15px;
-	background: #EEE;
-	font-size: 90%;
-}
-
-#comment_add {
+#form_misc {
 	padding: 40px;
 	width: 50%;
 }
+
+.comment_line {
+	margin: 5px;
+	padding: 10px;
+	background: #EEE;
+	font-size: 90%;
+	-moz-border-radius: 15px;
+}
+
 
 .comment_info {
 	font-weight: bold;
@@ -220,9 +235,10 @@ img {
 
 
 .info {
+	background: #CCE;
 	border: 1px dashed #AAC;
 	padding: 5px;
-	background: #CCE;
+
 	font-weight: normal;
 	margin-left: 10%;
 	margin-right: 10%;
@@ -253,6 +269,74 @@ th {
 	float: right;
 	width: 30%;
 }
+
+
+.help {
+	margin-left: 5%;
+	font-style: italic;
+}
+
+
+.action {
+	width: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
+}
+
+#main {
+/*	float: left;*/
+	width: 80%;
+
+	margin-left: 10%;
+	margin-right: 10%;
+
+/*	margin: 2%;*/
+/*	padding: 10px;*/
+
+/*	background: #EFEFEF;
+	border: 1px solid #CCC;
+*/
+}
+
+/*
+#main fieldset {
+/*	padding: 10px;*-/
+}
+
+#main fieldset label {
+	font-weight: bold;
+}
+*/
+
+
+#sidebar {
+	padding: 1em;
+}
+
+#sidebar a{
+	padding: 0.5em;
+	text-decoration: none;
+}
+
+#sidebar a:hover{
+	background: #DDD;
+	-moz-border-radius: 10px;
+}
+
+#sidebar ul{
+	list-style-type: none;
+	list-style-image: none;
+	margin: 0;
+	padding: 0;
+}
+
+#sidebar li{
+	margin: 0;
+	padding: 0;
+	display:inline;
+}
+
+
 
 
 .gallery {

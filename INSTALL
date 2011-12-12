@@ -1,25 +1,48 @@
-L'installation est trËs simple.
+Merci d'avoir choisi Hyla !
 
-Vous  avez  2  possiblitÈs  pour  installer  iFile,  la  premiËre  entiËrement
-automatique gr‚ce au script d'installation et la seconde, manuellement mais qui
-n'est franchement pas compliquÈe !
+L'installation est tr√®s simple,
+vous   avez   2  possiblit√©s  pour  installer  Hyla,  la  premi√®re   enti√®rement
+automatique  gr√¢ce au script d'installation et la seconde, manuellement mais qui
+n'est  franchement pas compliqu√©e  (voir avertissement en bas).
 
-Utilisateurs de free.fr : n'oubliez pas de crÈer un rÈpertoire "sessions" ‡ la RACINE de votre site !
+Utilisateurs  de  free.fr : n'oubliez  pas  de  cr√©er  un  r√©pertoire "sessions"
+√† la RACINE de votre site !
 
-I. Avec le script d'installation
+Dans les 2 cas, que vous installiez Hyla par le biais du script d'installation
+ou manuellement, vous devez ex√©cuter ces 2 t√¢ches :
 
-	1. Copiez tous les fichiers nÈcessaires ‡ l'application sur votre serveur
-	2. Assurez-vous que l'utilisateur de PHP ‡ les droits d'Ècriture dans le rÈpertoire cache/ ainsi que dans conf/
-	3. Ouvrez votre navigateur et entrez l'adresse de l'application suivi de install.php : http://localhost/ifile/install.php
-	4. Suivez simplement les indications
+ 1. Copiez tous les fichiers n√©cessaires √† l'application sur votre serveur
+ 2. Assurez-vous que l'utilisateur de PHP √† les droits d'√©criture dans
+    tous les r√©pertoires de sys/ (sys/cache/ sys/anon/) ainsi que dans conf/
+
+I. Puis, avec le script d'installation (m√©thode recommand√©e !)
+ 3.	Ouvrez  votre  navigateur  et  entrez  l'adresse  de  l'application suivi de
+    install.php : http://localhost/hyla/install.php
+ 4. Suivez simplement les indications
 
 
-II.	Manuellement
+II.	Ou, manuellement (√†  vos  risques  et  p√©ril  si  vous  ne  changez  pas 
+    le mot de passe par d√©faut, voir avertissement plus bas)
+ 3. Copiez le fichier conf/config.inc.default.php en conf/config.inc.php
+    et ouvrez √©ditez le correctement (tout est expliqu√© dans le fichier)
+ 4. Ex√©cutez le script SQL d'installation dans src/db/mysql.sql
+ 5. Vous pouvez √©ventuellement √©diter le fichier conf/hyla.ini
+ 6. ATTENTION :
+    L'utilisateur  cr√©√©  par  d√©faut  par  cette  voie  est  'admin'  avec  le
+   mot  de  passe  'hyla',  une  fois  loggu√©  dans  l'administration,  changez
+   le imm√©diatement !
 
-	1. Copiez tous les fichiers nÈcessaires ‡ l'application sur votre serveur
-	2. Assurez-vous que l'utilisateur de PHP ‡ les droits d'Ècriture dans le rÈpertoire cache/ ainsi que dans conf/
-	3. Copiez le fichier conf/config.inc.default.php en conf/config.inc.php et ouvrez Èditez le correctement (tout est expliquÈ dans le fichier)
-	4. CrÈez les 2 tables nÈcessaires ‡ l'application gr‚ce au script sql se trouvant ici : src/db/mysql.sql
-	5. Vous pouvez Èventuellement Èditer le fichier conf/ifile.ini
 
-Dans tous les cas, N'OUBLIEZ pas de supprimer le fichier install.php sinon, l'application ne se lancera pas !
+Dans  tous  les  cas, N'OUBLIEZ pas de  supprimer le  fichier install.php sinon,
+l'application ne se lancera pas !
+
+En cas de probl√®me, n'h√©sitez pas √† le faire savoir sur le site :
+http://www.digitalspirit.org/
+
+
+A LIRE SI VOUS D√âCIDEZ D'INSTALLER MANUELLEMENT HYLA :
+Lorsque  vous  cr√©ez  les  tables  manuellement  en  ex√©cutant  le  script  SQL,
+ce  dernier  cr√©er  aussi  un  utilisateur  par d√©faut nomm√© 'admin', ce dernier
+√†  pour  mot  de  passe  'hyla',  si  par  m√©garde,  vous  oubliez  de  changer 
+ce mot de passe par d√©faut, une personne mal intentionn√© pourrait se connecter √†
+l'administration et ainsi prendre le contr√¥le sur vos fichiers.

@@ -8,16 +8,16 @@
 		<table width="100%">
 		<!-- BEGIN zipfile -->
 			<tr class="line">
-				<td width="1%"><a href="{OBJECT}!{FILE_NAME}"><img src="img/mimetypes/{FILE_ICON}" width="24" height="24" border="0" align="middle" alt="Infos" /></a></td>
-				<td width="81%" align="left"><a href="{OBJECT}!{FILE_NAME}">{FILE_NAME}</a></td>
+				<td width="1%"><a href="{FILE_URL}"><img src="{FILE_ICON}" width="24" height="24" border="0" align="middle" alt="Infos" /></a></td>
+				<td width="81%" align="left"><a href="{FILE_URL}">{FILE_NAME}</a></td>
 				<td width="16%" align="right">{FILE_SIZE}</td>
-				<td width="2%" align="right"><a href="{PATH_DOWNLOAD}" title="Télécharger"><img src="{FOLDER_TEMPLATE}/img/gnome-fs-bookmark.png" width="32" height="32" border="0" align="middle" alt="Télécharger" /></a></td>
+				<td width="2%" align="right"><a href="{PATH_DOWNLOAD}" title="Télécharger"><img src="{DIR_TEMPLATE}/img/gnome-fs-bookmark.png" width="32" height="32" border="0" align="middle" alt="Télécharger" /></a></td>
 			</tr>
 		<!-- END zipfile -->
 		</table>
 
 	<p>
-		<a href="{OBJECT}&amp;pact=extract">Extraire dans le répertoire parent</a>
+		<a href="{ACT_EXTRACT}">Extraire dans le répertoire parent</a>
 		<p>
 			{RAPPORT}
 		</p>

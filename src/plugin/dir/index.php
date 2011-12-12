@@ -1,21 +1,21 @@
 <?php
 /*
-	This file is part of iFile
+	This file is part of Hyla
 	Copyright (c) 2004-2006 Charles Rincheval.
 	All rights reserved
 
-	iFile is free software; you can redistribute it and/or modify it
+	Hyla is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published
 	by the Free Software Foundation; either version 2 of the License,
 	or (at your option) any later version.
 
-	iFile is distributed in the hope that it will be useful, but
+	Hyla is distributed in the hope that it will be useful, but
 	WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with iFile; if not, write to the Free Software
+	along with Hyla; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
@@ -23,14 +23,15 @@ class Plugin_dir extends plugin {
 
 	function Plugin_dir() {
 		parent::plugin();
-		$this->tpl->set_root(FOLDER_PLUGINS.'dir');
+		$this->tpl->set_root(DIR_PLUGINS.'dir');
 		$this->tpl->set_file(array(
 				'dir'	=>	'dir.tpl'));
 		$this->tpl->set_block('dir', array(
 				'line_comment'	=>	'Hdlline_comment',
 				'line_header'	=>	'Hdlline_header',
 				'line_content'	=>	'Hdlline_content',
-				'line'			=>	'Hdlline',));
+				'line'			=>	'Hdlline',
+				));
 	}
 	
 	function act() {
@@ -38,12 +39,12 @@ class Plugin_dir extends plugin {
 	
 	function aff($aff) {
 
-		global $sort, $start;
+		global $sort, $start, $conf;
 
-		$sort = (isset($_SESSION['sort'])) ? $_SESSION['sort'] : SORT_CONFIG;
-		$grp = (isset($_SESSION['grp'])) ? $_SESSION['grp'] : GROUP_BY_SORT;
+		$sort = (isset($_SESSION['sess_sort'])) ? $_SESSION['sess_sort'] : $conf['sort_config'];
+		$grp = (isset($_SESSION['sess_grp'])) ? $_SESSION['sess_grp'] : $conf['group_by_sort'];
 
-		if (@$aff) {
+		if (isset($aff)) {
 			$tab = array(
 					'0' => SORT_DEFAULT,
 					'1' => SORT_ALPHA | SORT_FOLDER_FIRST,
@@ -58,7 +59,7 @@ class Plugin_dir extends plugin {
 			if ($act == 'sort') {
 				if ($value > 0) {
 					$sort = (isset($tab[$value]) ? $tab[$value] : $sort);
-					$_SESSION['sort'] = $sort;
+					$_SESSION['sess_sort'] = $sort;
 				}
 			}
 
@@ -66,11 +67,11 @@ class Plugin_dir extends plugin {
 				list($act, $value) = explode(':', $aff[1]);
 				if ($act == 'grp' && $value == 'ok') {
 					$grp = 1;
-					$_SESSION['grp'] = $grp;
+					$_SESSION['sess_grp'] = $grp;
 				}
 			} else {
 				$grp = 0;
-				$_SESSION['grp'] = $grp;
+				$_SESSION['sess_grp'] = $grp;
 			}
 		}
 
@@ -104,13 +105,12 @@ class Plugin_dir extends plugin {
 			$this->tpl->set_var('Hdlline_comment');
 
 			$this->tpl->set_var(array(
-					'OBJECT'			=>	obj::getUrl($this->cobj->file, AFF_INFO),
+					'OBJECT'			=>	url::getObj($this->cobj->file),
 					'FILE_ICON'			=>	$tab[$i]->icon,
 					'FILE_NAME'			=>	$tab[$i]->name,
-					'FILE_SIZE'			=>	($tab[$i]->type == TYPE_FILE) ? get_intelli_size($tab[$i]->size) : '&nbsp;',
-					'PATH_DOWNLOAD'		=>	obj::getUrl($tab[$i]->file, AFF_DOWNLOAD),
-					'PATH_INFO'			=>	obj::getUrl($tab[$i]->file, AFF_INFO),
-					'FOLDER_IMAGES'		=>	FOLDER_IMAGES,
+					'FILE_SIZE'			=>	($tab[$i]->type == TYPE_FILE) ? get_human_size_reading($tab[$i]->size) : '&nbsp;',
+					'PATH_DOWNLOAD'		=>	url::getObj($tab[$i]->file, 'download'),
+					'PATH_INFO'			=>	url::getObj($tab[$i]->file),
 					'FILE_DESCRIPTION'	=>	string::cut(eregi_replace("<br />", " ", $tab[$i]->info->description), 90),
 					'NBR_COMMENT'		=>	$tab[$i]->info->nbr_comment));
 
@@ -135,9 +135,6 @@ class Plugin_dir extends plugin {
 		}
 
 		return $this->tpl->parse('OutPut', 'dir');
-	}
-	
-	function __destruct() {
 	}
 }
 

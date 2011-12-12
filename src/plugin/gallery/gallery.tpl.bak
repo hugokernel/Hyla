@@ -9,7 +9,7 @@
 
 
 				<!-- BEGIN gallery_comment -->
-					<!--<a href="{PATH}#comment"><img src="{FOLDER_TEMPLATE}/img/comment.png" class="gal_comment" width="32" height="32" border="0" align="middle" alt="Commentaires" /></a>-->
+					<!--<a href="{PATH}#comment"><img src="{DIR_TEMPLATE}/img/comment.png" class="gal_comment" width="32" height="32" border="0" align="middle" alt="Commentaires" /></a>-->
 				<!-- END gallery_comment -->
 
 			</div>

@@ -1,102 +1,177 @@
----------------------< ChangeLog iFile >----------------------
+---------------------< ChangeLog Hyla >----------------------
+
+[VERSION 0.6.1]
+	- hugo
+		21 juillet 2006
+			* Correction d'un bug dans l'envoie de fichier anonyme lorsque l'on √©tait pas dans la racine
+			* Correction de fautes d'orthographes
+			* Correction d'erreurs lors de la saisie de commentaires, l'envoi de fichier et la recherche qui pouvait entrain√© des soucis de XSS
+			* Lorsqu'aucun nom de fichier est saisi lors de l'upload d'un fichier, on affiche cette erreur
+			* Correction d'un probl√®me lorsqu'une authentification √©chouait
+			* Dans le plugin galerie, on g√©n√®re des images ayant la taille de la constante THUMB_SIZE_X
+
+[VERSION 0.6]
+	- hugo
+		18-20 juillet 2006 - Correction apr√®s test
+			* Un bug dans string::test est corrig√©, cette fonction retournait une mauvaise valeur quand le premier caract√®re √©tait un de ceux recherch√©
+			* Si on essayait de t√©l√©charger un r√©pertoire vide, une page blanche apparaissait
+			* Changement dans file::downPath qui causait dans certain cas des incoh√©rences
+			* Lors du tri par extension, si plusieurs fichiers ont la m√™me extension, on les tri par ordre alphab√©tique
+			* Les donn√©es EXIF ne sont pas affich√©s si l'extension n'est pas charg√© ou si l'image n'en poss√®de pas
+			* Si l'utilisateur n'est pas loggu√©, envoie un commentaire en prenant un nom d'une personne d'une personne existante, on affiche une erreur
+			* Pour assurer une compatibilit√© avec les configuration en register_globals √† On, toutes les variables de sessions sont pr√©fix√©s par "sess_"
+			* On envoie un mail que si il y en a un !
+			* Correction d'un souci avec la cr√©ation des r√©pertoires
+		17 juillet 2006
+			* C'est officiel, iFile s'appelle dor√©navant Hyla : changement dans tout le code du nom, le fichier de config devient hyla.ini
+			* Lors de la suppression d'un fichier ou d'un r√©pertoire, on supprime ces infos en cache
+			* Cr√©ation du code pour la cr√©ation de r√©pertoire
+			* Tests
+			* Cr√©ation du fichier d'installation
+		12&13 juillet 2006
+			* Lors de l'envoie d'un fichier anonyme, on s'assure de ne pas afficher d'erreur de fichier d√©j√† existant en cherchant un nom libre
+			* La gestion des utilisateurs dans l'administration est termin√©e
+			* Il est dor√©navant possible d'ajouter un fichier de localisation dans les plugins
+			* Le r√©pertoire de locasation se nomme maintenant l10n (au lieu de lng)
+		11 juillet 2006
+			* Gros gros changement dans la gestion des urls, une nouvelle classe (url.class.php) en assure dor√©navant la g√©n√©ration
+			* Modifications dans index.php et aff.php, le syst√®me de template est uniquement dans aff.php
+			* Lorsque l'on est dans une page sans objet courant (derniers commentaires, administration...), on affiche plus d'info sur l'objet
+			* Un syst√®me est mis en place et permet de "catcher" les fin de script par time out permettant d'afficher un message d'erreur
+			* Le code html de la toolbar se trouve maintenant dans misc.tpl
+		10 juillet 2006
+			* La configuration provenant du fichier .ini se trouve maintenant dans la variable globale $conf
+			* Possibilit√© de suppression de commentaires dans l'interface d'administration
+		6&7 juillet 2006
+			* Tentative infructueuse de passage sur gettext pour la localisation, on s'en passera, trop de probl√®mes !
+			* Correction d'un probl√®me lorsque les fichiers contenaient des caract√®res sp√©ciaux (notamment le +)
+			* Suppression de la classe de gestion des erreurs qui posaient quelques soucis de lisibilit√©, on foncitonne dor√©navant avec trigger_error
+			* Chasse au @ (pour faire taire les notices) dans le code pour optimiser la vitesse
+			* Correction d'un bug qui chargait le plugin "Dir" lors de la lecture d'un fichier ne portant pas d'extension contenu dans une archive
+		4&5 juillet 2006
+			* Cr√©ation de la zone d'administration
+			* Ajout des actions d√©placer, copier et renommer
+		30 juin 2006
+			* Possibilit√© de suppression d'un r√©pertoire
+			* Il est dor√©navant possible de mettre √† la corbeille un fichier ou un r√©pertoire en lieu et place d'une suppression selon la configuration
+		28&29 juin 2006
+			* Si l'extension Exif n'est pas charg√©, on ne l'utilise pas !
+			* Tous les fichiers sont dor√©navant encod√©s en ISO-8859-15 en attendant mieux...
+			* Lorsque l'on demande un objet inexistant, on envoie un ent√™te 404, pareil en cas d'erreur d'authentification : 401
+			* Gr√¢ce √† un fichier de configuration (conf/icon.ini), il est maintenant possible simplement de modifier les liaisons extensions / icones
+			* On pr√©vient dans l'installation si les extensions EXIF ou GD ne sont pas charg√©es
+		8&9 juin 2006
+			* Il est dor√©navant possible de choisir un nom de fichier diff√©rent de l'original dans la page upload
+			* Lors de la suppression d'un objet, on supprime dor√©navant ces r√©f√©rences en base de donn√©es uniquement si la suppression physique √† fonctionn√©e
+			* En pr√©vision de la gestion des utilisateurs, le r√©pertoire cache n'est plus accessible directement, il est prot√©g√© par un .htaccess
+			* On tente de lire uniquement les donn√©es EXIF contenu dans les fichiers JPEG et TIFF
+			* L'arborescence du syst√®me √† chang√© quelque peu, un r√©pertoire sys contient maintenant les r√©pertoires de cache, la corbeille et le r√©pertoire de fichiers anonymes
+			* L'envoie de fichier anonyme est dor√©navant possible, il est √©galement possible de recevoir une notification par mail dans ce cas
+			* Une erreur est affich√©e si on tente d'acc√©der √† un objet non lisible
+			* La pagination existe dor√©navant aussi dans les r√©pertoires
+		1&2 juin 2006
+			* La fonction get_intelli_size est remplac√©e par get_human_size_reading
+			* Icones pour les swf
+			* Modification sur le template default, on affiche plus la racine par un . mais avec une image
+			* R√©solution d'un petit souci qui affichait les mauvais pr√©c√©dent / suivant avec le plugin zenphoto
 
 [VERSION 0.4.1]
 	- hugo
 		31 mai 2006
-			* BUG: Correction d'un bug ralentissant l'affichage d'un rÈpertoire car on allait chercher systÈmatiquement les objet prÈcÈdents, suivants...
-			* BUG: Dans certain cas, le groupage par critËre de tri Ètait erronÈ d˚ ‡ une erreur dans la rÈcupÈration des extensions des fichiers
-			* Le script d'installation ne renvoie plus de notice (E_ERROR)
-			* Pour l'utilisation sur Windows, une fonction fnmatch de remplacement ‡ ÈtÈ ajoutÈe
+			* BUG: Correction d'un bug ralentissant l'affichage d'un r√©pertoire car on allait chercher syst√©matiquement les objets pr√©c√©dents, suivants...
+			* BUG: Dans certain cas, le groupage par crit√®re de tri √©tait erron√© d√ª √† une erreur dans la r√©cup√©ration des extensions des fichiers
+			* Le script d'installation ne renvoie plus de notice (passage en E_ERROR)
+			* Pour l'utilisation sur Windows, une fonction fnmatch de remplacement √† √©t√© ajout√©e
 
 [VERSION 0.4]
 	- hugo
 		29 mai 2006
-			* Le plugin mp3 se sert dorÈnavant du plugin flash de Neolao
-			* Un nouveau plugin permet de lire les vidÈos au format flv par le biais du plugin flash de Neolao
-			* Un compteur de permet de compter les tÈlÈchargement (et non les visualisations)
-			* CrÈation d'un plugin permettant de lire les fichiers flash (swf)
-			* CrÈation d'un script d'installation automatique (install.php)
+			* Le plugin mp3 se sert dor√©navant du plugin flash de Neolao
+			* Un nouveau plugin permet de lire les vid√©os au format flv par le biais du plugin flash de Neolao
+			* Un compteur de permet de compter les t√©l√©chargement (et non les visualisations)
+			* Cr√©ation d'un plugin permettant de lire les fichiers flash (swf)
+			* Cr√©ation d'un script d'installation automatique (install.php)
 		27&28 mai 2006
-			* La pagination est dorÈnavant possible lorsque l'on navigue dans les fichiers
-			* PossibilitÈ dans la plugin image de choisir la taille de l'image ‡ afficher
-			* Le plugin archive permet d'extraire dans le rÈpertoire courant les fichiers contenu dans une archive
-			* BUG: Correction d'un problËme lorsque l'on lisait une image contenu dans une archive, les donnÈes EXIF n'Ètait pas lues
+			* La pagination est dor√©navant possible lorsque l'on navigue dans les fichiers
+			* Possibilit√© dans la plugin image de choisir la taille de l'image √† afficher
+			* Le plugin archive permet d'extraire dans le r√©pertoire courant les fichiers contenu dans une archive
+			* BUG: Correction d'un probl√®me lorsque l'on lisait une image contenu dans une archive, les donn√©es EXIF n'√©tait pas lues
 			* La pagination existe aussi dans les archives !!
-			* Lorsque l'on accËde ‡ un fichier qui n'existe pas dans une archive, il y a une erreur !
+			* Lorsque l'on acc√®de √† un fichier qui n'existe pas dans une archive, il y a une erreur !
 		25&26 mai 2006
-			* La configuration du fichier .ini est dorÈnavant lue avec la fonction parse_ini_file() inclu dans php si elle est disponible
-			* Ajout du groupage par critËre de tri dans le plugin Dir
-			* On passe par la fonction fnmatch pour les recherches (plus simple pour les non initiÈs que les expressions rÈguliËres avec preg)
-			* On affiche la taille maximale tÈlÈchargeable dans la page upload
-			* Lorsque l'on clique sur une action alors que l'on est pas logguÈ, on est redirigÈ vers le login puis l'action qui avait ÈtÈ stoppÈ par la phase de login est reprise
-			* Dans l'Èdition d'un rÈpertoire, il est maintenant possible de remettre le plugin par dÈfaut
-			* Changement dans l'affichage des pages pour faciliter l'intÈgration du systËme de pagination
+			* La configuration du fichier .ini est dor√©navant lue avec la fonction parse_ini_file() inclu dans php si elle est disponible
+			* Ajout du groupage par crit√®re de tri dans le plugin Dir
+			* On passe par la fonction fnmatch pour les recherches (plus simple pour les non initi√©s que les expressions r√©guli√®res avec preg)
+			* On affiche la taille maximale t√©l√©chargeable dans la page upload
+			* Lorsque l'on clique sur une action alors que l'on est pas loggu√©, on est redirig√© vers le login puis l'action qui avait √©t√© stopp√© par la phase de login est reprise
+			* Dans l'√©dition d'un r√©pertoire, il est maintenant possible de remettre le plugin par d√©faut
+			* Changement dans l'affichage des pages pour faciliter l'int√©gration du syst√®me de pagination
 
 [VERSION 0.2]
 	- hugo
 		5&8 mai 2006
 			* BUG: Correction d'un bug avec les fichiers venant du cache
-			* Un rÈpertoire dÈnommÈ conf est placÈ ‡ la racine de l'application, il contient config.inc.php et un nouveau fichier (.ini) : ifile.ini, ce dernier
-			  contient les options de configuration suceptible d'Ítre changer par l'intermÈdiaire de la future console d'administration
-			* CrÈation du plugin zenphoto
+			* Un r√©pertoire d√©nomm√© conf est plac√© √† la racine de l'application, il contient config.inc.php et un nouveau fichier (.ini) : ifile.ini, ce dernier
+			  contient les options de configuration suceptible d'√™tre changer par l'interm√©diaire de la future console d'administration
+			* Cr√©ation du plugin zenphoto
 		3 mai 2006
 			* Ajout du support de l'upload multiple local et distant
 		2 mai 2006
-			* On peut modifier la description d'un objet ainsi que le plugin par dÈfaut d'un rÈpertoire permettant de le passer en galerie
-			* Les icones des rÈpertoires avec le plugin galeries sont diffÈrents permettant de les distinguer
-			* PossibilitÈ de faire des recherches dans le systËme de fichiers
+			* On peut modifier la description d'un objet ainsi que le plugin par d√©faut d'un r√©pertoire permettant de le passer en galerie
+			* Les icones des r√©pertoires avec le plugin galeries sont diff√©rents permettant de les distinguer
+			* Possibilit√© de faire des recherches dans le syst√®me de fichiers
 		28 avril 2006
-			* Le tri est dorÈnavant gÈrer dans les plugins (dir...) et la valeur du tri est stockÈe dans la session php
+			* Le tri est dor√©navant g√©rer dans les plugins (dir...) et la valeur du tri est stock√©e dans la session php
 		26&27 avril 2006
-			* RÈÈcriture du moteur interne, dorÈnavant, une requÍte globale est exÈcutÈe pour un rÈpertoire lu, il est possible de spÈcifier
-			  ‡ partir de quel fichier commencer l'affichage et le nombre de fichiers ‡ afficher dans les rÈpertoires permettant ainsi de gÈrer la pagination
+			* R√©√©criture du moteur interne, dor√©navant, une requ√™te globale est ex√©cut√©e pour un r√©pertoire lu, il est possible de sp√©cifier
+			  √† partir de quel fichier commencer l'affichage et le nombre de fichiers √† afficher dans les r√©pertoires permettant ainsi de g√©rer la pagination
 			* Ajout d'un plugin mp3 qui permet de les lire au travers d'un plugin en flash: dewplayer
 		10&11 avril 2006
-			* Refonte du code : terminÈ le fichier XML, on passe en base de donnÈes (Sqlite)
-			* Ajout du systËme de cache des images
-			* Mise en place des modifications au niveau des plugins, maintenant, chaque plugin ‡ un rÈpertoire dans src/plugin/
-			* Mise en place du systËme permettant de lire un fichier contenu dans une archive comme un simple fichier
+			* Refonte du code : termin√© le fichier XML, on passe en base de donn√©es (Sqlite)
+			* Ajout du syst√®me de cache des images
+			* Mise en place des modifications au niveau des plugins, maintenant, chaque plugin √† un r√©pertoire dans src/plugin/
+			* Mise en place du syst√®me permettant de lire un fichier contenu dans une archive comme un simple fichier
 
-Le projet ‡ ÈtÈ arrÍtÈ car il rÈpondait aux attentes initiales et j'ai dÈcidÈ de le reprendre avec beaucoup plus de fonctionnalitÈs...
+Le projet √† √©t√© arr√™t√© car il r√©pondait aux attentes initiales et j'ai d√©cid√© de le reprendre avec beaucoup plus de fonctionnalit√©s...
 
 [VERSION 0.1]
 	- hugo
 		18&20 janvier 2004
-			* Ajout d'un systËme de comptage de fichiers tÈlÈchargÈs
-			* Lorsque l'on crÈÈ un rÈpertoire, on a la possibilitÈ de directement mettre un commentaire / type
-			* BUG: Lorsque un fichier sans extension Ètait ÈditÈ, problËme de chargement de plugin
-			* Gros changement visuel et interne dans le systËme d'upload
-			* Il est dorÈnavant impossible de supprimer la racine
+			* Ajout d'un syst√®me de comptage de fichiers t√©l√©charg√©s
+			* Lorsque l'on cr√©√© un r√©pertoire, on a la possibilit√© de directement mettre un commentaire / type
+			* BUG: Lorsque un fichier sans extension √©tait √©dit√©, probl√®me de chargement de plugin
+			* Gros changement visuel et interne dans le syst√®me d'upload
+			* Il est dor√©navant impossible de supprimer la racine
 		13 janvier 2004
-			* Lorsqu'un quote (') Ètait prÈsent dans une description, il Ètait affichÈ "slashÈ"
-			* Correction d'un bug empÈchant le tÈlÈchargement d'un fichier contenu dans un Zip
+			* Lorsqu'un quote (') √©tait pr√©sent dans une description, il √©tait affich√© "slash√©"
+			* Correction d'un bug emp√©chant le t√©l√©chargement d'un fichier contenu dans un Zip
 			* Correction d'un bug dans le plugin archive empechant la lecture du contenu d'un fichier Zip
-			* Suppression d'une alerte NOTICE lorsque qu'aucun plugin n'est trouvÈ pour un type de fichier
-		20 dÈcembre 2004
-			* PossibilitÈ dans l'administration de synchronisÈ le fichier xml avec le systËme de fichier pour
-			  Ítre s˚r quand cas de suppression de fichiers sans passer par l'appli, le fichier xml soit ‡ jour
-		15&16 dÈcembre 2004
-			* VÈrification des droits d'un fichier ou rÈpertoire avec is_writable() avant suppression
+			* Suppression d'une alerte NOTICE lorsque qu'aucun plugin n'est trouv√© pour un type de fichier
+		20 d√©cembre 2004
+			* Possibilit√© dans l'administration de synchronis√© le fichier xml avec le syst√®me de fichier pour
+			  √™tre s√ªr quand cas de suppression de fichiers sans passer par l'appli, le fichier xml soit √† jour
+		15&16 d√©cembre 2004
+			* V√©rification des droits d'un fichier ou r√©pertoire avec is_writable() avant suppression
 			* Affichage pour l'utilisateur root d'infos comme les permissions et la taille d'un objet
-			* BUG: Lors de la suppression d'un rÈpertoire, on Ètait redirigÈ vers celui-ci !
-		13 dÈcembre 2004
-			* BUG: Correction d'un bug lorsque "register_global" ‡ On
-			* BUG: ProblËme lors de recherche ‡ partir de la racine
-		6-9 dÈcembre 2004
+			* BUG: Lors de la suppression d'un r√©pertoire, on √©tait redirig√© vers celui-ci !
+		13 d√©cembre 2004
+			* BUG: Correction d'un bug lorsque "register_global" √† On
+			* BUG: Probl√®me lors de recherche √† partir de la racine
+		6-9 d√©cembre 2004
 			* Fork et passage en PHP4
-			* BUG: lors de dÈconnection, on Ètait redirigÈ vers la mauvaise page
-			* install.php permet l'installation sur un serveur plus simplement mais n'est pas encore terminÈ
+			* BUG: lors de d√©connection, on √©tait redirig√© vers la mauvaise page
+			* install.php permet l'installation sur un serveur plus simplement mais n'est pas encore termin√©
 		3 novembre 2004
-			* BUG: Lorsqu'un ' Ètait contenu dans un nom de fichier, PHP rajoutait un slash
+			* BUG: Lorsqu'un ' √©tait contenu dans un nom de fichier, PHP rajoutait un slash
 		28 octobre 2004
-			* BUG: Lors d'un upload, le fichier Ètait toujours mis ‡ la racine et non dans le dossier courant
-			* BUG: Une recherche est effectuÈ qu'‡ partir du rÈpertoire courant et non depuis la racine
+			* BUG: Lors d'un upload, le fichier √©tait toujours mis √† la racine et non dans le dossier courant
+			* BUG: Une recherche est effectu√© qu'√† partir du r√©pertoire courant et non depuis la racine
 			* Dans une galerie, on voit maintenant tous les fichiers et plus seulement les images
 		26-29 juillet 2004
-			* Le plugin archive n'affiche plus les rÈpertoire contenu dans l'archive mais uniquement les fichiers
+			* Le plugin archive n'affiche plus les r√©pertoire contenu dans l'archive mais uniquement les fichiers
 		26 juillet 2004
-			* Tout est ‡ base de plugin, lorsqu'un rÈpertoire est lu, c'est le plugin 'dir' qui est chargÈ...
+			* Tout est √† base de plugin, lorsqu'un r√©pertoire est lu, c'est le plugin 'dir' qui est charg√©...
 			* Ajout d'une administration pour ajouter / supprimer des utilisateurs
 		16 juillet 2004
-			* BUG: On n'affiche pas la case ‡ cocher 'Galerie image' dans l'edition d'un fichier
+			* BUG: On n'affiche pas la case √† cocher 'Galerie image' dans l'edition d'un fichier
 			* Nettoyage du code de listf.class.php

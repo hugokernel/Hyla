@@ -10,7 +10,7 @@
 
 		<!-- BEGIN gallery_line_other -->
 		<div class="imagethumb">
-			<a href="{PATH}" title="{FILE_DESCRIPTION}"><img src="img/mimetypes/{FILE_ICON}" width="32" height="32" border="0" align="middle" alt="Infos" />{FILE_NAME}</a>
+			<a href="{PATH}" title="{FILE_DESCRIPTION}"><img src="{FILE_ICON}" width="32" height="32" border="0" align="middle" alt="Infos" />{FILE_NAME}</a>
 		</div>
 		<!-- END gallery_line_other -->
 	</div>

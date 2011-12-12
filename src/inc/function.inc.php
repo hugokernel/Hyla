@@ -1,21 +1,21 @@
 <?php
 /*
-	This file is part of iFile
+	This file is part of Hyla
 	Copyright (c) 2004-2006 Charles Rincheval.
 	All rights reserved
 
-	iFile is free software; you can redistribute it and/or modify it
+	Hyla is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published
 	by the Free Software Foundation; either version 2 of the License,
 	or (at your option) any later version.
 
-	iFile is distributed in the hope that it will be useful, but
+	Hyla is distributed in the hope that it will be useful, but
 	WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with iFile; if not, write to the Free Software
+	along with Hyla; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
@@ -25,7 +25,6 @@ function DBUG($var) {
 	print_r($var);
 	echo '</pre>';
 }
-
 
 /*	On formate la date correctement !
 	@param string $date Date à formater
@@ -72,14 +71,12 @@ function format_date($date, $type = 0, $date2 = null)
  */
 function view_error($msg) {
 	if ($msg) {
-		$tpl = new Template(FOLDER_TEMPLATE);
+		$tpl = new Template(DIR_TEMPLATE);
 		$tpl->set_file('misc', 'misc.tpl');
 		$tpl->set_block('misc', array(
-				'mkdir'			=>	'Hdlmkdir',
-				'rename'		=>	'Hdlrename',
-//				'pagination'	=>	'Hdlpagination',
 				'error'			=>	'Hdlerror',
-				'status'		=>	'Hdlstatus'
+				'status'		=>	'Hdlstatus',
+				'toolbar'		=>	'Hdltoolbar'
 				));
 		$tpl->set_var('ERROR', $msg);
 		$tpl->parse('Hdlerror', 'error', true);
@@ -92,14 +89,12 @@ function view_error($msg) {
  */
 function view_status($msg) {
 	if ($msg) {
-		$tpl = new Template(FOLDER_TEMPLATE);
+		$tpl = new Template(DIR_TEMPLATE);
 		$tpl->set_file('misc', 'misc.tpl');
 		$tpl->set_block('misc', array(
-				'mkdir'			=>	'Hdlmkdir',
-				'rename'		=>	'Hdlrename',
-//				'pagination'	=>	'Hdlpagination',
 				'error'			=>	'Hdlerror',
-				'status'		=>	'Hdlstatus'
+				'status'		=>	'Hdlstatus',
+				'toolbar'		=>	'Hdltoolbar'
 				));
 		$tpl->set_var('STATUS', $msg);
 		$tpl->parse('Hdlstatus', 'status', true);
@@ -109,22 +104,22 @@ function view_status($msg) {
 
 
 /*	Redirection d'une page à une autre
-	@param string $title Titre fenêtre
-	@param string $page Page de redirection
-	@param string $msg Message
-	@param int $attente Temps d'attente (secondes)
-	@param bool $rnow Afficher le lien pour rediriger tout de suite ou non !
+	@param	string	$title Titre fenêtre
+	@param	string	$page Page de redirection
+	@param	string	$msg Message
+	@param	int		$attente Temps d'attente (secondes)
+	@param	bool	$rnow Afficher le lien pour rediriger tout de suite ou non !
  */
-function redirect($title, $page, $msg, $attente = 5, $rnow = true)
-{
+function redirect($title, $page, $msg, $attente = 5, $rnow = true) {
+	global $conf;
 	// Le template...
 //	include_once('src/lib/template.class.php');
-	$tpl = new Template(FOLDER_TEMPLATE);
+	$tpl = new Template(DIR_TEMPLATE);
 	$tpl->set_file('redirect', 'redirect.tpl');
 	$tpl->set_block('redirect', 'AffichRedirectNow', 'HdlAffichRedirectNow');
 
 	$tpl->set_var(array(
-			'NAVIG_TITLE'	=>	$title,
+			'TITLE'			=>	$title.' '.$conf['title'],
 			'ATTENTE'		=>	$attente,
 			'PAGE'			=>	$page,
 			'MESSAGE'		=>	$msg));
@@ -137,69 +132,12 @@ function redirect($title, $page, $msg, $attente = 5, $rnow = true)
 	unset($tpl);
 }
 
-/*	Vérifie si le mail est valide...
-	@param string $chaine Mail à vérifier...
- */
-function valid_email($chaine)
-{
-	return ereg('^[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+'.'@'.
-	'[-!#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+\.'.'[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+$', $chaine);
-}
-
-/*	On met un slashes ou non selon la config...
- */
-function add_slashes($chaine)
-{
-	return (get_magic_quotes_gpc()) ? $chaine : addslashes($chaine);
-}
-
-/*	Et on enlève les slashes selon la config ! STACH STACH !!
- */
-function strip_slashes($chaine)
-{
-	return (get_magic_quotes_gpc()) ? stripslashes($chaine) : $chaine;
-}
-
-
-/*	Fonction permettant de renvoyer depuis combien de jour, heure, minutes un user ne s'est pas connecté
-	@param string $date Date
- */
-function get_nbr_day($date)
-{
-	// On met la date au format qu'il faut...
-	list($annee, $mois, $jour) = explode("-", substr($date, 0, 10));
-	list($heure, $minute, $seconde) = explode(":", substr($date, 10, 18));
-
-	$date = mktime($heure, $minute, $seconde, $mois, $jour, $annee);
-	$date = system::time() - $date;
-	$ret['jour'] = round($date / 3600 / 24);
-
-	return (int)$ret['jour'];
-}
-
-/*	Validation des noms des users à l'inscription
-	@param string $login Login à valider
-	@param bool $ret Valide ou non valide...
- */
-function valid_login($login)
-{
-	$ret = true;
-	// On interdit les pseudos commencant par un caractère numérique et les espaces dans le pseudo
-	if ((int)ereg(" ", $login))
-		$ret = false;
-	if ((int)ereg("^[0123456789]", $login))
-		$ret = false;
-
-	return $ret;
-}
-
 /*	Test de 'empty' multiple renvoyant le message associé si un champs est vide...
 	@param	array	$tab_empty	Tableau contenant les string et leurs message à renvoyé si vide
 	@param	&		$msg		Référence de la chaine qui doit contenir le message de retour
 	@return	Booléen à false si au moins un champs était vide
  */
-function verif_value($tab_empty, &$msg)
-{
+function verif_value($tab_empty, &$msg) {
 	$bool = true;
 	foreach ($tab_empty as $key => $val) {
 		if (empty($key)) {
@@ -211,157 +149,124 @@ function verif_value($tab_empty, &$msg)
 	return $bool;
 }
 
-/*	Renvoie si l'extension d'un fichier est valide ou non...
-	@param string $name_file Le fichier
-	@param array $tab_ext Tableau contenant les extensions autorisées !
+/*	Charge le tableau $conf à partir du fichier de configuration
  */
-function verif_extension($name_file, $tab_ext)
-{
-	$ret = false;
-	$pos = strrpos($name_file, '.');
-	if ($pos)
-	{
-		$ext = substr($name_file, $pos + 1, strlen($name_file));
-		if (in_array(strtolower($ext), $tab_ext))
-			$ret = true;
-	}
-	return $ret;
+function load_config() {
+
+	global $conf;
+	$conf = array();
+
+	$tab = (function_exists('parse_ini_file')) ? parse_ini_file(FILE_INI) : iniFile::read(FILE_INI, true);
+
+	$conf['webmaster_mail']	= $tab['webmaster_mail'];
+	$conf['name_template']		= $tab['template'] ? $tab['template'] : 'default';
+	$conf['lng']				= $tab['lng'] ? $tab['lng'] : 'fr_FR';
+	$conf['title']				= $tab['title'];
+
+	$conf['file_chmod']		= octdec($tab['file_chmod']);
+	$conf['dir_chmod']			= octdec($tab['dir_chmod']);
+	$conf['anonymous_add_file'] = $tab['anonymous_add_file'];
+	$conf['send_mail']			= $tab['send_mail'];
+
+
+	$conf['group_by_sort']		= $tab['group_by_sort'];
+	$conf['nbr_obj']			= $tab['nbr_obj'];
+
+
+	$conf['view_hidden_file']	= $tab['view_hidden_file'];
+	$conf['download_counter']	= $tab['download_counter'];
+
+	$conf['dir_default_plugin']	= $tab['default_plugin'] ? $tab['default_plugin'] : 'Dir';
+
+	$conf['view_toolbar']		= $tab['view_toolbar'];
+
+	$conf['url_scan']			= $tab['url_scan'];
+
+	$sort_tab = array(0	=> SORT_DEFAULT, 1 => SORT_ALPHA, 2 => SORT_ALPHA_R, 3 => SORT_ALPHA_EXT, 4 => SORT_ALPHA_EXT_R);
+	$conf['sort_config'] = $sort_tab[$tab['sort']];
+
+	if ($tab['folder_first'])
+		$conf['sort_config'] |= SORT_FOLDER_FIRST;
+
+	unset($tab, $sort_tab);
 }
 
-/*	Renvoie une image selon l'extension du fichier...
-	@param string $name_file Le fichier
+/*	Ouvre le fichier de liaison extensions / icones et charge en mémoire les relations
  */
-function get_icone_from_ext($ext)
-{
-//	$ext = file::getExtension($name_file);
-	switch ($ext)
-	{
-		case 'avi':
-		case 'mpg':
-		case 'mpeg':
-		case 'asf':	$ext_img = 'video.png'; break;
-		
-		case 'doc':	$ext_img = 'doc.png'; break;
-
-		case 'bmp':
-		case 'gif':
-		case 'jpg':
-		case 'png':	$ext_img = 'image.png'; break;
-		
-		case 'c':	$ext_img = 'c.png'; break;
-		case 'cpp':	$ext_img = 'cpp.png'; break;
-		case 'hpp':
-		case 'h':	$ext_img = 'c-header.png'; break;
-		
-		case 'ogg':
-		case 'wav':
-		case 'mp3':	$ext_img = 'audio.png'; break;
-		case 'mid':	$ext_img = 'midi.png'; break;
-		
-		case 'ram':	$ext_img = 'realmedia.png'; break;
-		
-		case 'php3':
-		case 'php4':
-		case 'php5':
-		case 'php':	$ext_img = 'php.png'; break;
-		
-		case 'pdf':	$ext_img = 'pdf.png'; break;
-		case 'txt':	$ext_img = 'txt.png'; break;
-		
-		case 'tar':	$ext_img = 'tar.png'; break;
-
-		case 'deb':	$ext_img = 'deb.png'; break;
-		
-		case 'hex':
-		case 'rom':	$ext_img = 'rom.png'; break;
-		
-		case 'gz':	$ext_img = 'tgz.png'; break;
-		case 'bz2':	$ext_img = 'bz2.png'; break;
-		case 'rar':	$ext_img = 'rar.png'; break;
-		case 'zip':	$ext_img = 'zip.png'; break;
-		default:	$ext_img = 'unknown.png'; break;
+function load_icon_info() {
+	global $tab_icon;
+	$tab = (function_exists('parse_ini_file')) ? parse_ini_file(FILE_ICON, true) : iniFile::read(FILE_ICON, true);
+	foreach ($tab as $key => $value) {
+		$keys = explode(',', $key);
+		foreach ($keys as $ext) {
+			$tab_icon[trim($ext)] = $value;
+		}
 	}
-	
-	return $ext_img;
 }
 
-/*	Retourne la taille d'un fichier 'intelligiblement' ?!?
+/*	Renvoie l'icone selon l'extension
+ */
+function get_icon($ext) {
+	global $tab_icon;
+	$ret = (!array_key_exists($ext, $tab_icon)) ? $tab_icon['?']['icon'] : $tab_icon[$ext]['icon'];
+	$dir = (!array_key_exists('dir', $tab_icon)) ? $tab_icon['?']['dir'] : $tab_icon[$ext]['dir'];
+	return $dir.$ret;
+}
+
+/*	Retourne la taille d'un fichier de manière compréhensible (original trouvée sur www.php.net)
 	@param int $size Taille en octets
 	@param int $rnd La précision de l'arrondi !
  */
-function get_intelli_size($size, $rnd = -1)
-{
-	$size = ($size == null) ? 0 : $size;
-	if ($size >= 1073741824) {
-		$rnd = ($rnd == -1) ? 4 : $rnd;
-		$size = round($size / 1073741824, $rnd).' Go';
-	} else if ($size >= 1048576) {
-		$rnd = ($rnd == -1) ? 2 : $rnd;
-		$size = round($size / 1048576, $rnd).' Mo';
-	} else if ($size >= 1024) {
-		$rnd = ($rnd == -1) ? 1 : $rnd;
-		$size = round($size / 1024, $rnd).' Ko';
-	} else
-		$size = $size.' o';
-	return $size;
-}
-/*
-Trouvé sur php.net en remplacement de get_intelli_size
-function size_hum_read($size){
-
-//Returns a human readable size
-  $i=0;
-  $iec = array("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB");
-  while (($size/1024)>1) {
-   $size=$size/1024;
-   $i++;
-  }
-  return substr($size,0,strpos($size,'.')+4).$iec[$i];
-}
-*/
-
-
-
-/*	Renvoie le texte asocié
-	@param string $str Chaine voulue
- */
-function traduct($str, $str1 = null, $str2 = null)
-{
-	global $g_tab;
-	$ret = null;
-	$numarg = func_num_args();
-	switch ($numarg) {
-	case 3:
-		$ret = $g_tab[$str][$str1][$str2];
-		break;
-	case 2:
-		$ret = $g_tab[$str][$str1];
-		break;
-	case 1:
-	default:
-		$ret = $g_tab[$str];
+function get_human_size_reading($size, $rnd = 2){
+	$iec = array('o', 'Ko', 'Mo', 'Go', 'To', 'Po', 'Eo', 'Zo', 'Yo');
+	for ($i = 0; ($size / 1024) > 1; $i++) {
+		$size = $size / 1024;
 	}
-	//$ret = htmlentities($ret);
+	return round($size, $rnd).' '.$iec[$i];
+}
+
+/*	Renvoie le texte associé
+	@param	string	$str	Chaine voulue
+	@param	...
+ */
+function __($str)
+{
+	global $l10n;
+	$ret = (array_key_exists($str, $l10n)) ? $l10n[$str] : $str;
+	if (func_num_args() > 1) {
+		$tab = func_get_args();
+		$tab[0] = $ret;
+		$ret = call_user_func_array('sprintf', $tab);
+	}
 	return $ret;
 }
 
-function format($url, $current = true) {
+function format($_url, $current = true) {
+
+//	if (!$current) {
+		global $cobj;
+		$obj = &$cobj;
+//	}
+
+	$tab = explode('/', $_url);
+
+	$ret = null;
 
 	if ($current) {
-		global $cobj;
-		$obj = $cobj;
+		$ret = '<a href="'.url::getObj('/').'" title="Revenir à la racine"><img src="'.DIR_TEMPLATE.'/img/home.png" width="32" height="32" border="0" align="middle" alt="Revenir à la racine" /></a>';
 	}
 
-	$tab = explode('/', $url);
-	$ret = '<a href="'.obj::getUrl('/').'">.</a>';
-	$url = null;
+	if ($current && $obj->file != null && $obj->file != '/')
+		$ret .= ' <img src="'.$obj->icon.'" width="32" height="32" border="0" align="middle" alt="Icone" />';
+
+	$_url = null;
 	$size = sizeof($tab);
 	for ($i = 0; $i < $size; $i++) {
 		if ($tab[$i]) {
-			$url .= '/'.$tab[$i];
+			$_url .= '/'.$tab[$i];
 			// On met un '/' uniquement si il s'agit d'un dossier
-			$value = ($current) ? (($obj->type == TYPE_DIR) ? 1 : 0) : (is_dir(FOLDER_ROOT.$url));
-			$ret .= ' / <a href="'.obj::getUrl($url).(($i < $size - 1 || $value) ? '/' : '').'" class="object">'.$tab[$i].'</a>';
+			$value = ($current) ? (($obj->type == TYPE_DIR) ? 1 : 0) : (is_dir(FOLDER_ROOT.$_url));
+			$ret .= ' / <a href="'.url::getObj($_url).(($i < $size - 1 || $value) ? '/' : '').'" class="object">'.$tab[$i].'</a>';
 		}		
 	}
 
@@ -373,32 +278,34 @@ function format($url, $current = true) {
 
 if (!function_exists('fnmatch')) {
 	function fnmatch($pattern, $string) {
-	   for ($op = 0, $npattern = '', $n = 0, $l = strlen($pattern); $n < $l; $n++) {
-		   switch ($c = $pattern[$n]) {
-			   case '\\':
-				   $npattern .= '\\' . @$pattern[++$n];
-			   break;
-			   case '.': case '+': case '^': case '$': case '(': case ')': case '{': case '}': case '=': case '!': case '<': case '>': case '|':
-				   $npattern .= '\\' . $c;
-			   break;
-			   case '?': case '*':
-				   $npattern .= '.' . $c;
-			   break;
-			   case '[': case ']': default:
-				   $npattern .= $c;
-				   if ($c == '[') {
-					   $op++;
-				   } else if ($c == ']') {
-					   if ($op == 0) return false;
-					   $op--;
-				   }
-			   break;
-		   }
-	   }
+		for ($op = 0, $npattern = '', $n = 0, $l = strlen($pattern); $n < $l; $n++) {
+			switch ($c = $pattern[$n]) {
+				case '\\':
+					$npattern .= '\\' . @$pattern[++$n];
+					break;
+				case '.': case '+': case '^': case '$': case '(': case ')': case '{': case '}': case '=': case '!': case '<': case '>': case '|':
+					$npattern .= '\\' . $c;
+					break;
+				case '?': case '*':
+					$npattern .= '.' . $c;
+					break;
+				case '[': case ']': default:
+					$npattern .= $c;
+					if ($c == '[')
+						$op++;
+					else if ($c == ']') {
+						if ($op == 0)
+							return false;
+						$op--;
+					}
+					break;
+			}
+		}
 
-	   if ($op != 0) return false;
-	
-	   return preg_match('/' . $npattern . '/i', $string);
+		if ($op != 0)
+			return false;
+
+		return preg_match('/' . $npattern . '/i', $string);
 	}
 }
 

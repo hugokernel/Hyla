@@ -1,86 +1,140 @@
 <?php
 /*
-	This file is part of iFile
+	This file is part of Hyla
 	Copyright (c) 2004-2006 Charles Rincheval.
 	All rights reserved
 
-	iFile is free software; you can redistribute it and/or modify it
+	Hyla is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published
 	by the Free Software Foundation; either version 2 of the License,
 	or (at your option) any later version.
 
-	iFile is distributed in the hope that it will be useful, but
+	Hyla is distributed in the hope that it will be useful, but
 	WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with iFile; if not, write to the Free Software
+	along with Hyla; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
-/*
-function dir_size($dir)
-{
-   $handle = opendir($dir);
-  $mas = null;
-   while ($file = readdir($handle)) {
-       if ($file != '..' && $file != '.' && @!is_dir($dir.'/'.$file)) {
-           $mas += @filesize($dir.'/'.$file);
-           } else if (@is_dir($dir.'/'.$file) && $file != '..' && $file != '.') {
-           $mas += dir_size($dir.'/'.$file);
-       }
-   }
-   return $mas;
-}
-*/
-
-
 class file
 {
-	/*	Efface TOUT le contenu d'un dossier
-	 	@param string $_folder Le répertoire
-	 	@param boolean $_recurs On dégage aussi les répertoires récursivement !
+	/*	Copie un dossier dans un autre
+		@param	string	$dir			Le répertoire
+		@param	string	$dest			La cible
+		@param	octal	$dir_chmod		Le mode de création des répertoires
+		@return	Renvoie le nombre de fichiers et répertoires créés
 	 */
-	function delFolder($_folder, $_recurs = true) {
-		$hdl = @dir($_folder);
+	function copyDir($folder_origin, $folder_dest, $dir_chmod = 0765) {
+
+		static $var = true;
+		$ret = 0;
+
+		// Récupération et création du premier répertoire de destination
+		if ($var) {
+			$folder_dest = $folder_dest.(($folder_dest{strlen($folder_dest) - 1} == '/') ? null : '/').file::getLastDir($folder_origin);
+			mkdir($folder_dest, $dir_chmod);
+			$var = false;
+		}
+
+		$hdl = dir($folder_origin);
+		if ($hdl) {
+			while (($_occ = $hdl->read()) !== false) {
+				if ($_occ == '.' || $_occ == '..')
+					continue;
+
+				if (is_dir($folder_origin.'/'.$_occ)) {
+					if (mkdir($folder_dest.'/'.$_occ, $dir_chmod))
+						$ret++;
+					$ret += file::copyDir($folder_origin.'/'.$_occ, $folder_dest.'/'.$_occ, $dir_chmod);
+				} else if (is_file($folder_origin.'/'.$_occ)) {
+					if (copy($folder_origin.'/'.$_occ, $folder_dest.'/'.$_occ))
+						$ret++;
+				}
+		 	}
+		}
+
+		return $ret;
+	}
+
+	/*	Renvoie le nom du dernier dossier
+		@param	string	$path	Le chemin à scanner
+	 */
+	function getLastDir($path) {
+		$size = strlen($path);
+		if ($path{$size - 1} == '/')
+			$path{$size - 1} = null;
+		$path = trim($path);
+		$last_dir = strrchr($path, '/');
+		$last_dir = substr($last_dir, 1);
+		return $last_dir;
+	}
+
+	/*	Créer des répertoires (php.net)
+		@param	string	$dir	Le chemin complet contenant les répertoires à créer
+		@param	octal	$mode	Les droits
+	 */
+	function mkDirs($dir, $mode = 0755) {
+		if (is_null($dir) || $dir == '')
+			return false;
+		if (is_dir($dir) || $dir == '/')
+			return true;
+		if (file::mkdirs(dirname($dir), $mode))
+			return mkdir($dir, $mode);
+		return false;
+	}
+
+	/*	Supprime un répertoire et tout son contenu
+		@param string $dir
+	 */
+	function rmDirs($dir) {
+		$hdl = dir($dir);
 		if ($hdl) {
 			while (false !== ($_occ = $hdl->read())) {
-				if ($_recurs == true && is_dir($_folder.'/'.$_occ) && $_occ != '.' && $_occ != '..')
-					file::delFolder($_folder.'/'.$_occ);
-				if (is_file($_folder.'/'.$_occ))
-					unlink($_folder.'/'.$_occ);
+				if ($_occ == '.' || $_occ == '..')
+					continue;
+				if (is_dir($dir.'/'.$_occ))
+					file::rmDirs($dir.'/'.$_occ);
+				else if (is_file($dir.'/'.$_occ))
+					unlink($dir.'/'.$_occ);
 			}
 			$hdl->close();
 		}
-		return @rmdir($_folder);
+		return rmdir($dir);
 	}
-	
-	/*	Copie les fichier XML vide dans le répertoire TMP du user
-		@param string $_folder_string Répertoire d'origine
-		@param string $_folder_dest Répertoire de destination
+
+	/*	Si le fichier existe déjà dans la racine, retourne le nom du fichier préfixé d'une string le rendant unique
+		@param	string	$name	Le nom du fichier
+		@param	string	$root	La racine
 	 */
-	function copyAllFile($_folder_origin, $_folder_dest) {
-		$hdl = dir($_folder_origin);
-		if ($hdl) {
-			while (false !== ($_occ = $hdl->read())) {
-				if (is_file($_folder_origin.'/'.$_occ))
-		 			copy($_folder_origin.'/'.$_occ, $_folder_dest.'/'.$_occ);
-		 	}
+	function getUniqueName($name, $root) {
+		$prefix = '0';
+		if (file_exists($root.'/'.$name)) {
+			while (1) {
+				if (file_exists($root.'/'.$prefix.'_'.$name)) {
+					$prefix++;
+					continue;
+				}
+				$name = $prefix.'_'.$name;
+				break;
+			}
 		}
+		return $name;
 	}
 
 	/*	Retourne un tableau contenant l'arborescence du repertoire spécifié
-		@param string $_folder
+		@param	string	$_folder_root	Le répertoire racine
+		@param	string	$_folder		Sous répertoire
 	 */
 	function scanDir($_folder_root, $_folder = null) {
 		static $tab_dir;
-		echo $_folder_root;
+
 		$hdl = dir($_folder_root.$_folder);
 		if ($hdl) {
 			while (false !== ($_occ = $hdl->read())) {
-				if (is_dir($_folder_root.$_folder.'/'.$_occ) && $_occ != '.' && $_occ != '..') {
+				if ($_occ != '.' && $_occ != '..' && is_dir($_folder_root.$_folder.'/'.$_occ)) {
 					$tab_dir[] = $_folder.'/'.$_occ;
 					file::scanDir($_folder_root, $_folder.'/'.$_occ);
 				}
@@ -107,14 +161,11 @@ class file
 		if ($hdl) {
 			while (false !== ($_occ = $hdl->read())) {			
 				if (is_dir($base.$folder.'/'.$_occ) && $_occ != '.' && $_occ != '..' && $recurs) {
-//					 if ($scandir && @preg_match("/".$exp."/i", $_occ)) {
-					 if ($scandir && @fnmatch(strtolower($exp), strtolower($_occ))) {
+					 if ($scandir && fnmatch(strtolower($exp), strtolower($_occ))) {
 						$tab_file[] = $folder.'/'.$_occ.'/';
 					}
 					file::searchFile($folder.'/'.$_occ, $exp, $recurs, $base);
-				} else if (is_file($base.$folder.'/'.$_occ) && $_occ != '.' && $_occ != '..') {
-//					 if (@preg_match("/".$exp."/i", $_occ)) {
-					 if (@fnmatch(strtolower($exp), strtolower($_occ))) {
+				} else if (is_file($base.$folder.'/'.$_occ) && $_occ != '.' && $_occ != '..') {					 if (fnmatch(strtolower($exp), strtolower($_occ))) {
 						$tab_file[] = $folder.'/'.$_occ;
 					}
 				}
@@ -141,9 +192,9 @@ class file
 	/*	Retourne le répertoire
 		ATTENTION :	Différent de dirname car vérifie si le répertoire existe vraiment et si
 					$folder est un chemin avec un fichier, il extrait le chemin si il existe
-		@param string $folder Le répertoire avec un nom de fichier ou non
-		@param string $base La racine qui comporte $folder
-		@return string Le chemin réel
+		@param	string	$folder Le répertoire avec un nom de fichier ou non
+		@param	string	$base La racine qui comporte $folder
+		@return Le chemin réel
 	 */
 	function getRealDir($folder, $base = null) {
 		$ret = null;
@@ -157,13 +208,13 @@ class file
 					$ret = '/';
 			}
 		}
-		return file::_formatPath($ret);
+		return file::formatPath($ret);
 	}
 	
 	/*	Retourne le nom du fichier
 		ATTENTION : Différent de basename car vérifie si le fichier existe vraiment
-		@param string $file Le nom du fichier
-		@param string $base La racine comportant le fichier
+		@param	string	$file Le nom du fichier
+		@param	string	$base La racine comportant le fichier
 	 */
 	function getRealFile($file, $base = null) {
 		$ret = null;
@@ -172,26 +223,22 @@ class file
 				$ret = basename($file);
 			}
 		}
-		return file::_formatPath($ret);
+		return file::formatPath($ret);
 	}
 
 	/*	Envoie un fichier avec le bon type mime
 		@param string $file Le fichier
-		@param boolean $force Forcer le téléchargement
 	 */
-	function sendFile($file) {	//, $force = false) {
+	function sendFile($file) {
 		$ext = null;		// Extension
 		$ctype = null;		// Content type
-		
-//		if ($path{strlen($path) - 1} != '/')
-//			$path{strlen($path)} = '/';
-		
+
 		$ext = file::getExtension($file);
 	
 		switch ($ext) {
 			case 'mpeg':
 			case 'mpg':
-			case 'mpe':		$ctype = 'video/mpeg';			break;	// Vidéos Mpg
+			case 'mpe':	$ctype = 'video/mpeg';			break;	// Vidéos Mpg
 			case 'avi':		$ctype = 'video/avi';			break;	// Vidéos Microsoft Windows
 			case 'doc':		$ctype = 'application/word';	break;
 			case 'zip':		$ctype = 'application/zip';		break;
@@ -200,7 +247,7 @@ class file
 			case 'gif':		$ctype = 'image/gif';			break;
 			case 'jpeg':
 			case 'jpg':		$ctype = 'image/jpeg';			break;
-			case 'mp3':		$ctype = 'audio/mpeg3';			break;
+			case 'mp3':	$ctype = 'audio/mpeg3';			break;
 			case 'htm':
 			case 'html':	$ctype = 'text/html';			break;
 			
@@ -211,23 +258,13 @@ class file
 			case 'txt':		$ctype = 'text/plain';			break;
 			default:		$ctype = 'octet/stream';		break;
 		}
-		
-		// Force le téléchargement
-		/*if ($force || $ctype == 'octet/stream') {
-			header('Content-Type: '.$ctype);
-			header('Content-Length: '.filesize($path.$file));
-			header('Content-Disposition: attachment; filename='.$file);
-		} else {
-			header('Content-Type: '.$ctype.'; filename='.$file);
-			header('Content-Length: '.filesize($path.$file));
-		}*/
 
 		header('Content-Disposition: inline; filename="'.basename($file).'"');
 		header('Content-Type: '.$ctype);
 		header('Content-Length: '.filesize($file));
 
 		readfile($file);
-		exit;
+		// Surtout pas de exit ici
 	}
 
 	/*	Renvoie le contenu d'un fichier
@@ -276,7 +313,66 @@ class file
 	function downPath($path) {
 		if ($path{strlen($path) - 1} == '/')
 			$path{strlen($path) - 1} = null;
-		return substr($path, 0, strlen($path) - strlen(strrchr($path, '/')));
+
+		$tab = explode('/', trim($path));
+		$path = '/';
+		$size = sizeof($tab);
+		$size--;
+		for ($i = 0; $i < $size; $i++) {
+			$n = $tab[$i];
+			if ($n)
+				$path .= $n.'/';
+		}
+		return $path;
+	}
+
+	/*	Certain hébergeur désactive realpath pour des raisons de sécurité, pourtant la fonction existe et ne renvoie rien (merci Free)...
+		@param	string	$path	Le chemin à tester
+		@param	bool	$exist	Test si le fichier ou répertoire existe vraiment (avec ce paramètre à true, cette fonction simule parfaitement realpath)
+	 */
+	function realpath($path, $exist = false) {
+
+		$ret = null;
+		$path = file::formatPath($path);
+
+		if ($exist && $path == '.')
+			return dirname($_SERVER['PATH_TRANSLATED']);
+
+		$dirs = explode('/', $path);
+		$dirs_out = array();
+
+		$i = 0;
+		foreach ($dirs as $k => $v) {
+			if ($v == null || $v == '.')
+				continue;
+			if ($v == '..') {
+				$dirs_out[--$i] = null;
+			} else {
+				$dirs_out[$i++] = $v;
+			}
+		}
+
+		$p = ($exist && substr(PHP_OS, 0, 3) == 'WIN') ? null : '/';
+		foreach($dirs_out as $k => $v) {
+			if ($v)
+				$p .= $v.'/';
+		}
+		
+		$p = substr($p, 0, strlen($p) - 1);
+
+		if ($exist) {
+			if (is_dir($p))
+				$ret = $p;
+			else if (is_file($p))
+				$ret = $p;
+			else
+				$ret = false;
+		} else
+			$ret = $p;
+
+		$ret = file::unFormatPath($ret);
+
+		return $ret;
 	}
 
 	/*	Renvoie true si le chemin canonique absolu ne descend pas en dessous de la base
@@ -287,21 +383,33 @@ class file
 		@access private
 	 */
 	function _isLegalPath($base, $path, &$realpath) {
-		$base = realpath($base);
-		$rpath = realpath($base.$path);
-		$size = strlen($base);		
-		$ret = ($base == substr($rpath, 0, $size)) ? true : false;
-		if ($ret)
+		$ret = false;
+
+		$rpath = file::realpath($path);
+		$rpath = file::realpath($base.$rpath, true);
+
+		if ($rpath) {
 			$realpath = $rpath;
+			$ret = true;
+		}
+
 		return $ret;
 	}
 	
-	/*
-		@access private
+	/*	Renvoie une chains propre pour windows
 	 */
-	function _formatPath($path) {
+	function formatPath($path) {
 		if (substr(PHP_OS, 0, 3) == 'WIN') {
 			$path = str_replace('\\', '/', $path);
+		}
+		return $path;
+	}
+
+	/*	Renvoie une chains propre pour windows
+	 */
+	function unFormatPath($path) {
+		if (substr(PHP_OS, 0, 3) == 'WIN') {
+			$path = str_replace('/', '\\', $path);
 		}
 		return $path;
 	}

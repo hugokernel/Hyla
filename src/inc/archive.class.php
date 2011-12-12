@@ -1,21 +1,21 @@
 <?php
 /*
-	This file is part of iFile
+	This file is part of Hyla
 	Copyright (c) 2004-2006 Charles Rincheval.
 	All rights reserved
 
-	iFile is free software; you can redistribute it and/or modify it
+	Hyla is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License as published
 	by the Free Software Foundation; either version 2 of the License,
 	or (at your option) any later version.
 
-	iFile is distributed in the hope that it will be useful, but
+	Hyla is distributed in the hope that it will be useful, but
 	WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with iFile; if not, write to the Free Software
+	along with Hyla; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
@@ -25,9 +25,9 @@ require 'src/lib/pclzip.lib.php';
 class archive {
 
 
-	/*	CrÃ©Ã© une archive contenant tous les fichiers d'un rÃ©pertoire
+	/*	Créé une archive contenant tous les fichiers d'un répertoire
 		@param	string	$archive	L'archive de destination
-		@param	string	$path		Le rÃ©pertoire en question
+		@param	string	$path		Le répertoire en question
 	 */
 	function createFromDir($archive, $path) {
 
@@ -42,7 +42,7 @@ class archive {
 
 			while (false !== ($occ = $hdl->read())) {
 
-				// Si on a un fichier cachÃ©...
+				// Si on a un fichier caché...
 				if ($occ{0} == '.')
 					continue;
 
@@ -62,13 +62,12 @@ class archive {
 
 			$zip = new PclZip($archive);
 			$out = $zip->create($str, PCLZIP_OPT_REMOVE_PATH, $path);
-
 		}
 
 		return $out;
 	}
 
-	/*	Renvoie un tableau contenant les nom des fichiers prÃ©cÃ©dent et suivant en tenant compte du tri
+	/*	Renvoie un tableau contenant les nom des fichiers précédent et suivant en tenant compte du tri
 		@param	string	$archive	L'archive
 	 */
 	function getPrevNext($archive, $target) {
@@ -101,6 +100,5 @@ class archive {
 	}
 
 }
-
 
 ?>

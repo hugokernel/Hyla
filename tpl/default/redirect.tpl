@@ -1,9 +1,9 @@
 <html>
 <head>
-<title>{NAVIG_TITLE}</title>
+<title>{TITLE}</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="refresh" content="{ATTENTE}; url={PAGE}">
-<link rel="stylesheet" href="{FOLDER_TEMPLATE}/default.css" type="text/css">
+<link rel="stylesheet" href="{DIR_TEMPLATE}/default.css" type="text/css">
 
 </head>
 
