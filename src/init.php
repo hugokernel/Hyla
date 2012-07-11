@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -41,7 +41,7 @@ $starttime = system::chrono();
 
 $msg_error = null;
 
-define('DIR_CONF',      'conf/');
+define('DIR_CONF',      './conf/');
 define('CONFIG_FILE',   DIR_CONF.'config.inc.php');
 
 
@@ -49,9 +49,12 @@ define('CONFIG_FILE',   DIR_CONF.'config.inc.php');
  */
 //register_shutdown_function(array('system', 'timeOut'));
 
-ini_set('magic_quotes_runtime', 0);
-ini_set('magic_quotes_sybase', 0);
-set_magic_quotes_runtime(0);
+// Pour faire taire les notices, on test avant
+if (ini_get('magic_quotes_runtime')) {
+    set_magic_quotes_runtime(0);
+    ini_set('magic_quotes_runtime', 0);
+    ini_set('magic_quotes_sybase', 0);
+}
 
 
 // En attendant de trouver mieux...
@@ -81,6 +84,15 @@ if (basename($_SERVER['PHP_SELF']) != 'install.php') {
 define('DIR_ROOT', file::dirName($_SERVER['SCRIPT_FILENAME']).'/');
 
 require 'src/inc/define.php';
+
+if (!defined('DIR_CACHE')) {
+    define('DIR_CACHE', 'sys/cache/');
+}
+
+if (!defined('DIR_ANON')) {
+    define('DIR_ANON',  'sys/anon/');
+}
+
 require 'src/lib/class.ini.file.php';
 require 'src/lib/XPath.class.php';
 
@@ -116,7 +128,7 @@ $page_styles = array();
 // Entête envoyé en premier
 $xfile = DIR_TEMPLATE.'/info.xml';
 if (file_exists($xfile)) {
-    $xml =& new XPath($xfile);
+    $xml = new XPath($xfile);
     $res = $xml->match('/template');
     if ($res) {
         header($xml->getData('/template/header'));

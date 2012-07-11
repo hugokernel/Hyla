@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -21,16 +21,20 @@
 
 class cache {
 
+    function getCachePath() {
+        return get_cache_path();
+    }
+
     /*  Vide le cache
      */
     function free() {
         $i = 0;
-        $hdl = dir(DIR_ROOT.DIR_CACHE);
+        $hdl = dir(cache::getCachePath());
         if ($hdl) {
             while (false !== ($occ = $hdl->read())) {
                 if ($occ{0} == '.')
                     continue;
-                if (file::rmDirs(DIR_ROOT.DIR_CACHE.$occ))
+                if (file::rmDirs(cache::getCachePath().$occ))
                     $i++;
             }
         }
@@ -45,8 +49,8 @@ class cache {
         $types = archive::getAllType();
         foreach ($types as $type) {
             cache::getArchivePath($file, $out, $type);
-            if (is_file(DIR_ROOT.$out)) {
-                unlink(DIR_ROOT.$out);
+            if (is_file($out)) {
+                unlink($out);
             }
         }
 
@@ -70,9 +74,9 @@ class cache {
                 }
                 $hdl->close();
 
-                if (is_dir(DIR_ROOT.DIR_CACHE.$dir)) {
+                if (is_dir(cache::getCachePath().$dir)) {
                     $list = array();
-                    $hdl = dir(DIR_ROOT.DIR_CACHE.$dir);
+                    $hdl = dir(cache::getCachePath().$dir);
                     if ($hdl) {
                         while (false !== ($_occ = $hdl->read())) {
                             if ($_occ == '.' || $_occ == '..')
@@ -87,7 +91,7 @@ class cache {
                             if ($ret = preg_grep($k, $list)) {
                                 $ret = array_values($ret);
                                 foreach ($ret as $r) {
-                                    unlink(DIR_ROOT.DIR_CACHE.$dir.'/'.$r);
+                                    unlink(cache::getCachePath().$dir.'/'.$r);
                                 }
                             }
                         }
@@ -109,15 +113,16 @@ class cache {
         @param  string  $file   Le fichier concerné
         @param  int     $sizex  La taille x
         @param  int     $sizey  La taille y
+        @return Le chemin absolu vers l'image cachée
      */
     function getImagePath($file, $sizex, $sizey, &$out) {
 
         $fmd5 = md5(file::dirName($file));
 
-        if (!is_dir(DIR_CACHE.$fmd5{0}))
-            mkdir(DIR_CACHE.$fmd5{0});
+        if (!is_dir(cache::getCachePath().$fmd5{0}))
+            mkdir(cache::getCachePath().$fmd5{0});
 
-        $out = DIR_CACHE.$fmd5{0}.'/'.$fmd5.'.'.$sizex.'x'.$sizey.'.'.basename($file);
+        $out = cache::getCachePath().$fmd5{0}.'/'.$fmd5.'.'.$sizex.'x'.$sizey.'.'.basename($file);
 
         return (bool)file_exists($out);
     }
@@ -135,10 +140,10 @@ class cache {
 
         $fmd5 = md5(file::dirName($file));
 
-        if (!is_dir(DIR_CACHE.$fmd5{0}))
-            mkdir(DIR_CACHE.$fmd5{0});
+        if (!is_dir(cache::getCachePath().$fmd5{0}))
+            mkdir(cache::getCachePath().$fmd5{0});
 
-        $out = DIR_CACHE.$fmd5{0}.'/'.$fmd5.'.'.basename($file);
+        $out = cache::getCachePath().$fmd5{0}.'/'.$fmd5.'.'.basename($file);
 
         return (bool)file_exists($out);
     }
@@ -157,19 +162,19 @@ class cache {
 
         $fmd5 = md5(file::dirName($file));
 
-        if (!is_dir(DIR_CACHE.$fmd5{0})) {
-            mkdir(DIR_CACHE.$fmd5{0});
+        if (!is_dir(cache::getCachePath().$fmd5{0})) {
+            mkdir(cache::getCachePath().$fmd5{0});
         }
 
-        if (!is_dir(DIR_CACHE.$fmd5{0}.'/'.$fmd5)) {
-            mkdir(DIR_CACHE.$fmd5{0}.'/'.$fmd5);
+        if (!is_dir(cache::getCachePath().$fmd5{0}.'/'.$fmd5)) {
+            mkdir(cache::getCachePath().$fmd5{0}.'/'.$fmd5);
         }
 
         if ($file == '/') {
             $file = 'root';
         }
 
-        $out = DIR_CACHE.$fmd5{0}.'/'.$fmd5.'/'.basename($file).'.'.$type;
+        $out = cache::getCachePath().$fmd5{0}.'/'.$fmd5.'/'.basename($file).'.'.$type;
 
         return (bool)file_exists($out);
     }

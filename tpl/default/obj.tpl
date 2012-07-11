@@ -26,12 +26,14 @@
 </div>
 <div id="content">
     {CONTENT}
+    {COMMENTS}
 </div>
 <!-- END with_tree -->
 
 <!-- BEGIN no_tree -->
 <div id="content-no-tree">
     {CONTENT}
+    {COMMENTS}
 </div>
 <!-- END no_tree -->
 

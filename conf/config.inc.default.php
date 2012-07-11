@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2006 Charles Rincheval.
+	Copyright (c) 2004-2012 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -41,7 +41,7 @@ define('FOLDER_ROOT', '/var/www');
 
 
 /*	+---------------------------------+
-	| Connection à la base de données |
+	| Connexion à la base de données |
 	+---------------------------------+
 	Dans SQL_HOST, il est possible de spécifier un port différent
 	de la manière suivante : 'server:3300'
@@ -50,5 +50,14 @@ define('SQL_HOST',	'');
 define('SQL_BASE',	'');
 define('SQL_USER',	'');
 define('SQL_PASS',	'');
+
+/*	+--------------------------------------------------------------+
+	| Chemin d'accès aux dossiers de cache et de fichiers anonymes |
+	+--------------------------------------------------------------+
+    Absolu ou relatif
+    Laissez commenté pour utiliser les valeurs par défaut
+ */
+//define('DIR_CACHE',         'sys/cache/');
+//define('DIR_ANON',          'sys/anon/');
 
 ?>

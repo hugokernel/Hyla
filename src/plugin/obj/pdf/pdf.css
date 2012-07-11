@@ -1,0 +1,17 @@
+
+.pdf-page {
+    margin: 10px;
+}
+
+.pdf-page #pdf-page-previous {
+    margin-right: 50px;
+}
+
+.pdf-page #pdf-page-next {
+    margin-left: 50px;
+}
+
+.pdf-page a.disabled {
+    color: #CCC;
+}
+

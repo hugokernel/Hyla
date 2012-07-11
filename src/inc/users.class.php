@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -184,7 +184,9 @@ class users extends grp {
         @param  string  $login  Le login à tester
      */
     function testLex($login) {
-        return preg_match('/^[A-Zéèçà]{1}[A-Zéèçà0-9._-]{1,31}$/i', $login);
+        // Récupère le plugin auth pour accéder au testLex
+        $auth = plugins::get(PLUGIN_TYPE_AUTH, $conf['plugin_default_auth']);
+        return $auth->testLex($login);
     }
 }
 

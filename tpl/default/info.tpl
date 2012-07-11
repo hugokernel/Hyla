@@ -47,14 +47,14 @@
 
     <!-- BEGIN aff_file -->
     <ul>
-        <li><a href="{URL_RSS_FILE_COMMENT}" title="Rss 1.0"><img src="{DIR_ROOT}/img/rss.png" alt="rss" /> {LANG:Rss feed of comments of this file.}</a></li>
+        <li><a href="{URL_RSS_FILE_COMMENT}" title="Rss 1.0"><img src="{DIR_ROOT}img/rss.png" alt="rss" /> {LANG:Rss feed of comments of this file.}</a></li>
     </ul>
     <!-- END aff_file -->
 
     <!-- BEGIN aff_dir -->
     <ul>
-        <li><a href="{URL_RSS_DIR_OBJECT}" title="Rss 1.0"><img src="{DIR_ROOT}/img/rss.png" alt="rss" /> {LANG:Rss feed of file in this dir.}</a></li>
-        <li><a href="{URL_RSS_DIR_COMMENT}" title="Rss 1.0"><img src="{DIR_ROOT}/img/rss.png" alt="rss" /> {LANG:Rss feed of comment in this dir.}</a></li>
+        <li><a href="{URL_RSS_DIR_OBJECT}" title="Rss 1.0"><img src="{DIR_ROOT}img/rss.png" alt="rss" /> {LANG:Rss feed of file in this dir.}</a></li>
+        <li><a href="{URL_RSS_DIR_COMMENT}" title="Rss 1.0"><img src="{DIR_ROOT}img/rss.png" alt="rss" /> {LANG:Rss feed of comment in this dir.}</a></li>
     </ul>
     <!-- END aff_dir -->
 

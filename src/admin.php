@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -706,7 +706,6 @@ switch ($url->getParam('aff', 2)) {
 
             $ini->editVar('register_user',          $_POST['conf_register_user']);
 
-
             if (plugins::isValid(strtolower($_POST['conf_plugin_default_dir']))) {
                 $ini->editVar('plugin_default_dir',     $_POST['conf_plugin_default_dir']);
             }
@@ -765,7 +764,7 @@ switch ($url->getParam('aff', 2)) {
                 $tpl->set_var('Hdlaff_conf_template_style');
                 $tpl->set_var('TEMPLATE_NAME', $tpl_name);
 
-                $xml =& new XPath($xfile);
+                $xml = new XPath($xfile);
                 $res = $xml->match('/template');
                 if ($res) {
                     $res = $xml->match('/template/stylesheets/stylesheet');
@@ -866,14 +865,14 @@ switch ($url->getParam('aff', 2)) {
 
         $msg = null;
 
-        $lobj = new obj(DIR_ROOT.DIR_ANON);
+        $lobj = new obj(get_anon_path());
         $lobj->loadRights();
 
         switch ($url->getParam('aff', 3)) {
             #   Téléchargement
             case 'download':
-                if (file::getRealFile($url->getParam('obj'), DIR_ROOT.DIR_ANON)) {
-                    file::sendFile(DIR_ROOT.DIR_ANON.$url->getParam('obj'));
+                if (file::getRealFile($url->getParam('obj'), get_anon_path())) {
+                    file::sendFile(get_anon_path() . $url->getParam('obj'));
                     system::end();
                 }
                 break;
@@ -974,9 +973,9 @@ switch ($url->getParam('aff', 2)) {
                 'DIR_CACHE'                 =>  DIR_CACHE,
                 'DIR_ANON'                  =>  DIR_ANON,
 
-                'ACCESS_FILE_INI'           =>  is_writable(DIR_ROOT.FILE_INI) ? $ok : $no,
-                'ACCESS_DIR_CACHE'          =>  is_writable(DIR_ROOT.DIR_CACHE) ? $ok : $no,
-                'ACCESS_DIR_ANON'           =>  is_writable(DIR_ROOT.DIR_ANON) ? $ok : $no,
+                'ACCESS_FILE_INI'           =>  is_writable(FILE_INI) ? $ok : $no,
+                'ACCESS_DIR_CACHE'          =>  is_writable(get_cache_path()) ? $ok : $no,
+                'ACCESS_DIR_ANON'           =>  is_writable(get_anon_path()) ? $ok : $no,
 
                 'EXTENSION_GD'              =>  extension_loaded('gd') ? $ok : $no,
                 'EXTENSION_EXIF'            =>  extension_loaded('exif') ? $ok : $no,

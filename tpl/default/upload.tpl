@@ -65,6 +65,6 @@
 <div class="info">
     <p>
         Il est possible d'envoyer plusieurs fichiers en une seule fois en les mettant dans une archive (gzip, tar, zip...), vous n'aurez plus alors qu'à ouvrir
-        cette dernière et extraire les fichiers grâce au lien adéquate.
+        cette dernière et extraire les fichiers grâce au lien adéquat.
     </p>
 </div>

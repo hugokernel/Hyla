@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin target="file" enabled="true">
+    <name>Pdf</name>
+    <extension>pdf</extension>
+    <description>Lecture des fichiers pdf avec pdf.js</description>
+    <author>hugo</author>
+    <version>1</version>
+    <minversion>0.8.1</minversion>
+</plugin>
+

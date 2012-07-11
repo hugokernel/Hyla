@@ -52,7 +52,7 @@
     </p>
     <p>
         {DEBUG} - <a href="http://www.hyla-project.org/">Hyla</a> {HYLA_VERSION},
-        Copyright (c) 2004-2007 <a href="http://www.digitalspirit.org/">Charles Rincheval</a>
+        Copyright (c) 2004-2012 <a href="http://www.digitalspirit.org/">Charles Rincheval</a>
     </p>
 <!--
     <p>

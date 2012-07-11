@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -413,6 +413,14 @@ function acl_test() {
     $ret = false;
 
     $args = func_get_args();
+
+    /* Les droits proviennent du dossier parent, même pour un dossier, sauf pour l'ajout de fichier et la création de dossier,
+     * les droits sont pris du dossier courant
+     */
+    if ($cobj->type == TYPE_DIR && $args[0] != AC_ADD_FILE && $args[0] != AC_CREATE_DIR) {
+        array_unshift($args, file::downPath($cobj->file));
+    }
+
     $r = call_user_func_array(array('acl', 'ok'), $args);
     if (!$r) {
         if ($cuser->id == ANONYMOUS_ID) {
@@ -431,6 +439,39 @@ function acl_test() {
     return $ret;
 }
 
+/*  Renvoie 1 ou 0 selon le droit d'accès
+    @param  ... ACL_xxx, ACL_xxx...
+ */
+function acl_get() {
+    global $cobj, $cuser, $url;
+    $ret = false;
+
+    $args = func_get_args();
+    if ($cobj->type == TYPE_DIR) {
+        array_unshift($args, file::downPath($cobj->file));
+    }
+
+    return call_user_func_array(array('acl', 'ok'), $args);
+}
+
+function get_anon_path() {
+    if (substr(DIR_ANON, 0, 1) == '/') {
+        $path = DIR_ANON;
+    } else {
+        $path = DIR_ROOT . DIR_ANON;
+    }
+    return $path;
+}
+
+function get_cache_path() {
+    if (substr(DIR_CACHE, 0, 1) == '/') {
+        $path = DIR_CACHE;
+    } else {
+        $path = DIR_ROOT . DIR_CACHE;
+    }
+    return $path;
+}
+
 /*  Renvoie le chemin réel vers le fichier (si c'est une archive, renvoie le chemin vers le cache)
  */
 function get_real_directory() {
@@ -438,7 +479,7 @@ function get_real_directory() {
     $ret = null;
     if ($cobj->type == TYPE_ARCHIVED) {
         cache::getFilePath($cobj->file, $file);
-        $ret = DIR_ROOT.$file.'/'.$cobj->target;
+        $ret = $file.'/'.$cobj->target;
     } else {
         $ret = $cobj->realpath;
     }

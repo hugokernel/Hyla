@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -22,7 +22,7 @@
 
 /*  La version
  */
-define('HYLA_VERSION',      '0.8.2');
+define('HYLA_VERSION',      '0.8.4');
 
 
 /*  Le décalage pour l'heure
@@ -40,10 +40,6 @@ define('DIR_PLUGINS_URL',   DIR_PLUGINS.'url/');
 define('DIR_IMG_PERSO',     'img/perso/');
 
 define('DIR_TPL',           'tpl/');
-
-define('DIR_CACHE',         'sys/cache/');
-define('DIR_ANON',          'sys/anon/');
-
 
 define('FILE_INI',          DIR_CONF.'hyla.ini');
 define('FILE_ICON',         DIR_CONF.'icon.ini');
@@ -115,7 +111,7 @@ define('SORT_DATE_R',           512);   // Date + -
 define('SORT_FOLDER_FIRST',     256);   // Répertoire en premier
 
 
-/*  Les Id réservé
+/*  Les Id réservés
     L'id 0 est interdit, il est utilisé en interne
  */
 define('ANY_ID',                1);

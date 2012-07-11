@@ -306,6 +306,15 @@ legend {
     padding: 0.4em;
 }
 
+fieldset#login label {
+	float: left;
+	width: 40%;
+	text-align: right;
+	margin: 0;
+	padding: 0 .5em 0 0;
+	line-height: 1.8;
+}
+
 
 #form_misc {
 /*  padding: 10%;*/

@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -77,9 +77,9 @@ function get_tree() {
 
     $class = null;
 
-    if ($tab) {
+    $last = 0;
 
-        $last = 0;
+    if ($tab) {
 
         foreach ($tab as $occ) {
 

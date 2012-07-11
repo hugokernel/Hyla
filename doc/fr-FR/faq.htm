@@ -39,12 +39,12 @@
     <p>
         Depuis la version 0.8.0, Hyla possède un système de <a href="rights.htm">droits</a>
         vous permettant, par exemple, de bloquer l'accès à certains dossiers de manière à protéger
-        leurs contenu.
+        leurs contenus.
     </p>
     
     <p>
-        Des petites règles sont cependant importantes afin de s'assurer que les fichiers dit "sécurisés"
-        (entendez, fichiers au sein d'un dossier possédant des droits) ne soit pas accessibles par
+        Des petites règles sont cependant importantes afin de s'assurer que les fichiers dits "sécurisés"
+        (entendez, fichiers au sein d'un dossier possédant des droits) ne soient pas accessibles par
         un autre point d'entrée que Hyla. 
     </p>
 
@@ -68,13 +68,13 @@
         <li>
             Assurez-vous qu'il n'existe pas d'autre point d'entrée pour accéder au dossier partagé.
             <br />
-            Un exemple vaut mieux qu'un long discour, imaginez l'arborescence suivante :
+            Un exemple vaut mieux qu'un long discours, imaginez l'arborescence suivante :
             <p>
                 <span class="path">/var/www/</span> est la racine de votre site web.
                 <br />
                 <span class="path">/var/www/share/</span> est le dossier de partage de Hyla.
                 <br />
-                <span class="path">/var/www/hyla/</span> est le dossier oû est installé Hyla.
+                <span class="path">/var/www/hyla/</span> est le dossier où est installé Hyla.
             </p>
             <p>
                 Dans cette configuration, il sera tout aussi simple d'accéder aux fichiers
@@ -84,12 +84,12 @@
             </p>
             <p class="remarque">    
                 <u>Note pour les développeurs de plugins:</u> C'est la raison pour laquelle il ne faut pas
-                afficher à l'utilisateur le chemin complet sur le serveur car une personne mal
-                intentionné pourrait alors, si le chemin n'est pas protégé, accéder au contenu partagé.
+                afficher à l'utilisateur le chemin complet sur le serveur, car une personne mal
+                intentionnée pourrait alors, si le chemin n'est pas protégé, accéder au contenu partagé.
             </p>
             <p>
                 Il est donc conseiller de spécifier un dossier de partage qui ne soit pas accessible
-                directement depuis le web ou, si vous ne pouvez pas, créér un fichier .htaccess à la racine
+                directement depuis le web ou, si vous ne pouvez pas, créer un fichier .htaccess à la racine
                 de votre dossier de partage (ex: <span class="path">/var/www/share/</span>) contenant
                 "deny from all".
             </p>
@@ -132,7 +132,7 @@
     
     <p>
         Il est fort probable qu'il y est un souci dans la configuration ou lors de l'établissement
-        de la connection avec le serveur SQL, par défaut, Hyla n'affiche pas les erreurs mais vous
+        de la connexion avec le serveur SQL, par défaut, Hyla n'affiche pas les erreurs, mais vous
         pouvez forcer l'affichage afin de trouver la cause de votre problème.
         <br />
         Ouvrez le fichier <span class="path">/src/init.php</span>, au début de ce dernier, vous devriez
@@ -156,7 +156,7 @@ error_reporting(E_ALL);
     </pre>
 
     <p>
-        Dorénavant, toutes les erreurs seront affichés, il est maintenant plus simple de connaitre
+        Dorénavant, toutes les erreurs seront affichées, il est maintenant plus simple de connaitre
         la cause de votre problème.
         <br />
         Une fois le problème résolu, n'oubliez pas de remettre le fichier <span class="path">/src/init.php</span>

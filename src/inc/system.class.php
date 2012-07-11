@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -84,7 +84,7 @@ class system
         @access static
      */
     function getHost() {
-        $server_name = $_SERVER['HTTP_HOST'];
+        $server_name = $_SERVER['SERVER_NAME'];
         if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
             $scheme = 'https';
             $port = ($_SERVER['SERVER_PORT'] == '443') ? null : ':'.$_SERVER['SERVER_PORT'];

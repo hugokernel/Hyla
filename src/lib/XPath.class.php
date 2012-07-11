@@ -157,9 +157,14 @@
  *
  * @author  S.Blum / N.Swinson / D.Allen / (P.Mehl)
  * @link    http://sourceforge.net/projects/phpxpath/
- * @version 3.4
- * @CVS $Id: XPath.class.php,v 1.136 2003/06/01 00:06:25 nigelswinson Exp $
+ * @version 3.5
+ * @CVS $Id: XPath.class.php,v 1.148 2004/08/13 11:47:36 nigelswinson Exp $
  */
+
+// Include guard, protects file being included twice
+$ConstantName = 'INCLUDED_'.strtoupper(__FILE__);
+if (defined($ConstantName)) return;
+define($ConstantName,1, TRUE);
 
 /************************************************************************************************
 * ===============================================================================================
@@ -175,6 +180,16 @@ class XPathBase {
   // Used to help navigate through the begin/end debug calls
   var $iDebugNextLinkNumber = 1;
   var $aDebugOpenLinks = array();
+  var $aDebugFunctions = array(
+		//'_evaluateStep',
+          //'_evaluatePrimaryExpr',
+          //'_evaluateExpr',
+          //'_evaluateStep',
+          //'_checkPredicates',
+          //'_evaluateFunction',
+          //'_evaluateOperator',
+          //'_evaluatePathExpr',
+               );
 
   /**
    * Constructor
@@ -199,7 +214,8 @@ class XPathBase {
       case 'Windows_98':
       case 'Unknown OS':
         // should catch Mac OS X compatible environment 
-        if (preg_match('/Darwin/',$_SERVER['SERVER_SOFTWARE'])) { 
+        if (!empty($_SERVER['SERVER_SOFTWARE']) 
+            && preg_match('/Darwin/',$_SERVER['SERVER_SOFTWARE'])) { 
            // fall-through 
         } else { 
            $this->properties['OS_supports_flock'] = FALSE; 
@@ -617,10 +633,10 @@ class XPathBase {
     static $color = array('green','blue','red','lime','fuchsia', 'aqua');
     static $colIndex = -1;
     $colIndex++;
-    $pre = '<pre STYLE="border:solid thin '. $color[$colIndex % 6] . '; padding:5">';
-    $out = '<div align="left"> ' . $pre . "<STRONG>{$fileName} : {$functionName}</STRONG>";
-    echo $out;
-    echo '<a style="float:right" name="'.$this->iDebugNextLinkNumber.'Open" href="#'.$this->iDebugNextLinkNumber.'Close">Function Close '.$this->iDebugNextLinkNumber.'</a>';
+    echo '<div style="clear:both" align="left"> ';
+    echo '<pre STYLE="border:solid thin '. $color[$colIndex % 6] . '; padding:5">';
+    echo '<a style="float:right;margin:5px" name="'.$this->iDebugNextLinkNumber.'Open" href="#'.$this->iDebugNextLinkNumber.'Close">Function Close '.$this->iDebugNextLinkNumber.'</a>';
+    echo "<STRONG>{$fileName} : {$functionName}</STRONG>";
     echo '<hr style="clear:both">';
     array_push($this->aDebugOpenLinks, $this->iDebugNextLinkNumber);
     $this->iDebugNextLinkNumber++;
@@ -640,19 +656,19 @@ class XPathBase {
    */
   function _closeDebugFunction($aStartTime, $returnValue = "") {
     echo "<hr>";
+    $iOpenLinkNumber = array_pop($this->aDebugOpenLinks);
+    echo '<a style="float:right" name="'.$iOpenLinkNumber.'Close" href="#'.$iOpenLinkNumber.'Open">Function Open '.$iOpenLinkNumber.'</a>';
     if (isSet($returnValue)) {
       if (is_array($returnValue))
         echo "Return Value: ".print_r($returnValue)."\n";
       else if (is_numeric($returnValue)) 
-        echo "Return Value: '".(string)$returnValue."'\n";
+        echo "Return Value: ".(string)$returnValue."\n";
       else if (is_bool($returnValue)) 
         echo "Return Value: ".($returnValue ? "TRUE" : "FALSE")."\n";
       else 
         echo "Return Value: \"".htmlspecialchars($returnValue)."\"\n";
     }
     $this->_profileFunction($aStartTime, "Function took");
-    $iOpenLinkNumber = array_pop($this->aDebugOpenLinks);
-    echo '<a style="float:right" name="'.$iOpenLinkNumber.'Close" href="#'.$iOpenLinkNumber.'Open">Function Open '.$iOpenLinkNumber.'</a>';
     echo '<br style="clear:both">';
     echo " \n</pre></div>";
   }
@@ -959,7 +975,7 @@ class XPathEngine extends XPathBase {
     if ($this->_indexIsDirty) $this->reindexNodeTree();
     return $this->nodeIndex[$absoluteXPath];
   }
-  
+
   /**
    * Get a the content of a node text part or node attribute.
    * 
@@ -1007,7 +1023,7 @@ class XPathEngine extends XPathBase {
         break; // try-block
       }
             
-      // Xpath contains a 'text()'-function, thus goes right to a text node. If so interpete the Xpath.
+      // Xpath contains a 'text()'-function, thus goes right to a text node. If so interpret the Xpath.
       if (preg_match(":(.*)/text\(\)(\[(.*)\])?$:U", $absoluteXPath, $matches)) {
         $absoluteXPath = $matches[1];
  
@@ -1064,6 +1080,24 @@ class XPathEngine extends XPathBase {
     
     if (!$status) return FALSE;
     return $text;
+  }
+
+  /**
+   * Obtain the string value of an object
+   *
+   * http://www.w3.org/TR/xpath#dt-string-value
+   *
+   * "For every type of node, there is a way of determining a string-value for a node of that type. 
+   * For some types of node, the string-value is part of the node; for other types of node, the 
+   * string-value is computed from the string-value of descendant nodes."
+   *
+   * @param $node   (node)   The node we have to convert
+   * @return        (string) The string value of the node.  "" if the object has no evaluatable
+   *                         string value
+   */
+  function _stringValue($node) {
+    // Decode the entitites and then add the resulting literal string into our array.
+    return $this->_addLiteral($this->decodeEntities($this->wholeText($node)));
   }
   
   //-----------------------------------------------------------------------------------------
@@ -1135,13 +1169,12 @@ class XPathEngine extends XPathBase {
           break; // try-block
         }
       }
-      
       if (!($xmlOut = $this->_export($absoluteXPath, $xmlHeader))) {
         $errStr = "Export failed";
         break; // try-block
       }
       
-	  $iBytesWritten = fwrite($hFile, $xmlOut);
+      $iBytesWritten = fwrite($hFile, $xmlOut);
       if ($iBytesWritten != strlen($xmlOut)) {
         $errStr = "Write error when writing back the $fileName file.";
         break; // try-block
@@ -1155,6 +1188,7 @@ class XPathEngine extends XPathBase {
     @flock($hFile, LOCK_UN);
     @fclose($hFile);
     // Sanity check the produced file.
+    clearstatcache();
     if (filesize($fileName) < strlen($xmlOut)) {
       $errStr = "Write error when writing back the $fileName file.";
       $status = FALSE;
@@ -1257,7 +1291,6 @@ class XPathEngine extends XPathBase {
       $to = array('&lt;', '&gt;', '<font color="#FF0000"><b>', '</b></font>');
       $xmlOut = str_replace($from, $to, $xmlOut);
     }
-    
     return $xmlOut; 
   }  
 
@@ -2399,10 +2432,323 @@ class XPathEngine extends XPathBase {
   }
 
   /**
-   * Internal recursive evaluate an-XPath-expression function.
+   * Look for operators in the expression
+   *
+   * Parses through the given expression looking for operators.  If found returns
+   * the operands and the operator in the resulting array.
+   *
+   * @param  $xPathQuery  (string) XPath query to be evaluated.
+   * @return              (array)  If an operator is found, it returns an array containing
+   *                               information about the operator.  If no operator is found
+   *                               then it returns an empty array.  If an operator is found,
+   *                               but has invalid operands, it returns FALSE.
+   *                               The resulting array has the following entries:
+   *                                'operator' => The string version of operator that was found,
+   *                                              trimmed for whitespace
+   *                                'left operand' => The left operand, or empty if there was no
+   *                                              left operand for this operator.
+   *                                'right operand' => The right operand, or empty if there was no
+   *                                              right operand for this operator.
+   */
+  function _GetOperator($xPathQuery) {
+    $position = 0;
+    $operator = '';
+
+    // The results of this function can easily be cached.
+    static $aResultsCache = array();
+    if (isset($aResultsCache[$xPathQuery])) {
+      return $aResultsCache[$xPathQuery];
+    }
+
+    // Run through all operators and try to find one.
+    $opSize = sizeOf($this->operators);
+    for ($i=0; $i<$opSize; $i++) {
+      // Pick an operator to try.
+      $operator = $this->operators[$i];
+      // Quickcheck. If not present don't wast time searching 'the hard way'
+      if (strpos($xPathQuery, $operator)===FALSE) continue;
+      // Special check
+      $position = $this->_searchString($xPathQuery, $operator);
+      // Check whether a operator was found.
+      if ($position <= 0 ) continue;
+
+      // Check whether it's the equal operator.
+      if ($operator == '=') {
+        // Also look for other operators containing the equal sign.
+        switch ($xPathQuery[$position-1]) {
+          case '<' : 
+            $position--;
+            $operator = '<=';
+            break;
+          case '>' : 
+            $position--;
+            $operator = '>=';
+            break;
+          case '!' : 
+            $position--;
+            $operator = '!=';
+            break;
+          default:
+            // It's a pure = operator then.
+        }
+        break;
+      }
+
+      if ($operator == '*') {
+        // http://www.w3.org/TR/xpath#exprlex:
+        // "If there is a preceding token and the preceding token is not one of @, ::, (, [, 
+        // or an Operator, then a * must be recognized as a MultiplyOperator and an NCName must 
+        // be recognized as an OperatorName."
+
+        // Get some substrings.
+        $character = substr($xPathQuery, $position - 1, 1);
+      
+        // Check whether it's a multiply operator or a name test.
+        if (strchr('/@:([', $character) != FALSE) {
+          // Don't use the operator.
+            $position = -1;
+          continue;
+        } else {
+          // The operator is good.  Lets use it.
+          break;
+        }
+      }
+
+      // Extremely annoyingly, we could have a node name like "for-each" and we should not
+      // parse this as a "-" operator.  So if the first char of the right operator is alphabetic,
+      // then this is NOT an interger operator.
+      if (strchr('-+*', $operator) != FALSE) {
+        $rightOperand = trim(substr($xPathQuery, $position + strlen($operator)));
+        if (strlen($rightOperand) > 1) {
+          if (preg_match(':^\D$:', $rightOperand[0])) {
+            // Don't use the operator.
+            $position = -1;
+            continue;
+          } else {
+            // The operator is good.  Lets use it.
+            break;
+          }
+        }
+      }
+
+      // The operator must be good then :o)
+      break;
+
+    } // end while each($this->operators)
+
+    // Did we find an operator?
+    if ($position == -1) {
+      $aResultsCache[$xPathQuery] = array();
+      return array();
+    }
+
+    /////////////////////////////////////////////
+    // Get the operands
+
+    // Get the left and the right part of the expression.
+    $leftOperand  = trim(substr($xPathQuery, 0, $position));
+    $rightOperand = trim(substr($xPathQuery, $position + strlen($operator)));
+  
+    // Remove whitespaces.
+    $leftOperand  = trim($leftOperand);
+    $rightOperand = trim($rightOperand);
+
+    /////////////////////////////////////////////
+    // Check the operands.
+
+    if ($leftOperand == '') {
+      $aResultsCache[$xPathQuery] = FALSE;
+      return FALSE;
+    }
+
+    if ($rightOperand == '') {
+      $aResultsCache[$xPathQuery] = FALSE;
+      return FALSE;
+    }
+
+    // Package up and return what we found.
+    $aResult = array('operator' => $operator,
+                'left operand' => $leftOperand,
+                'right operand' => $rightOperand);
+
+    $aResultsCache[$xPathQuery] = $aResult;
+
+    return $aResult;
+  }
+
+  /**
+   * Evaluates an XPath PrimaryExpr
+   *
+   * http://www.w3.org/TR/xpath#section-Basics
+   *
+   *  [15]    PrimaryExpr    ::= VariableReference  
+   *                             | '(' Expr ')'  
+   *                             | Literal  
+   *                             | Number  
+   *                             | FunctionCall 
+   *
+   * @param  $xPathQuery  (string)   XPath query to be evaluated.
+   * @param  $context     (array)    The context from which to evaluate
+   * @param  $results     (mixed)    If the expression could be parsed and evaluated as one of these
+   *                                 syntactical elements, then this will be either:
+   *                                    - node-set (an ordered collection of nodes without duplicates) 
+   *                                    - boolean (true or false) 
+   *                                    - number (a floating-point number) 
+   *                                    - string (a sequence of UCS characters) 
+   * @return              (string)    An empty string if the query was successfully parsed and 
+   *                                  evaluated, else a string containing the reason for failing.
+   * @see    evaluate()
+   */
+  function _evaluatePrimaryExpr($xPathQuery, $context, &$result) {
+    // If you are having difficulty using this function.  Then set this to TRUE and 
+    // you'll get diagnostic info displayed to the output.
+    $bDebugThisFunction = in_array('_evaluatePrimaryExpr', $this->aDebugFunctions);
+    
+    if ($bDebugThisFunction) {
+      $aStartTime = $this->_beginDebugFunction("_evaluatePrimaryExpr");
+      echo "Path: $xPathQuery\n";
+      echo "Context:";
+      $this->_printContext($context);
+      echo "\n";
+    }
+
+    // Certain expressions will never be PrimaryExpr, so to speed up processing, cache the
+    // results we do find from this function.
+    static $aResultsCache = array();
+    
+    // Do while false loop
+    $error = "";
+    // If the result is independant of context, then we can cache the result and speed this function
+    // up on future calls.
+    $bCacheableResult = FALSE;
+    do {
+      if (isset($aResultsCache[$xPathQuery])) {
+        $error = $aResultsCache[$xPathQuery]['Error'];
+        $result = $aResultsCache[$xPathQuery]['Result'];
+        break;
+      }
+
+      // VariableReference 
+      // ### Not supported.
+
+      // Is it a number?
+      // | Number  
+      if (is_numeric($xPathQuery)) {
+        $result = doubleval($xPathQuery);
+        $bCacheableResult = TRUE;
+        break;
+      }
+
+      // If it starts with $, and the remainder is a number, then it's a string.
+      // | Literal  
+      $literal = $this->_asLiteral($xPathQuery);
+      if ($literal !== FALSE) {
+        $result = $xPathQuery;
+        $bCacheableResult = TRUE;
+        break;
+      }
+
+      // Is it a function?
+      // | FunctionCall 
+      {
+        // Check whether it's all wrapped in a function.  will be like count(.*) where .* is anything
+        // text() will try to be matched here, so just explicitly ignore it
+        $regex = ":^([^\(\)\[\]/]*)\s*\((.*)\)$:U";
+        if (preg_match($regex, $xPathQuery, $aMatch) && $xPathQuery != "text()") {
+          $function = $aMatch[1];
+          $data     = $aMatch[2];
+          // It is possible that we will get "a() or b()" which will match as function "a" with
+          // arguments ") or b(" which is clearly wrong... _bracketsCheck() should catch this.
+          if ($this->_bracketsCheck($data)) {
+            if (in_array($function, $this->functions)) {
+              if ($bDebugThisFunction) echo "XPathExpr: $xPathQuery is a $function() function call:\n";
+              $result = $this->_evaluateFunction($function, $data, $context);
+              break;
+            } 
+          }
+        }
+      }
+
+      // Is it a bracketed expression?
+      // | '(' Expr ')'  
+      // If it is surrounded by () then trim the brackets
+      $bBrackets = FALSE;
+      if (preg_match(":^\((.*)\):", $xPathQuery, $aMatches)) {
+        // Do not keep trimming off the () as we could have "(() and ())"
+        $bBrackets = TRUE;
+        $xPathQuery = $aMatches[1];
+      }
+
+      if ($bBrackets) {
+        // Must be a Expr then.
+        $result = $this->_evaluateExpr($xPathQuery, $context);
+        break;
+      }
+
+      // Can't be a PrimaryExpr then.
+      $error = "Expression is not a PrimaryExpr";
+      $bCacheableResult = TRUE;
+    } while (FALSE);
+    //////////////////////////////////////////////    
+
+    // If possible, cache the result.
+    if ($bCacheableResult) {
+        $aResultsCache[$xPathQuery]['Error'] = $error;
+        $aResultsCache[$xPathQuery]['Result'] = $result;
+    }
+
+    if ($bDebugThisFunction) {
+      $this->_closeDebugFunction($aStartTime, array('result' => $result, 'error' => $error));
+    }
+    // Return the result.
+    return $error;
+  }
+
+  /**
+   * Evaluates an XPath Expr
    *
    * $this->evaluate() is the entry point and does some inits, while this 
    * function is called recursive internaly for every sub-xPath expresion we find.
+   * It handles the following syntax, and calls evaluatePathExpr if it finds that none
+   * of this grammer applies.
+   *
+   * http://www.w3.org/TR/xpath#section-Basics
+   *
+   * [14]    Expr               ::= OrExpr 
+   * [21]    OrExpr             ::= AndExpr  
+   *                                | OrExpr 'or' AndExpr  
+   * [22]    AndExpr            ::= EqualityExpr  
+   *                                | AndExpr 'and' EqualityExpr  
+   * [23]    EqualityExpr       ::= RelationalExpr  
+   *                                | EqualityExpr '=' RelationalExpr  
+   *                                | EqualityExpr '!=' RelationalExpr  
+   * [24]    RelationalExpr     ::= AdditiveExpr  
+   *                                | RelationalExpr '<' AdditiveExpr  
+   *                                | RelationalExpr '>' AdditiveExpr  
+   *                                | RelationalExpr '<=' AdditiveExpr  
+   *                                | RelationalExpr '>=' AdditiveExpr  
+   * [25]    AdditiveExpr       ::= MultiplicativeExpr  
+   *                                | AdditiveExpr '+' MultiplicativeExpr  
+   *                                | AdditiveExpr '-' MultiplicativeExpr  
+   * [26]    MultiplicativeExpr ::= UnaryExpr  
+   *                                | MultiplicativeExpr MultiplyOperator UnaryExpr  
+   *                                | MultiplicativeExpr 'div' UnaryExpr  
+   *                                | MultiplicativeExpr 'mod' UnaryExpr  
+   * [27]    UnaryExpr          ::= UnionExpr  
+   *                                | '-' UnaryExpr 
+   * [18]    UnionExpr          ::= PathExpr  
+   *                                | UnionExpr '|' PathExpr 
+   *
+   * NOTE: The effect of the above grammar is that the order of precedence is 
+   * (lowest precedence first): 
+   * 1) or 
+   * 2) and 
+   * 3) =, != 
+   * 4) <=, <, >=, > 
+   * 5) +, -
+   * 6) *, div, mod
+   * 7) - (negate)
+   * 8) |
    *
    * @param  $xPathQuery  (string)   XPath query to be evaluated.
    * @param  $context     (array)    An associative array the describes the context from which
@@ -2420,16 +2766,16 @@ class XPathEngine extends XPathBase {
   function _evaluateExpr($xPathQuery, $context) {
     // If you are having difficulty using this function.  Then set this to TRUE and 
     // you'll get diagnostic info displayed to the output.
-    $bDebugThisFunction = FALSE;
+    $bDebugThisFunction = in_array('_evaluateExpr', $this->aDebugFunctions);
     
     if ($bDebugThisFunction) {
       $aStartTime = $this->_beginDebugFunction("_evaluateExpr");
       echo "Path: $xPathQuery\n";
       echo "Context:";
       $this->_printContext($context);
-      echo "\n";
+      echo "\n";    
     }
-    
+
     // Numpty check
     if (!isset($xPathQuery) || ($xPathQuery == '')) {
       $this->_displayError("The \$xPathQuery argument must have a value.", __LINE__, __FILE__);
@@ -2439,175 +2785,45 @@ class XPathEngine extends XPathBase {
     // At the top level we deal with booleans.  Only if the Expr is just an AdditiveExpr will 
     // the result not be a boolean.
     //
-    // [14]    Expr               ::= OrExpr 
-    // [21]    OrExpr             ::= AndExpr  
-    //                                | OrExpr 'or' AndExpr  
-    // [22]    AndExpr            ::= EqualityExpr  
-    //                                | AndExpr 'and' EqualityExpr  
-    // [23]    EqualityExpr       ::= RelationalExpr  
-    //                                | EqualityExpr '=' RelationalExpr  
-    //                                | EqualityExpr '!=' RelationalExpr  
-    // [24]    RelationalExpr     ::= AdditiveExpr  
-    //                                | RelationalExpr '<' AdditiveExpr  
-    //                                | RelationalExpr '>' AdditiveExpr  
-    //                                | RelationalExpr '<=' AdditiveExpr  
-    //                                | RelationalExpr '>=' AdditiveExpr  
-    // [25]    AdditiveExpr       ::= MultiplicativeExpr  
-    //                                | AdditiveExpr '+' MultiplicativeExpr  
-    //                                | AdditiveExpr '-' MultiplicativeExpr  
-    // [26]    MultiplicativeExpr ::= UnaryExpr  
-    //                                | MultiplicativeExpr MultiplyOperator UnaryExpr  
-    //                                | MultiplicativeExpr 'div' UnaryExpr  
-    //                                | MultiplicativeExpr 'mod' UnaryExpr  
-    // [27]    UnaryExpr          ::= UnionExpr  
-    //                                | '-' UnaryExpr 
-    // [18]    UnionExpr          ::= PathExpr  
-    //                                | UnionExpr '|' PathExpr 
-    //
-    // NOTE: The effect of the above grammar is that the order of precedence is 
-    // (lowest precedence first): 
-    // 1) or 
-    // 2) and 
-    // 3) =, != 
-    // 4) <=, <, >=, > 
-    // 5) +, -
-    // 6) *, div, mod
-    // 7) - (negate)
-    // 8) |
     //
     // Between these syntactical elements we get PathExprs.
 
     // Do while false loop
     do {
-      // An expression can be one of these, and we should catch these "first".
-      //
-      // [15]    PrimaryExpr    ::= VariableReference  
-      //                            | '(' Expr ')'  
-      //                            | Literal  
-      //                            | Number  
-      //                            | FunctionCall 
+      static $aKnownPathExprCache = array();
 
-      // If it is surrounded by () then trim the brackets
-      while (preg_match(":^\((.*)\):", $xPathQuery, $aMatches)) {
-        $xPathQuery = $aMatches[1];
-      }
-
-      /////////////////////////////////////////////
-      // Easy outs
-
-      // Is it a number?
-      if (is_numeric($xPathQuery)) {
-        $result = $xPathQuery;
-        break;
-      }
-
-      // If it starts with $, and the remainder is a number, then it's a string.
-      $literal = $this->_asLiteral($xPathQuery);
-      if ($literal !== FALSE) {
-          $result = $xPathQuery;
-          break;
-      }
-
-      // Is it a function?
-      {
-        // Check whether it's all wrapped in a function.  will be like count(.*) where .* is anything
-        // text() will try to be matched here, so just explicitly ignore it
-        $regex = ":^([^\(\)\[\]/]*)\s*\((.*)\)$:U";
-        if (preg_match($regex, $xPathQuery, $aMatch) && $xPathQuery != "text()") {
-          $function = $aMatch[1];
-          $data     = $aMatch[2];
-          // It is possible that we will get "a() or b()" which will match as function "a" with
-          // arguments ") or b(" which is clearly wrong... _bracketsCheck() should catch this.
-          if ($this->_bracketsCheck($data)) {
-            if ($bDebugThisFunction) echo "XPathExpr: $xPathQuery is a $function() function call:\n";
-            if (in_array($function, $this->functions)) {
-              $result = $this->_evaluateFunction($function, $data, $context);
-              break;
-            } 
-          }
-        }
-      }
-
-      /////////////////////////////////////////////
-      // Check for operators.
-      // Set the default position and the type of the operator.
-      $position = 0;
-      $operator = '';
-      
-      // Run through all operators and try to find one.
-      $opSize = sizeOf($this->operators);
-      for ($i=0; $i<$opSize; $i++) {
-        // Have we found an operator yet?
-        if ($position >0) break;
-        $operator = $this->operators[$i];
-        // Quickcheck. If not present don't wast time searching 'the hard way'
-        if (strpos($xPathQuery, $operator)===FALSE) continue;
-        // Special check
-        $position = $this->_searchString($xPathQuery, $operator);
-        // Check whether a operator was found.
-        if ($position <= 0 ) continue;
-        // Check whether it's the equal operator.
-        if ($operator == '=') {
-          // Also look for other operators containing the equal sign.
-          switch ($xPathQuery[$position-1]) {
-            case '<' : 
-              $position--;
-              $operator = '<=';
-              break;
-            case '>' : 
-              $position--;
-              $operator = '>=';
-              break;
-            case '!' : 
-              $position--;
-              $operator = '!=';
-              break;
-            default:
-              // It's a pure = operator then.
-          }
-        }
-        if ($operator == '*') {
-          // http://www.w3.org/TR/xpath#exprlex:
-          // "If there is a preceding token and the preceding token is not one of @, ::, (, [, 
-          // or an Operator, then a * must be recognized as a MultiplyOperator and an NCName must 
-          // be recognized as an OperatorName."
-
-          // Get some substrings.
-          $character = substr($xPathQuery, $position - 1, 1);
-        
-          // Check whether it's a multiply operator or a name test.
-          if (strchr('/@:([', $character) != FALSE) {
-            // Don't use the operator.
-            $operator = '';
-            $position = -1;
-            continue;
-          }
-        }
-
-        // Extremely annoyingly, we could have a node name like "for-each" and we should not
-        // parse this as a "-" operator.  So if the first char of the right operator is alphabetic,
-        // then this is NOT an interger operator.
-        if (strchr('-+*', $operator) != FALSE) {
-          $rightOperand = trim(substr($xPathQuery, $position + strlen($operator)));
-          if (strlen($rightOperand) > 1) {
-            if (preg_match(':^\D$:', $rightOperand[0])) {
-              // Don't use the operator.
-              $operator = '';
-              $position = -1;
-              continue;
-            }
-          }
-        }
-
-      } // end while each($this->operators)
-      
-      /////////////////////////////////////////////
-      // Check whether an operator was found.
-      if ($position <= 0) {
-        // No operator.  Means we have a PathExpr then.  Go to the next level.
+      if (isset($aKnownPathExprCache[$xPathQuery])) {
+        if ($bDebugThisFunction) echo "XPathExpr is a PathExpr\n";
         $result = $this->_evaluatePathExpr($xPathQuery, $context);
         break;
       }
+
+      // Check for operators first, as we could have "() op ()" and the PrimaryExpr will try to
+      // say that that is an Expr called ") op ("
+      // Set the default position and the type of the operator.
+      $aOperatorInfo = $this->_GetOperator($xPathQuery);
+
+      // An expression can be one of these, and we should catch these "first" as they are most common
+      if (empty($aOperatorInfo)) {
+        $error = $this->_evaluatePrimaryExpr($xPathQuery, $context, $result);
+        if (empty($error)) {
+          // It could be parsed as a PrimaryExpr, so look no further :o)
+          break;
+        }
+      }
+
+      // Check whether an operator was found.
+      if (empty($aOperatorInfo)) {
+        if ($bDebugThisFunction) echo "XPathExpr is a PathExpr\n";
+        $aKnownPathExprCache[$xPathQuery] = TRUE;
+        // No operator.  Means we have a PathExpr then.  Go to the next level.
+        $result = $this->_evaluatePathExpr($xPathQuery, $context);
+        break;
+      } 
+
+      if ($bDebugThisFunction) { echo "\nFound and operator:"; print_r($aOperatorInfo); }//LEFT:[$leftOperand]  oper:[$operator]  RIGHT:[$rightOperand]";
+
+      $operator = $aOperatorInfo['operator'];
 
       /////////////////////////////////////////////
       // Recursively process the operator
@@ -2618,10 +2834,6 @@ class XPathEngine extends XPathBase {
         case ' and ':
           $operatorType = 'Boolean';
           break;
-        case '<=':
-        case '<': 
-        case '>=':
-        case '>':
         case '+': 
         case '-': 
         case '*':
@@ -2632,6 +2844,10 @@ class XPathEngine extends XPathBase {
         case ' | ':
           $operatorType = 'NodeSet';
           break;
+        case '<=':
+        case '<': 
+        case '>=':
+        case '>':
         case '=': 
         case '!=':
           $operatorType = 'Multi';
@@ -2640,76 +2856,182 @@ class XPathEngine extends XPathBase {
             $this->_displayError("Internal error.  Default case of switch statement reached.", __LINE__, __FILE__);
       }
 
-      if ($bDebugThisFunction) echo "\nOperator is a [$operator]($operatorType operator) at pos '$position'";
-
-      /////////////////////////////////////////////
-      // Get the operands
-
-      // Get the left and the right part of the expression.
-      $leftOperand  = trim(substr($xPathQuery, 0, $position));
-      $rightOperand = trim(substr($xPathQuery, $position + strlen($operator)));
-      if ($bDebugThisFunction) echo "\nLEFT:[$leftOperand]  oper:[$operator]  RIGHT:[$rightOperand]";
-    
-      // Remove whitespaces.
-      $leftOperand  = trim($leftOperand);
-      $rightOperand = trim($rightOperand);
+      if ($bDebugThisFunction) echo "\nOperator is a [$operator]($operatorType operator)";
 
       /////////////////////////////////////////////
       // Evaluate the operands
 
-      // Evaluate the left and the right part.
-      if (!empty($leftOperand)) {
-        if ($bDebugThisFunction) echo "\nEvaluating LEFT:[$leftOperand]\n";
-        $left = $this->_evaluateExpr($leftOperand, $context);
-        if ($bDebugThisFunction) {echo "$leftOperand evals as:\n"; print_r($left); }
-      }
+      // Evaluate the left part.
+      if ($bDebugThisFunction) echo "\nEvaluating LEFT:[{$aOperatorInfo['left operand']}]\n";
+      $left = $this->_evaluateExpr($aOperatorInfo['left operand'], $context);
+      if ($bDebugThisFunction) {echo "{$aOperatorInfo['left operand']} evals as:\n"; print_r($left); }
       
       // If it is a boolean operator, it's possible we don't need to evaluate the right part.
 
       // Only evaluate the right part if we need to.
-      $bEvaluateRightPart = TRUE;
       $right = '';
       if ($operatorType == 'Boolean') {
-        $right = FALSE;
         // Is the left part false?
         $left = $this->_handleFunction_boolean($left, $context);
         if (!$left and ($operator == ' and ')) {
-          $bEvaluateRightPart = FALSE;
-          $right = FALSE;
+          $result = FALSE;
+          break;
         } else if ($left and ($operator == ' or ')) {
-          $bEvaluateRightPart = FALSE;
-          $right = TRUE;
-        } 
+          $result = TRUE;
+          break;
+        }
       } 
-      
-      // And do we need to?
-      if ($bEvaluateRightPart) {
-        if ($bDebugThisFunction) echo "\nEvaluating RIGHT:[$rightOperand]\n";
-        $right = $this->_evaluateExpr($rightOperand, $context);
-        if ($bDebugThisFunction) {echo "$rightOperand evals as:\n"; print_r($right); }
-      } else {
-        if ($bDebugThisFunction) echo "\nNo point in evaluating the right predicate: [$rightOperand]";
-      }
+
+      // Evaluate the right part
+      if ($bDebugThisFunction) echo "\nEvaluating RIGHT:[{$aOperatorInfo['right operand']}]\n";
+      $right = $this->_evaluateExpr($aOperatorInfo['right operand'], $context);
+      if ($bDebugThisFunction) {echo "{$aOperatorInfo['right operand']} evals as:\n"; print_r($right); echo "\n";}
 
       /////////////////////////////////////////////
       // Combine the operands
 
-      // Work out how to treat the multi operator
-      if ($operatorType == 'Multi') {
-        if (is_bool($left) || is_bool($right)) {
-          $operatorType = 'Boolean';
-        } elseif (is_int($left) || is_int($right)) {
-          $operatorType = 'Integer';
-        } elseif (!is_array($left) || !is_array($right)) {
-          $operatorType = 'String';
-        } elseif (is_array($left) || is_array($right)) {
-          $operatorType = 'Integer';
-        } else {
-          $operatorType = 'String';
+      // If necessary, work out how to treat the multi operators
+      if ($operatorType != 'Multi') {
+        $result = $this->_evaluateOperator($left, $operator, $right, $operatorType, $context);
+      } else {
+        // http://www.w3.org/TR/xpath#booleans
+        // If both objects to be compared are node-sets, then the comparison will be true if and 
+        // only if there is a node in the first node-set and a node in the second node-set such 
+        // that the result of performing the comparison on the string-values of the two nodes is 
+        // true. 
+        // 
+        // If one object to be compared is a node-set and the other is a number, then the 
+        // comparison will be true if and only if there is a node in the node-set such that the 
+        // result of performing the comparison on the number to be compared and on the result of 
+        // converting the string-value of that node to a number using the number function is true. 
+        //
+        // If one object to be compared is a node-set and the other is a string, then the comparison 
+        // will be true if and only if there is a node in the node-set such that the result of performing 
+        // the comparison on the string-value of the node and the other string is true. 
+        // 
+        // If one object to be compared is a node-set and the other is a boolean, then the comparison 
+        // will be true if and only if the result of performing the comparison on the boolean and on 
+        // the result of converting the node-set to a boolean using the boolean function is true.
+        if (is_array($left) || is_array($right)) {
+          if ($bDebugThisFunction) echo "As one of the operands is an array, we will need to loop\n";
+          if (is_array($left) && is_array($right)) {
+            $operatorType = 'String';
+          } elseif (is_numeric($left) || is_numeric($right)) {
+            $operatorType = 'Integer';
+          } elseif (is_bool($left)) {
+            $operatorType = 'Boolean';
+            $right = $this->_handleFunction_boolean($right, $context);
+          } elseif (is_bool($right)) {
+            $operatorType = 'Boolean';
+            $left = $this->_handleFunction_boolean($left, $context);
+          } else {
+            $operatorType = 'String';
+          }
+          if ($bDebugThisFunction) echo "Equals operator is a $operatorType operator\n";
+          // Turn both operands into arrays to simplify logic
+          $aLeft = $left;
+          $aRight = $right;
+          if (!is_array($aLeft)) $aLeft = array($aLeft);
+          if (!is_array($aRight)) $aRight = array($aRight);
+          $result = FALSE;
+          if (!empty($aLeft)) {
+            foreach ($aLeft as $leftItem) {
+              if (empty($aRight)) break;
+              // If the item is from a node set, we should evaluate it's string-value
+              if (is_array($left)) {
+                if ($bDebugThisFunction) echo "\tObtaining string-value of LHS:$leftItem as it's from a nodeset\n";
+                $leftItem = $this->_stringValue($leftItem);
+              }
+              foreach ($aRight as $rightItem) {
+                // If the item is from a node set, we should evaluate it's string-value
+                if (is_array($right)) {
+                  if ($bDebugThisFunction) echo "\tObtaining string-value of RHS:$rightItem as it's from a nodeset\n";
+                  $rightItem = $this->_stringValue($rightItem);
+                }
+
+                if ($bDebugThisFunction) echo "\tEvaluating $leftItem $operator $rightItem\n";
+                $result = $this->_evaluateOperator($leftItem, $operator, $rightItem, $operatorType, $context);
+                if ($result === TRUE) break;
+              }
+              if ($result === TRUE) break;
+            }
+          }
+        } 
+        // When neither object to be compared is a node-set and the operator is = or !=, then the 
+        // objects are compared by converting them to a common type as follows and then comparing 
+        // them. 
+        //
+        // If at least one object to be compared is a boolean, then each object to be compared 
+        // is converted to a boolean as if by applying the boolean function. 
+        //
+        // Otherwise, if at least one object to be compared is a number, then each object to be 
+        // compared is converted to a number as if by applying the number function. 
+        //
+        // Otherwise, both objects to be compared are converted to strings as if by applying 
+        // the string function. 
+        //  
+        // The = comparison will be true if and only if the objects are equal; the != comparison 
+        // will be true if and only if the objects are not equal. Numbers are compared for equality 
+        // according to IEEE 754 [IEEE 754]. Two booleans are equal if either both are true or 
+        // both are false. Two strings are equal if and only if they consist of the same sequence 
+        // of UCS characters.
+        else {
+          if (is_bool($left) || is_bool($right)) {
+            $operatorType = 'Boolean';
+          } elseif (is_numeric($left) || is_numeric($right)) {
+            $operatorType = 'Integer';
+          } else {
+            $operatorType = 'String';
+          }
+          if ($bDebugThisFunction) echo "Equals operator is a $operatorType operator\n";
+          $result = $this->_evaluateOperator($left, $operator, $right, $operatorType, $context);
         }
-        if ($bDebugThisFunction) echo "Equals operator is a $operatorType operator\n";
       }
 
+    } while (FALSE);
+    //////////////////////////////////////////////
+
+    if ($bDebugThisFunction) {
+      $this->_closeDebugFunction($aStartTime, $result);
+    }
+    // Return the result.
+    return $result;
+  }
+
+  /**
+   * Evaluate the result of an operator whose operands have been evaluated
+   *
+   * If the operator type is not "NodeSet", then neither the left or right operators 
+   * will be node sets, as the processing when one or other is an array is complex,
+   * and should be handled by the caller.
+   *
+   * @param  $left          (mixed)   The left operand
+   * @param  $right         (mixed)   The right operand
+   * @param  $operator      (string)  The operator to use to combine the operands
+   * @param  $operatorType  (string)  The type of the operator.  Either 'Boolean', 
+   *                                  'Integer', 'String', or 'NodeSet'
+   * @param  $context     (array)    The context from which to evaluate
+   * @return              (mixed)    The result of the XPath expression.  Either:
+   *                                 node-set (an ordered collection of nodes without duplicates) 
+   *                                 boolean (true or false) 
+   *                                 number (a floating-point number) 
+   *                                 string (a sequence of UCS characters) 
+   */
+  function _evaluateOperator($left, $operator, $right, $operatorType, $context) {
+    // If you are having difficulty using this function.  Then set this to TRUE and 
+    // you'll get diagnostic info displayed to the output.
+    $bDebugThisFunction = in_array('_evaluateOperator', $this->aDebugFunctions);
+    
+    if ($bDebugThisFunction) {
+      $aStartTime = $this->_beginDebugFunction("_evaluateOperator");
+      echo "left: $left\n";
+      echo "right: $right\n";
+      echo "operator: $operator\n";
+      echo "operator type: $operatorType\n";
+    }
+
+    // Do while false loop
+    do {
       // Handle the operator depending on the operator type.
       switch ($operatorType) {
         case 'Boolean':
@@ -2825,8 +3147,56 @@ class XPathEngine extends XPathBase {
   }
   
   /**
-   * Internal recursive evaluate an Path expression.
+   * Evaluates an XPath PathExpr
    *
+   * It handles the following syntax:
+   *
+   * http://www.w3.org/TR/xpath#node-sets
+   * http://www.w3.org/TR/xpath#NT-LocationPath
+   * http://www.w3.org/TR/xpath#path-abbrev
+   * http://www.w3.org/TR/xpath#NT-Step
+   *
+   * [19]   PathExpr              ::= LocationPath  
+   *                                  | FilterExpr  
+   *                                  | FilterExpr '/' RelativeLocationPath  
+   *                                  | FilterExpr '//' RelativeLocationPath
+   * [20]   FilterExpr            ::= PrimaryExpr  
+   *                                  | FilterExpr Predicate 
+   * [1]    LocationPath          ::= RelativeLocationPath  
+   *                                  | AbsoluteLocationPath  
+   * [2]    AbsoluteLocationPath  ::= '/' RelativeLocationPath?  
+   *                                  | AbbreviatedAbsoluteLocationPath
+   * [3]    RelativeLocationPath  ::= Step  
+   *                                  | RelativeLocationPath '/' Step  
+   *                                  | AbbreviatedRelativeLocationPath
+   * [4]    Step                  ::= AxisSpecifier NodeTest Predicate*  
+   *                                  | AbbreviatedStep  
+   * [5]    AxisSpecifier         ::= AxisName '::'  
+   *                                  | AbbreviatedAxisSpecifier  
+   * [10]   AbbreviatedAbsoluteLocationPath
+   *                              ::= '//' RelativeLocationPath
+   * [11]   AbbreviatedRelativeLocationPath
+   *                              ::= RelativeLocationPath '//' Step
+   * [12]   AbbreviatedStep       ::= '.'  
+   *                                  | '..'  
+   * [13]   AbbreviatedAxisSpecifier    
+   *                              ::= '@'? 
+   *
+   * If you expand all the abbreviated versions, then the grammer simplifies to:
+   *
+   * [19]   PathExpr              ::= RelativeLocationPath  
+   *                                  | '/' RelativeLocationPath?  
+   *                                  | FilterExpr  
+   *                                  | FilterExpr '/' RelativeLocationPath  
+   * [20]   FilterExpr            ::= PrimaryExpr  
+   *                                  | FilterExpr Predicate 
+   * [3]    RelativeLocationPath  ::= Step  
+   *                                  | RelativeLocationPath '/' Step  
+   * [4]    Step                  ::= AxisName '::' NodeTest Predicate*  
+   *
+   * Conceptually you can say that we should split by '/' and try to treat the parts
+   * as steps, and if that fails then try to treat it as a PrimaryExpr.  
+   * 
    * @param  $PathExpr   (string) PathExpr syntactical element
    * @param  $context    (array)  The context from which to evaluate
    * @return             (mixed)  The result of the XPath expression.  Either:
@@ -2839,7 +3209,7 @@ class XPathEngine extends XPathBase {
   function _evaluatePathExpr($PathExpr, $context) {
     // If you are having difficulty using this function.  Then set this to TRUE and 
     // you'll get diagnostic info displayed to the output.
-    $bDebugThisFunction = FALSE;
+    $bDebugThisFunction = in_array('_evaluatePathExpr', $this->aDebugFunctions);
     
     if ($bDebugThisFunction) {
       $aStartTime = $this->_beginDebugFunction("_evaluatePathExpr");
@@ -2856,23 +3226,37 @@ class XPathEngine extends XPathBase {
     }
     //////////////////////////////////////////////
 
-    // mini syntax check
-    if (!$this->_bracketsCheck($PathExpr)) {
-      $this->_displayError('While parsing an XPath query, in the PathExpr "' .
-      $PathExpr.
-      '", there was an invalid number of brackets or a bracket mismatch.', __LINE__, __FILE__);
+    // Parsing the expression into steps is a cachable operation as it doesn't depend on the context
+    static $aResultsCache = array();
+
+    if (isset($aResultsCache[$PathExpr])) {
+      $steps = $aResultsCache[$PathExpr];
+    } else {
+      // Note that we have used $this->slashes2descendant to simplify this logic, so the 
+      // "Abbreviated" paths basically never exist as '//' never exists.
+
+      // mini syntax check
+      if (!$this->_bracketsCheck($PathExpr)) {
+        $this->_displayError('While parsing an XPath query, in the PathExpr "' .
+        $PathExpr.
+        '", there was an invalid number of brackets or a bracket mismatch.', __LINE__, __FILE__);
+      }
+      // Save the current path.
+      $this->currentXpathQuery = $PathExpr;
+      // Split the path at every slash *outside* a bracket.
+      $steps = $this->_bracketExplode('/', $PathExpr);
+      if ($bDebugThisFunction) { echo "<hr>Split the path '$PathExpr' at every slash *outside* a bracket.\n "; print_r($steps); }
+      // Check whether the first element is empty.
+      if (empty($steps[0])) {
+        // Remove the first and empty element. It's a starting  '//'.
+        array_shift($steps);
+      }
+      $aResultsCache[$PathExpr] = $steps;
     }
-    // Save the current path.
-    $this->currentXpathQuery = $PathExpr;
-    // Split the path at every slash *outside* a bracket.
-    $steps = $this->_bracketExplode('/', $PathExpr);
-    if ($bDebugThisFunction) { echo "<hr>Split the path '$PathExpr' at every slash *outside* a bracket.\n "; print_r($steps); }
-    // Check whether the first element is empty.
-    if (empty($steps[0])) {
-      // Remove the first and empty element. It's a starting  '//'.
-      array_shift($steps);
-    }
+
     // Start to evaluate the steps.
+    // ### Consider implementing an evaluateSteps() function that removes recursion from
+    // evaluateStep()
     $result = $this->_evaluateStep($steps, $context);
 
     // Preserve doc order if there was more than one result
@@ -2897,7 +3281,8 @@ class XPathEngine extends XPathBase {
   function _sortByDocOrder($xPathSet) {
     // If you are having difficulty using this function.  Then set this to TRUE and 
     // you'll get diagnostic info displayed to the output.
-    $bDebugThisFunction = FALSE;
+    $bDebugThisFunction = in_array('_sortByDocOrder', $this->aDebugFunctions);
+
     if ($bDebugThisFunction) {
       $aStartTime = $this->_beginDebugFunction(__LINE__.":_sortByDocOrder(xPathSet:[".count($xPathSet)."])");
       echo "xPathSet:\n";
@@ -2990,12 +3375,13 @@ class XPathEngine extends XPathBase {
    * @param  $context      (array) The context from which to evaluate
    * @return               (array) Vector of absolute XPath's as a result of the step 
    *                               evaluation.  The results will not necessarily be in doc order
-   * @see    evaluate()
+   * @see    _evaluatePathExpr()
    */
   function _evaluateStep($steps, $context) {
     // If you are having difficulty using this function.  Then set this to TRUE and 
     // you'll get diagnostic info displayed to the output.
-    $bDebugThisFunction = FALSE;
+    $bDebugThisFunction = in_array('_evaluateStep', $this->aDebugFunctions);
+
     if ($bDebugThisFunction) {
       $aStartTime = $this->_beginDebugFunction(__LINE__.":_evaluateStep");
       echo "Context:";
@@ -3013,18 +3399,19 @@ class XPathEngine extends XPathBase {
     $step = trim(array_shift($steps)); // Get this step.
     if ($bDebugThisFunction) echo __LINE__.":Evaluating step $step\n";
     
-    $axis = $this->_getAxis($step, $context); // Get the axis of the current step.
-    if ($bDebugThisFunction) { echo __LINE__.":Axis of step is:\n"; print_r($axis); echo "\n";}
-    
-    // Check whether it's a function.
-    if ($axis['axis'] == 'function') {
-      // Check whether an array was return by the function.
-      if (is_array($axis['node-test'])) {
-        $contextPaths = array_merge($contextPaths, $axis['node-test']);  // Add the results to the list of contexts.
-      } else {
-        $contextPaths[] = $axis['node-test']; // Add the result to the list of contexts.
+    $axis = $this->_getAxis($step); // Get the axis of the current step.
+
+    // If there was no axis, then it must be a PrimaryExpr
+    if ($axis == FALSE) {
+      if ($bDebugThisFunction) echo __LINE__.":Step is not an axis but a PrimaryExpr\n";
+      // ### This isn't correct, as the result of this function might not be a node set.
+      $error = $this->_evaluatePrimaryExpr($step, $context, $contextPaths);
+      if (!empty($error)) {
+        $this->_displayError("Expression failed to parse as PrimaryExpr because: $error"
+                , __LINE__, __FILE__, FALSE);
       }
     } else {
+      if ($bDebugThisFunction) { echo __LINE__.":Axis of step is:\n"; print_r($axis); echo "\n";}
       $method = '_handleAxis_' . $axis['axis']; // Create the name of the method.
     
       // Check whether the axis handler is defined. If not display an error message.
@@ -3037,16 +3424,16 @@ class XPathEngine extends XPathBase {
       // Perform an axis action.
       $contextPaths = $this->$method($axis, $context['nodePath']);
       if ($bDebugThisFunction) { echo __LINE__.":We found these contexts from this step:\n"; print_r( $contextPaths ); echo "\n";}
-      
-      // Check whether there are predicates.
-      if (count($contextPaths) > 0 && count($axis['predicate']) > 0) {
-        if ($bDebugThisFunction) echo __LINE__.":Filtering contexts by predicate...\n";
-        
-        // Check whether each node fits the predicates.
-        $contextPaths = $this->_checkPredicates($contextPaths, $axis['predicate']);
-      }
     }
-    
+
+    // Check whether there are predicates.
+    if (count($contextPaths) > 0 && count($axis['predicate']) > 0) {
+      if ($bDebugThisFunction) echo __LINE__.":Filtering contexts by predicate...\n";
+      
+      // Check whether each node fits the predicates.
+      $contextPaths = $this->_checkPredicates($contextPaths, $axis['predicate']);
+    }
+
     // Check whether there are more steps left.
     if (count($steps) > 0) {
       if ($bDebugThisFunction) echo __LINE__.":Evaluating next step given the context of the first step...\n";        
@@ -3092,7 +3479,8 @@ class XPathEngine extends XPathBase {
   function _checkPredicates($xPathSet, $predicates) {
     // If you are having difficulty using this function.  Then set this to TRUE and 
     // you'll get diagnostic info displayed to the output.
-    $bDebugThisFunction = FALSE;
+    $bDebugThisFunction = in_array('_checkPredicates', $this->aDebugFunctions);
+
     if ($bDebugThisFunction) {
       $aStartTime = $this->_beginDebugFunction("_checkPredicates(Nodes:[$xPathSet], Predicates:[$predicates])");
       echo "XPathSet:";
@@ -3188,7 +3576,7 @@ class XPathEngine extends XPathBase {
   function _evaluateFunction($function, $arguments, $context) {
     // If you are having difficulty using this function.  Then set this to TRUE and 
     // you'll get diagnostic info displayed to the output.
-    $bDebugThisFunction = FALSE;
+    $bDebugThisFunction = in_array('_evaluateFunction', $this->aDebugFunctions);
     if ($bDebugThisFunction) {
       $aStartTime = $this->_beginDebugFunction("_evaluateFunction");
       if (is_array($arguments)) {
@@ -3244,11 +3632,18 @@ class XPathEngine extends XPathBase {
    * @see    evaluate()
    */
   function _checkNodeTest($contextPath, $nodeTest) {
+    // Empty node test means that it must match
+//    if (empty($nodeTest)) return TRUE;
+
     if ($nodeTest == '*') {
       // * matches all element nodes.
       return (!preg_match(':/[^/]+\(\)\[\d+\]$:U', $contextPath));
     }
-    elseif (preg_match('/^[\w-:]+$/', $nodeTest)) {
+    elseif (preg_match('/^[\w-:\.]+$/', $nodeTest)) {
+       // http://www.w3.org/TR/2000/REC-xml-20001006#NT-Name
+       // The real spec for what constitutes whitespace is quite elaborate, and 
+       // we currently just hope that "\w" catches them all.  In reality it should
+       // start with a letter too, not a number, but we've just left it simple.
        // It's just a node name test.  It should end with "/$nodeTest[x]"
        return (preg_match('"/'.$nodeTest.'\[\d+\]$"', $contextPath));
     }
@@ -3310,23 +3705,61 @@ class XPathEngine extends XPathBase {
    * Retrieves axis information from an XPath query step.
    *
    * This method tries to extract the name of the axis and its node-test
-   * from a given step of an XPath query at a given node.
+   * from a given step of an XPath query at a given node.  If it can't parse
+   * the step, then we treat it as a PrimaryExpr.
+   *
+   * [4]    Step            ::= AxisSpecifier NodeTest Predicate*  
+   *                            | AbbreviatedStep  
+   * [5]    AxisSpecifier   ::= AxisName '::'  
+   *                            | AbbreviatedAxisSpecifier 
+   * [12]   AbbreviatedStep ::= '.'  
+   *                            | '..'  
+   * [13]   AbbreviatedAxisSpecifier    
+   *                        ::=    '@'? 
+   * 
+   * [7]    NodeTest        ::= NameTest  
+   *                            | NodeType '(' ')'  
+   *                            | 'processing-instruction' '(' Literal ')'  
+   * [37]   NameTest        ::= '*'  
+   *                            | NCName ':' '*'  
+   *                            | QName  
+   * [38]   NodeType        ::= 'comment'  
+   *                            | 'text'  
+   *                            | 'processing-instruction'  
+   *                            | 'node' 
    *
    * @param  $step     (string) String containing a step of an XPath query.
-   * @param  $context  (array)  The context from which to evaluate
-   * @return           (array)  Contains information about the axis found in the step.
+   * @return           (array)  Contains information about the axis found in the step, or FALSE
+   *                            if the string isn't a valid step.
    * @see    _evaluateStep()
    */
-  function _getAxis($step, $context) {
+  function _getAxis($step) {
+    // The results of this function are very cachable, as it is completely independant of context.
+    static $aResultsCache = array();
+
     // Create an array to save the axis information.
     $axis = array(
       'axis'      => '',
       'node-test' => '',
       'predicate' => array()
     );
-    
+
+    $cacheKey = $step;
     do { // parse block
       $parseBlock = 1;
+
+      if (isset($aResultsCache[$cacheKey])) {
+        return $aResultsCache[$cacheKey];
+      } else {
+        // We have some danger of causing recursion here if we refuse to parse a step as having an
+        // axis, and demand it be treated as a PrimaryExpr.  So if we are going to fail, make sure
+        // we record what we tried, so that we can catch to see if it comes straight back.
+        $guess = array(
+          'axis' => 'child',
+          'node-test' => $step,
+          'predicate' => array());
+        $aResultsCache[$cacheKey] = $guess;
+      }
 
       ///////////////////////////////////////////////////
       // Spot the steps that won't come with an axis
@@ -3343,14 +3776,6 @@ class XPathEngine extends XPathBase {
       if ($step == '..') {
         // Select the parent axis.
         $axis['axis']      = 'parent';
-        $axis['node-test'] = '*';
-        break $parseBlock;
-      }
-
-      // Check whether is an abbreviated syntax.
-      if ($step == '*') {
-        // Use the child axis and select all children.
-        $axis['axis']      = 'child';
         $axis['node-test'] = '*';
         break $parseBlock;
       }
@@ -3398,47 +3823,94 @@ class XPathEngine extends XPathBase {
       }
 
       ///////////////////////////////////////////////////
-      // Process the rest which will either be a function or a node name
+      // Process the rest which will either a node test, or else this isn't a step.
 
+      // Check whether is an abbreviated syntax.
+      if ($step == '*') {
+        // Use the child axis and select all children.
+        $axis['node-test'] = '*';
+        break $parseBlock;
+      }
+
+      // ### I'm pretty sure our current handling of cdata is a fudge, and we should
+      // really do this better, but leave this as is for now.
       if ($step == "text()") {
         // Handle the text node
         $axis["node-test"] = "cdata";
         break $parseBlock;
       }
 
-      // Check whether it's all wrapped in a function.  will be like count(.*) where .* is anything
-      // text() will try to be matched here, so just explicitly ignore it
-      $regex = ":^(.*)\s*\((.*)\)$:U";
-      if (preg_match($regex, $step, $match) && $step != "text()") {
-        $function = $match[1];
-        $data    = $match[2];
-        if (in_array($function, $this->functions)) {
-          // Save the evaluated function.
-          $axis['axis']      = 'function';
-          $axis['node-test'] = $this->_evaluateFunction($function, $data, $context);
-        } 
-        else {
-          $axis['node-test'] = $step;
-        }
+      // There are a few node tests that we match verbatim.
+      if ($step == "node()"
+          || $step == "comment()"
+          || $step == "text()"
+          || $step == "processing-instruction") {
+        $axis["node-test"] = $step;
         break $parseBlock;
       }
 
-      // We have removed the axis and the predicates, all that is left is the node test.
-      $axis['node-test'] = $step;
-      if (!empty($this->parseOptions[XML_OPTION_CASE_FOLDING])) {
-        // Case in-sensitive
-        $axis['node-test'] = strtoupper($axis['node-test']);
+      // processing-instruction() is allowed to take an argument, but if it does, the argument
+      // is a literal, which we will have parsed out to $[number].
+      if (preg_match(":processing-instruction\(\$\d*\):", $step)) {
+        $axis["node-test"] = $step;
+        break $parseBlock;
+      }
+
+      // The only remaining way this can be a step, is if the remaining string is a simple name
+      // or else a :* name.
+      // http://www.w3.org/TR/xpath#NT-NameTest
+      // NameTest   ::= '*'  
+      //                | NCName ':' '*'  
+      //                | QName 
+      // QName      ::=  (Prefix ':')? LocalPart 
+      // Prefix     ::=  NCName 
+      // LocalPart  ::=  NCName 
+      //
+      // ie
+      // NameTest   ::= '*'  
+      //                | NCName ':' '*'  
+      //                | (NCName ':')? NCName
+      $NCName = "[a-zA-Z][\w\.\-_]*";
+      if (preg_match("/^$NCName:$NCName$/", $step)
+        || preg_match("/^$NCName:*$/", $step)) {
+        $axis['node-test'] = $step;
+        if (!empty($this->parseOptions[XML_OPTION_CASE_FOLDING])) {
+          // Case in-sensitive
+          $axis['node-test'] = strtoupper($axis['node-test']);
+        }
+        // Not currently recursing
+        $LastFailedStep = '';
+        $LastFailedContext = '';
+        break $parseBlock;
+      } 
+
+      // It's not a node then, we must treat it as a PrimaryExpr
+      // Check for recursion
+      if ($LastFailedStep == $step) {
+        $this->_displayError('Recursion detected while parsing an XPath query, in the step ' .
+              str_replace($step, '<b>'.$step.'</b>', $this->currentXpathQuery)
+              , __LINE__, __FILE__, FALSE);
+        $axis['node-test'] = $step;
+      } else {
+        $LastFailedStep = $step;
+        $axis = FALSE;
       }
       
     } while(FALSE); // end parse block
     
     // Check whether it's a valid axis.
-    if (!in_array($axis['axis'], array_merge($this->axes, array('function')))) {
-      // Display an error message.
-      $this->_displayError('While parsing an XPath query, in the step ' .
-        str_replace($step, '<b>'.$step.'</b>', $this->currentXpathQuery) .
-        ' the invalid axis ' . $axis['axis'] . ' was found.', __LINE__, __FILE__, FALSE);
+    if ($axis !== FALSE) {
+      if (!in_array($axis['axis'], array_merge($this->axes, array('function')))) {
+        // Display an error message.
+        $this->_displayError('While parsing an XPath query, in the step ' .
+          str_replace($step, '<b>'.$step.'</b>', $this->currentXpathQuery) .
+          ' the invalid axis ' . $axis['axis'] . ' was found.', __LINE__, __FILE__, FALSE);
+      }
     }
+
+    // Cache the real axis information
+    $aResultsCache[$cacheKey] = $axis;
+
     // Return the axis information.
     return $axis;
   }
@@ -3886,6 +4358,8 @@ class XPathEngine extends XPathBase {
   
   /**
    * Handles the XPath function string.
+   *
+   * http://www.w3.org/TR/xpath#section-String-Functions
    *   
    * @param  $arguments     (string) String containing the arguments that were passed to the function.
    * @param  $context       (array)  The context from which to evaluate the function
@@ -3898,24 +4372,42 @@ class XPathEngine extends XPathBase {
       // Get the value of the first result (which means we want to concat all the text...unless
       // a specific text() node has been given, and it will switch off to substringData
       if (!count($arguments)) $result = '';
-      else $result = $this->decodeEntities($this->wholeText($arguments[0]));
+      else {
+        $result = $this->_stringValue($arguments[0]);
+        if (($literal = $this->_asLiteral($result)) !== FALSE) {
+          $result = $literal;
+        }
+      }
     }
-    // Is it a literal string?
+    // Is it a number string?
     elseif (preg_match('/^[0-9]+(\.[0-9]+)?$/', $arguments) OR preg_match('/^\.[0-9]+$/', $arguments)) {
+      // ### Note no support for NaN and Infinity.
       $number = doubleval($arguments); // Convert the digits to a number.
       $result = strval($number); // Return the number.
     }
     elseif (is_bool($arguments)) { // Check whether it's TRUE or FALSE and return as string.
-      if ($arguments === TRUE)  $result = 'TRUE'; else $result = 'FALSE';
+      // ### Note that we used to return TRUE and FALSE which was incorrect according to the standard.
+      if ($arguments === TRUE) {        
+        $result = 'true'; 
+      } else {
+        $result = 'false';
+      }
     }
-    // a string is true if and only if its length is non-zero
     elseif (($literal = $this->_asLiteral($arguments)) !== FALSE) {
       return $literal;
     }
     elseif (!empty($arguments)) {
+      // Spec says:
+      // "An object of a type other than the four basic types is converted to a string in a way that 
+      // is dependent on that type."
       // Use the argument as an XPath.
       $result = $this->_evaluateExpr($arguments, $context);
-      $result = $this->_handleFunction_string($result, $context);
+      if (is_string($result) && is_string($arguments) && (!strcmp($result, $arguments))) {
+        $this->_displayError("Loop detected in XPath expression.  Probably an internal error :o/.  _handleFunction_string($result)", __LINE__, __FILE__, FALSE);
+        return '';
+      } else {
+        $result = $this->_handleFunction_string($result, $context);
+      }
     }
     else {
       $result = '';  // Return an empty string.
@@ -4117,6 +4609,8 @@ class XPathEngine extends XPathBase {
   /**
    * Handles the XPath function boolean.
    *   
+   * http://www.w3.org/TR/xpath#section-Boolean-Functions
+   *
    * @param  $arguments     (string) String containing the arguments that were passed to the function.
    * @param  $context       (array)  The context from which to evaluate the function
    * @return                (mixed)  Depending on the type of function being processed
@@ -4148,6 +4642,9 @@ class XPathEngine extends XPathBase {
     // an object of a type other than the four basic types is converted to a boolean in a 
     // way that is dependent on that type
     else {
+      // Spec says:
+      // "An object of a type other than the four basic types is converted to a number in a way 
+      // that is dependent on that type"
       // Try to evaluate the argument as an XPath.
       $result = $this->_evaluateExpr($arguments, $context);
       if (is_string($result) && is_string($arguments) && (!strcmp($result, $arguments))) {
@@ -4223,6 +4720,8 @@ class XPathEngine extends XPathBase {
   /**
    * Handles the XPath function number.
    *   
+   * http://www.w3.org/TR/xpath#section-Number-Functions
+   *
    * @param  $arguments     (string) String containing the arguments that were passed to the function.
    * @param  $context       (array)  The context from which to evaluate the function
    * @return                (mixed)  Depending on the type of function being processed
@@ -4246,10 +4745,27 @@ class XPathEngine extends XPathBase {
       if (is_numeric($string))
         return doubleval($string);
     }
+    elseif (($literal = $this->_asLiteral($arguments)) !== FALSE) {
+      if (is_numeric($literal)) {
+        return doubleval($literal);
+      } else {
+        // If we are to stick strictly to the spec, we should return NaN, but lets just
+        // leave PHP to see if can do some dynamic conversion.
+        return $literal;
+      }
+    }
     else {
+      // Spec says:
+      // "An object of a type other than the four basic types is converted to a number in a way 
+      // that is dependent on that type"
       // Try to evaluate the argument as an XPath.
       $result = $this->_evaluateExpr($arguments, $context);
-      return $this->_handleFunction_number($result, $context);
+      if (is_string($result) && is_string($arguments) && (!strcmp($result, $arguments))) {
+        $this->_displayError("Loop detected in XPath expression.  Probably an internal error :o/.  _handleFunction_number($result)", __LINE__, __FILE__, FALSE);
+        return FALSE;
+      } else {
+        return $this->_handleFunction_number($result, $context);
+      }
     }
   }
 
@@ -4271,7 +4787,10 @@ class XPathEngine extends XPathBase {
       // Run through all results.
       $size = sizeOf($result);
       for ($i=0; $i<$size; $i++) {
-        $value = $this->_handleFunction_number($result[$i], $context);
+        $value = $this->_stringValue($result[$i], $context);
+        if (($literal = $this->_asLiteral($value)) !== FALSE) {
+          $value = $literal;
+        }
         $sum += doubleval($value); // Add it to the sum.
       }
     }
@@ -4576,7 +5095,13 @@ class XPathEngine extends XPathBase {
    * @return            (string) The XML string with translated ampersands.
    */
   function _translateAmpersand($xmlSource, $reverse=FALSE) {
-    return ($reverse ? str_replace('&amp;', '&', $xmlSource) : str_replace('&', '&amp;', $xmlSource));
+    $PHP5 = (substr(phpversion(), 0, 1) == '5');
+    if ($PHP5) {
+      //otherwise we receive  &amp;nbsp;  instead of  &nbsp;
+      return $xmlSource;
+    } else {
+      return ($reverse ? str_replace('&amp;', '&', $xmlSource) : str_replace('&', '&amp;', $xmlSource));
+    }
   }
 
 } // END OF CLASS XPathEngine
@@ -4613,8 +5138,10 @@ class XPath extends XPathEngine {
     $this->properties['modMatch'] = XPATH_QUERYHIT_ALL;
     if ($fileName) {
       if (!$this->importFromFile($fileName)) {
-        //$this = FALSE;
-         unset($this);
+        // Re-run the base constructor to "reset" the object.  If the user has any sense, then
+        // they will have created the object, and then explicitly called importFromFile(), giving
+        // them the chance to catch and handle the error properly.
+        parent::XPathEngine($userXmlOptions);
       }
     }
   }
@@ -5675,20 +6202,9 @@ class XPath extends XPathEngine {
 // Take the comment tags away and run this file.
 **************************************************************************************************/
 
-/*
-$x =& new XPath('file.xml');
-//$x->removeChild('/list/object[@name="/index.htm"]');
-$x->insertChild('/list/object[@name="/index.htm"]', 'test');
-
-$x->exportToFile('file.xml');
-
-exit;
-*/
-
 /**
  * Produces a short title line.
  */
-/*
 function _title($title) { 
   echo "<br><hr><b>" . htmlspecialchars($title) . "</b><hr>\n";
 }
@@ -5745,5 +6261,5 @@ EOD;
   $xPath->replaceChildByData('/AAA[1]/BB[2]', '"Some new text"');
   echo $xPath->exportAsHtml();
 }
-*/
+
 ?>

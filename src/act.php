@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -47,6 +47,8 @@ if (isset($param)) {
             '6' => SORT_CAT_ALPHA_R,
             '7' => SORT_SIZE,
             '8' => SORT_SIZE_R,
+            '9' => SORT_DATE,
+            '10' => SORT_DATE_R,
             );
     $grp = $ffirst = $sort = 0;
     foreach ($param as $occ) {
@@ -98,6 +100,8 @@ switch ($url->getParam('act', 0)) {
 
     //  Password modification
     case 'changepassword':
+        acl_test(ADMINISTRATOR_ONLY);
+
         if ($cuser->id != ANONYMOUS_ID) {
             if (empty($_POST['user_password']) || empty($_POST['user_password_bis'])) {
                 $msg = view_error(__('All the fields must be filled'));
@@ -456,7 +460,7 @@ switch ($url->getParam('act', 0)) {
 
     //  Suppression d'un objet
     case 'del':
-        acl_test(($cobj->type == TYPE_DIR) ? AC_DEL_DIR : AC_DEL_FILE);
+        acl_test(AC_DEL_FILE);
 
         // La suppression d'une archive n'est pas possible
         if ($cobj->type == TYPE_ARCHIVED) {
@@ -466,13 +470,13 @@ switch ($url->getParam('act', 0)) {
 
         // On ne peut pas supprimer la racine
         if ($cobj->file == '/') {
-            redirect(__('Error'), $url->linkToCurrentObj(), __('Impossible to remove the root'));
+            redirect(__('Error'), $url->linkToCurrentObj(), __('Unable to remove the root'));
             system::end();
         }
 
         // Il faut avoir les droits !
         if (!is_writable($cobj->realpath)) {
-            redirect(__('Error'), $url->linkToCurrentObj(), view_error(__('Impossible to remove object, check permissions !')));
+            redirect(__('Error'), $url->linkToCurrentObj(), view_error(__('Unable to remove object, check permissions !')));
             system::end();
         }
 
@@ -517,7 +521,7 @@ switch ($url->getParam('act', 0)) {
         $_POST['mk_name'] = stripslashes($_POST['mk_name']);
 
         // Il ne doit pas y avoir de caractère interdit !
-        if (string::test($_POST['mk_name'], UNAUTHORIZED_CHAR)) {
+        if (!trim($_POST['mk_name']) || string::test($_POST['mk_name'], UNAUTHORIZED_CHAR)) {
             $msg_error = __('There are an invalid char in the file name, unauthorized char are : %s', UNAUTHORIZED_CHAR);
             $url->setParam('aff', 1, 'mkdir');
             break;

@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2007 Charles Rincheval.
+	Copyright (c) 2004-2012 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -35,7 +35,7 @@ $l10n['Rss feed of comment in this dir.']			= 'Fil rss des commentaires de ce do
 
 $l10n['Export']			= 'Exportation';
 $l10n['Export content plugin in your own site, blog !'] =
-			'Il vous est possible de placer le contenu du plugin sur votre site, blog, simplement en copiant le code ci dessus et en le plaçant oû vous le souhaitez !';
+			'Il vous est possible de placer le contenu du plugin sur votre site, blog, simplement en copiant le code ci dessus et en le plaçant où vous le souhaitez !';
 
 $l10n['Javascript exportation']	= 'Exportation en javascript';
 $l10n['Iframe exportation']		= 'Exportation en iframe';

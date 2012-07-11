@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -150,11 +150,11 @@ class archive {
                 $zip = new PclZip($archive);
                 $out = $zip->create($tab, PCLZIP_OPT_REMOVE_PATH, $path);
                 break;
-            case 'tar':
             case 'gz':
             case 'tar.gz':
                 $type = 'tgz';
             case 'tgz':
+            case 'tar':
             default:
                 $out = PclTarCreate($archive, $tab, $type, null, $path);
                 break;

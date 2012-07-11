@@ -47,7 +47,7 @@
 	</p>
 
 	<p>
-		Néanmoins, les droits sont à utiliser avec précautions car il ne faut pas attribuer n'importe quel droits à n'importe qui, il est donc essentiel de bien
+		Néanmoins, les droits sont à utiliser avec précautions, car il ne faut pas attribuer n'importe quels droits à n'importe qui, il est donc essentiel de bien
 		connaitre le fonctionnement des droits dans Hyla...
 	</p>
 
@@ -56,7 +56,7 @@
 	<h3 id="types">Types</h3>
 
 	<p>
-		Vous trouverez dans le tableau ci dessous les différents type de droits qu'il est possible de trouver dans Hyla.
+		Vous trouverez dans le tableau ci-dessous les différents types de droits qu'il est possible de trouver dans Hyla.
 	</p>
 
 	<table summary="Liste des droits applicables à un dossier">
@@ -154,7 +154,7 @@
 
 	<p>
 		Un utilisateur peut avoir plusieurs droits le concernant dans un seul dossier, par exemple, si le méta-utilisateur 'Any' désignant
-		n'importe quel utilisateur possède un droit, il sera d'une priorité inférieur à un droit désignant un utilisateur nommé.
+		n'importe quel utilisateur possède un droit, il sera d'une priorité inférieure à un droit désignant un utilisateur nommé.
 	</p>
 
 	<p>
@@ -173,7 +173,7 @@
 	</p>
 
 	<p>
-		Dans cette exemple, l'utilisateur Any (qui représente n'importe quel utilisateur) à les droits de Visualisation et d'Édition.
+		Dans cet exemple, l'utilisateur Any (qui représente n'importe quel utilisateur) a les droits de Visualisation et d'Édition.
 	</p>
 
 	<table summary="Exemple de la priorité dans les droits">
@@ -222,12 +222,12 @@
 	<p>
 		Dans Hyla, les droits se propagent automatiquement dans l'arborescence, c'est à dire qu'un dossier ne possédant pas de droits
 		va hériter des droits de son parent, ainsi, si vous éditez les droits de la racine,	ses droits se répercuteront automatiquement
-		dans tous les dossiers fils sauf si un droit est assigné dans un de ceux là.
+		dans tous les dossiers fils sauf si un droit est assigné dans un de ceux-là.
 	</p>
 
 	<p>
 		Attention tout de même, il est impossible d'accéder à un dossier possédant le droit de visualisation
-		si un parent ou plusieurs de ces parents n'ont pas ce droit car, ces derniers sont alors invisbles (voir <a href="#exemple2">l'exemple 2</a>)
+		si un parent ou plusieurs de ces parents n'ont pas ce droit car, ces derniers sont alors invisibles (voir <a href="#exemple2">l'exemple 2</a>)
 	</p>
 
 	<p>
@@ -267,7 +267,7 @@
 
 	<p class="remarque">
 		<u>Remarque :</u>
-		Dans une tel arborescence sans droit, seul un administrateur ou un superviseur peut se connecter.
+		Dans une telle arborescence sans droit, seul un administrateur ou un superviseur peuvent se connecter.
 	</p>
 
 	<p>
@@ -340,7 +340,7 @@
 
 	<p class="remarque">
 		<u>Remarque :</u>
-		Comme vous le voyez, les droits se propagent partout sauf lorsque l'on créé des nouveaux droits, dans ce cas là, la propagation est arrêté et on se retrouve sans droits.
+		Comme vous le voyez, les droits se propagent partout sauf lorsque l'on créer des nouveaux droits, dans ce cas là, la propagation est arrêtée et on se retrouve sans droits.
 	</p>
 
 	<p>
@@ -353,7 +353,7 @@
 
 	<p>
 		1. Dans le cas ci-dessous, nous voyons une arborescence de dossiers, tous les dossiers sont accessibles car
-		le droit de visualisation à été donné à la racine, les dossiers enfants en héritent.
+		le droit de visualisation a été donné à la racine, les dossiers enfants en héritent.
 	</p>
 
 	<table summary="Exemple d'aborescence de droits">
@@ -399,12 +399,12 @@
 	</table>
 
 	<p>
-		<b>Résultat :</b> Dans cette configuration, l'accès à la racine est bien sûr, toujours possible mais pas l'accès au dossier foo,
+		<b>Résultat :</b> Dans cette configuration, l'accès à la racine est bien sûr, toujours possible, mais pas l'accès au dossier foo,
 		ni à <span class="path">/foo/bar</span>, notons que foo sera invisible lors de la lecture de la racine.
 	</p>
 
 	<p>
-		3. J'édite maintenant le dossier <span class="path">/foo/bar</span> afin qu'il est le droit de Visualisation :
+		3. J'édite maintenant le dossier <span class="path">/foo/bar</span> afin qu'il ait le droit de Visualisation :
 	</p>
 
 	<table summary="Exemple de droits">
@@ -433,15 +433,15 @@
 
 	<p class="remarque">
 		<u>Remarque :</u>
-		Hyla détecte ce genre de problème et vous propose, dans l'interface d'aministration, dans la section droits,
+		Hyla détecte ce genre de problème et vous propose, dans l'interface d'administration, dans la section droits,
 		un lien permettant de réparer les droits.
 	</p>
 
 	<p>
-		<b>Conclusion :</b> Il est interdit de "traverser" un dossier ne possédant pas le droits de Visualisation.
+		<b>Conclusion :</b> Il est interdit de "traverser" un dossier ne possédant pas le droit de Visualisation.
 	</p>
 
-	<h2 id="recap">Récapitulatif pour décideurs préssés</h2>
+	<h2 id="recap">Récapitulatif pour décideurs pressés</h2>
 
 	<p>
 		Voici ce qu'il faut retenir des droits dans Hyla :

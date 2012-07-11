@@ -52,7 +52,7 @@
     <p>
         <a href="#">{LANG:Top of page}</a> - <a href="{DIR_ROOT}doc/{L10N}/index.htm" onclick="popup(this.href); return false;">Documentation</a>
         - {DEBUG} - <a href="http://www.hyla-project.org/">Hyla</a> {HYLA_VERSION},
-        Copyright (c) 2004-2007 <a href="http://www.digitalspirit.org/">Charles Rincheval</a>
+        Copyright (c) 2004-2012 <a href="http://www.digitalspirit.org/">Charles Rincheval</a>
     </p>
 <!--
     <p>
