@@ -1,0 +1,11 @@
+To enable this auth plugin, follow the following steps :
+
+1/ copy file conf.default.ini to conf.ini and edit corresponding parameters
+    (database connection, cms type...)
+
+2/ enable the plugin by editing conf/hyla.ini file to set plugin_default_auth
+    parameter :
+
+    plugin_default_auth = external_database
+
+3/ that's all folks !

@@ -31,6 +31,8 @@
                 <option value="sort:6" {SELECT_SORT_6}>&nbsp;Catégories   Z / A</option>
                 <option value="sort:7" {SELECT_SORT_7}>&nbsp;Taille - / +</option>
                 <option value="sort:8" {SELECT_SORT_8}>&nbsp;Taille + / -</option>
+                <option value="sort:9" {SELECT_SORT_9}>&nbsp;Date récent / vieux</option>
+                <option value="sort:10" {SELECT_SORT_10}>&nbsp;Date vieux / récent</option>
             </select>
             <label for="ffirst">
                 <input type="checkbox" name="param[]" id="ffirst" value="ffirst:ok" {FFIRST_CHECKED} />

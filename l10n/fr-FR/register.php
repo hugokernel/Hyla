@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2007 Charles Rincheval.
+	Copyright (c) 2004-2012 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -25,7 +25,7 @@ $l10n['Password']		        = 'Mot de passe';
 $l10n['Password Confirmation']  = 'Confirmer le mot de passe';
 $l10n['Send']                   = 'Envoyer';
 
-$l10n['Account correctly created !']                = 'Votre compte à bien été créé !';
+$l10n['Account correctly created !']                = 'Votre compte a bien été créé !';
 
 $l10n['Hyla - A new user has been registered !']    = 'Un nouvel utilisateur s\'est enregistré !';
 $l10n['register_mail_content'] = "

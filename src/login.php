@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -62,7 +62,7 @@ $tpl->set_var(array(
         'NAME'          =>  (isset($_POST['lg_name']) ? stripslashes(htmlentities($_POST['lg_name'])) : null),
         'OBJECT'        =>  $cobj->file,
         'ERROR'         =>  view_error($msg_error),
-        'SUGGESTION'    =>  get_suggest(array(__('Saisissez votre mot de passe à l\'abri des regards indiscret !'))),
+        'SUGGESTION'    =>  get_suggest(array(__('Saisissez votre mot de passe à l\'abri des regards indiscrets !'))),
         ));
 
 $msg_error = null;

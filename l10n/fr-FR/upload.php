@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2007 Charles Rincheval.
+	Copyright (c) 2004-2012 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -28,6 +28,6 @@ $l10n['']		=	'Description :';
 $l10n['']		=	'Nom :';
 $l10n['']		=	'(laissez vide pour garder le nom original)';
 $l10n['']		=	'Il est possible d\'envoyer plusieurs fichiers en une seule fois en les mettant dans une archive (gzip, tar, zip...), vous n\'aurez plus alors qu\'à ouvrir
-					cette dernière et extraire les fichiers grâce au lien adéquate.';
+					cette dernière et extraire les fichiers grâce au lien adéquat.';
 
 ?>

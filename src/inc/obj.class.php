@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -646,12 +646,12 @@ class obj extends acl {
         if (!$var = $this->_bdd->execQuery($sql))
             trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
         if ($tab = $this->_bdd->fetchArray($var)) {
-            $destination = $tab['destination'].($tab['destination']{0} ? null : '/').substr($tab['name'], 1, strlen($tab['name']));
+            $destination = $tab['destination']. '/' .substr($tab['name'], 1, strlen($tab['name']));
         } else {
             $destination = $file;
         }
 
-        $source = DIR_ROOT.DIR_ANON.$file;
+        $source = get_anon_path() . $file;
 
         $ret = rename($source, $root.$destination);
         if ($ret && $tab) {
@@ -927,9 +927,10 @@ class obj extends acl {
         for ($y = 0; $res = $this->_bdd->nextTuple($var); $y++) {
 
             if ($res['flag'] == FLAG_ANON) {
-                $file = DIR_ROOT.DIR_ANON.'/'.file::baseName($res['object']);
-            } else
+                $file = get_anon_path() . '/' . file::baseName($res['object']);
+            } else {
                 $file = $this->_folder_root.$res['object'];
+            }
 
             if (!file_exists($file)) {
 

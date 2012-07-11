@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2007 Charles Rincheval.
+	Copyright (c) 2004-2012 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -85,7 +85,7 @@ $l10n['There are no comments !']				= 'Il n\'y a aucun commentaire ! ';
 $l10n['There are no file !']					= 'Il n\'y a aucun fichier !';
 $l10n['There are no image !']					= 'Il n\'y a aucune image !';
 
-$l10n['The author field is required']			= 'Le champs auteur doir être rempli !';
+$l10n['The author field is required']			= 'Le champ auteur doit être rempli !';
 $l10n['The message field is required']			= 'Le contenu du message ne doit pas être vide !';
 
 $l10n['All the fields must be filled']			= 'Tous les champs doivent être remplis...';
@@ -178,7 +178,7 @@ $l10n['Couldn\'t write configuration file ( %s ) !']	= 'Impossible d\'écrire le
 
 $l10n['Couldn\'t connect to sql server !']			= 'Impossible de se connecter au serveur sql !';
 $l10n['Unable to use database &laquo; %s &raquo;']	= 'Impossible de sélectionner la base de données &laquo; %s &raquo;';
-$l10n['Couldn\'t close connection to sql server !']	= 'Impossible de fermer la connection au serveur sql !';
+$l10n['Couldn\'t close connection to sql server !']	= 'Impossible de fermer la connexion au serveur sql !';
 
 $l10n['No result']				= 'Aucun résultat';
 $l10n['Not writable !']			= 'Ecriture impossible !';
@@ -192,7 +192,7 @@ $l10n['Last comment']	= 'Derniers commentaires';
 $l10n['Administration']	= 'Administration';
 
 $l10n['%s objet(s) was deleted from database !']	= '%s objet(s) supprimé(s) de la base de données !';
-$l10n['Cache was purged !']	= 'Le cache à été purgé !';
+$l10n['Cache was purged !']	= 'Le cache a été purgé !';
 
 $l10n['Page executed in %s seconds with %s sql query']	= 'Page générée en %s seconde(s) avec %s requête(s) sql';
 

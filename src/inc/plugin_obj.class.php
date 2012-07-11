@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -79,7 +79,7 @@ class plugin_obj extends plugin
 
                 $xfile = DIR_PLUGINS_OBJ.$occ.'/info.xml';
                 if (file_exists($xfile)) {
-                    $xml =& new XPath($xfile);
+                    $xml = new XPath($xfile);
                     $exp = $type ? '/plugin[contains(@target,"dir")]/*' : '/plugin[contains(@target,"file") ]/*';
                     $res = $xml->match($exp);
                     if ($res) {
@@ -145,7 +145,7 @@ class plugin_obj extends plugin
                     }
 
                     // File not found in archive
-                    if (!file_exists(file::dirName($_SERVER['SCRIPT_FILENAME']).'/'.$file.'/'.$cobj->target)) {
+                    if (!file_exists($file.'/'.$cobj->target)) {
                         system::end(__('Error: File not found !'));
                         break;
                     }

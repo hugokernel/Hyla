@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -269,6 +269,15 @@ class file
         return file::formatPath($ret);
     }
 
+    /* Teste s'il est nécessaire, selon le client, d'utiliser le mimetype
+       multipart/x-byteranges voulu par certains clients ou le standard
+       multipart/byteranges. Inspiré du filtre interne "byterange" d'apache.
+    */
+    function use_range_x() {
+        return (isset($_SERVER['HTTP_REQUEST_RANGE'])
+                || strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 3') !== false);
+    }
+
     /*  Retourne le nom du fichier
         ATTENTION : Différent de basename car vérifie si le fichier existe vraiment
         @param  string  $file Le nom du fichier
@@ -317,11 +326,115 @@ class file
             default:        $ctype = 'octet/stream';        break;
         }
 
+        $file_len = filesize($file);
         header('Content-Disposition: inline; filename="'.file::baseName($file).'"');
         header('Content-Type: '.$ctype);
-        header('Content-Length: '.filesize($file));
 
-        readfile($file);
+        if (   !isset($_SERVER['HTTP_RANGE'])
+            && !isset($_SERVER['HTTP_REQUEST_RANGE'])) {
+            // Envoi classique du fichier en entier.
+            header('Content-Length: '.$file_len);
+            // Avant d'envoyer le fichier, on vide le(s) buffer(s) de sortie
+            // et on le(s) désactive(s) (autrement php garde en mémoire le
+            // fichier, qui est peut-être très (trop) gros).
+            while(@ob_end_flush());
+            readfile($file);
+
+        } else {
+            // Le client demande uniquement une ou plusieurs parties du fichier
+            // RFC 2616, 14.16
+            $req_range = $_SERVER['HTTP_RANGE'];
+            if (empty($req_range)) // vieux navigateurs
+                $req_range = $_SERVER['HTTP_REQUEST_RANGE'];
+
+            list(, $ranges) = explode('=', $req_range, 2);
+            $ranges = explode(',', $ranges);
+            $parts = array();   
+            foreach ($ranges as $range) {
+                list($begin, $end) = explode('-', $range);
+                if (   (strlen($end  ) && !is_numeric($end  ))
+                   || (strlen($begin) && !is_numeric($begin))
+                   || (!strlen($begin) && !strlen($end)) ) {
+                    continue;
+                }
+                if (!strlen($end) || $end >= $file_len)
+                    $end = $file_len - 1;
+                if (!strlen($begin)) {
+                    $begin = $file_len - $end;
+                    $end = $file_len - 1;
+                }
+                if ($begin > $end)
+                    continue;
+                $parts[] = array( 'begin' => intval($begin),
+                                  'end'   => intval($end  ),
+                                  'len'   => intval($end) - intval($begin) + 1 );
+            }
+
+            $satisfiable = false;
+            foreach ($parts as $p) {
+                if ($p['begin'] < $file_len || $p['end'] != 0) {
+                    $satisfiable = true;
+                    break;
+                }
+            }
+            if (!$satisfiable) {
+                header("HTTP/1.1 416 Requested range not satisfiable");
+                return;
+            }
+
+            header("HTTP/1.1 206 Partial Content");
+            header("Accept-Ranges: bytes");
+            if (count($parts) == 1) {
+                // S'il n'y a qu'une partie on l'envoie directement.
+                header("Content-Range: bytes "
+                       .$parts[0]['begin']."-".$parts[0]['end']."/$file_len");
+                header("Content-Length: ".$parts[0]['len']);
+            } else {
+                // S'il y a plusieurs parties à envoyer, il faut les empaqueter
+                // dans un multipart (comme dans les mails).
+                $bound = sprintf("%x%x%x", time(), getmypid(), rand());
+                header("Content-Type: multipart/".(file::use_range_x()?'x-':'')
+                       ."byteranges; boundary=$bound");
+                // Calcul du la taille du contenu que nous allons envoyer
+                $clen = 0;
+                $interparts = array();
+                foreach ($parts as $p) {
+                    $clen += $p['len'];
+                    $interparts[] = "\r\n--$bound\r\nContent-type: $ctype\r\n"
+                                    ."Content-range: bytes ".$p['begin']."-"
+                                    .$p['end']."/$file_len\r\n\r\n";
+                }
+                foreach ($interparts as $i)
+                    $clen += strlen($i);
+                $tail = "\r\n--$bound--\r\n"; // fin du multipart
+                $clen += strlen($tail);
+                header("Content-Length: $clen");
+            }
+
+            // Avant d'envoyer le fichier, on vide le(s) buffer(s) de sortie
+            // et on le(s) désactive(s) (autrement php garde en mémoire le fichier,
+            // qui est peut-être très (trop) gros).
+            while(@ob_end_flush());
+
+            $fd = fopen($file, 'rb');
+            if (!$fd) return;
+
+            for ($i = 0 ; $i < count($parts) ; $i++) {
+                fseek($fd, $parts[$i]['begin'], SEEK_SET);
+                $cur = $parts[$i]['begin'];
+                if (count($parts) > 1)
+                    print $interparts[$i];
+                while (!feof($fd) && $cur <= $parts[$i]['end']
+                       && !connection_aborted()) {
+                    $block = min(1024*16, $parts[$i]['end']-$cur+1);
+                    print fread($fd, $block);
+                    $cur += $block;
+                }
+            }
+            fclose($fd);
+            if (count($parts) > 1)
+                print $tail; // fin du multipart
+        }
         // not exit here !
     }
 

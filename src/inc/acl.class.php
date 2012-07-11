@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -506,8 +506,6 @@ class acl {
     function ok() {
         global $obj, $cobj, $cuser;
         $ret = false;
-        $auth_only = false;
-        $admin_only = false;
 
         if ($cuser->type == USR_TYPE_ADMIN || $cuser->type == USR_TYPE_SUPERVISOR) {
             $arg = func_get_arg(0);
@@ -517,9 +515,19 @@ class acl {
                 $ret = true;
         } else {
             $num = func_num_args();
-            for ($i = 0; $i < $num; $i++) {
+            $path = (is_string(func_get_arg(0))) ? func_get_arg(0) : $cobj->path;
+
+            if (is_string(func_get_arg(0))) {
+                $path = func_get_arg(0);
+                $i = 1;
+            } else {
+                $path = $cobj->path;
+                $i = 0;
+            }
+
+            for (; $i < $num; $i++) {
                 $niv = func_get_arg($i);
-                if ($niv && ($obj->getCUserRights4Path($cobj->path) & $niv)) {
+                if ($niv && ($obj->getCUserRights4Path($path) & $niv)) {
                     $ret = true;
                     break;
                 }
@@ -528,7 +536,6 @@ class acl {
 
         return $ret;
     }
-
 
     /*  Ajoute une erreur
         @access private

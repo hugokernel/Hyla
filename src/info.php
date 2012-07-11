@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -67,7 +67,6 @@ switch ($cobj->type) {
             archive::extract($cobj->realpath, $file);
         }
 
-//        $filepath = file::dirName($_SERVER['SCRIPT_FILENAME']).'/'.$file.'/'.$cobj->target;
         $filepath = get_real_directory();
         if (!file_exists($filepath)) {
             header('HTTP/1.x 404 Not Found');

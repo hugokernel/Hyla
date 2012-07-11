@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -21,8 +21,13 @@
 
 class plugin_auth extends plugin {
 
+    var $_bdd;
+
     function plugin_auth() {
+        global $bdd;
         parent::plugin();
+
+        $this->_bdd = &$bdd;
     }
 
     /*  Charge le plugin et l'instancie
@@ -59,6 +64,13 @@ class plugin_auth extends plugin {
      */
     function logout() {
         session_destroy();
+    }
+
+    /*  Test lexical du login
+        @param  string  $login  Le login à tester
+     */
+    function testLex($login) {
+        return preg_match('/^[A-Zéèçà]{1}[A-Zéèçà0-9._-]{1,31}$/i', $login);
     }
 }
 

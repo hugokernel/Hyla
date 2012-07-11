@@ -14,13 +14,13 @@
 
     <!-- BEGIN aff_home -->
     <p>
-        <a href="http://www.hyla-project.org/"><img src="{DIR_ROOT}/img/hyla.png" alt="Une rainette verte" /></a>
+        <a href="http://www.hyla-project.org/"><img src="{DIR_ROOT}img/hyla.png" alt="Une rainette verte" /></a>
     </p>
 
-    <h3>Hyla {HYLA_VERSION}, copyright (c) 2004-2007 Charles Rincheval</h3>
+    <h3>Hyla {HYLA_VERSION}, copyright (c) 2004-2012 Charles Rincheval</h3>
 
     <p>
-        Il est important de toujours avoir la dernière version d'Hyla pour palier à d'éventuels problèmes de sécurité et bien sûr disposer des dernières nouveautés !
+        Il est important de toujours avoir la dernière version d'Hyla pour palier d'éventuels problèmes de sécurité et bien sûr disposer des dernières nouveautés !
 
         <!-- BEGIN test_version -->
         <br />

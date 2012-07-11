@@ -21,7 +21,7 @@
 <div style="margin: 5% 30% 0 30%">
 
     <form method="post" name="form_upload" action="{PAGE_LOGIN}">
-        <fieldset>
+        <fieldset id="login">
             <legend><img src="{DIR_IMAGE}/login.png" align="middle" width="32" height="32" alt="Auth" /> {LANG:Authentication}</legend>
            {ERROR}
             <p>
@@ -34,7 +34,10 @@
                 <input name="lg_password" id="lg_password" size="15" maxlength="32" type="password" />
             </p>
 
-            <input type="submit" name="Submit" value="{LANG:Send}" />
+            <p>
+                <label>&nbsp;</label>
+                <input type="submit" name="Submit" value="{LANG:Send}" />
+            </p>
 
             <blockquote class="info">
                 Les cookies sont nécessaires pour vous connecter sur le site, ils permettent d'identifier les données relatives

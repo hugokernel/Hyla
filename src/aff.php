@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2007 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -99,6 +99,7 @@ $l10n->setFile('general.php');
 $l10n->setFile('aff.php');
 
 $var_tpl = null;
+$var_tpl_comment = null;
 $start = null;
 $title = null;
 $plugin_run = false;
@@ -280,10 +281,9 @@ switch ($aff) {
                 if ($conf['download_dir']) {
                     $file = null;
                     if (!cache::getArchivePath($cobj->file, $file, $type)) {        
-                        $file = file::dirName($_SERVER['SCRIPT_FILENAME']).'/'.$file;
                         $out = archive::createFromDir($file, $cobj->realpath, $type);
                         if (!$out) {
-                            redirect(__('Error'), file::downPath($url->linkToObj($cobj->path)), __('Dir is probably empty or not readable !'));
+                            redirect(__('Error'), $url->linkToObj(file::downPath($cobj->path)), __('Dir is probably empty or not readable !'));
                             break;
                         }
                     }
@@ -335,7 +335,7 @@ switch ($aff) {
             header('Content-Length: '.filesize(get_real_directory()));
             header('Expires: '.gmdate('D, d M Y H:i:s', time() + 1296000).' GMT');  // Expire dans 15 jours
 
-            readfile(DIR_ROOT.$cache_path);
+            readfile($cache_path);
         } else {
             image::resize(get_real_directory(), $sizex, $sizey, $cache_path);
             /*
@@ -354,7 +354,16 @@ switch ($aff) {
 
     //  Édition
     case 'edit':
-        acl_test(AC_EDIT_DESCRIPTION, AC_EDIT_PLUGIN);
+
+// TODO: MERGER acl_test avec test_acl
+
+        if ($cobj->type == TYPE_DIR) {
+            // Vérifie si le dossier parent possède le droit de suppression de dossier...
+            acl_test(file::downPath($cobj->file), AC_EDIT_DESCRIPTION, AC_EDIT_PLUGIN, AC_EDIT_ICON);
+        } else {
+            acl_test(AC_EDIT_DESCRIPTION, AC_EDIT_PLUGIN, AC_EDIT_ICON);
+        }
+
         include('src/edit.php');
         break;
 
@@ -707,23 +716,37 @@ if ($cuser->id == ANONYMOUS_ID) {
 
 if ($url->getParam('aff') != 'page') {
     $tpl->parse('Hdlaff_info', 'aff_info', true);
-    if ($conf['view_toolbar'] || acl::ok(AC_ADD_FILE))
+
+    if ($conf['view_toolbar'] || acl::ok(AC_ADD_FILE)) {
         $tpl->parse('Hdlaction_addfile', 'action_addfile', true);
-    if (($conf['view_toolbar'] || acl::ok(AC_EDIT_DESCRIPTION, AC_EDIT_PLUGIN)) && $cobj->type != TYPE_ARCHIVED)
+    }
+
+    if (($conf['view_toolbar'] || acl_get(AC_EDIT_DESCRIPTION, AC_EDIT_PLUGIN, AC_EDIT_ICON)) && $cobj->type != TYPE_ARCHIVED) {
         $tpl->parse('Hdlaction_edit', 'action_edit', true);
-    if ($conf['view_toolbar'] || acl::ok(AC_CREATE_DIR))
+    }
+
+    if ($conf['view_toolbar'] || acl::ok(AC_CREATE_DIR)) {
         $tpl->parse('Hdlaction_mkdir', 'action_mkdir', true);
+    }
 
     // On ne peut pas déplacer ou supprimer la racine !
     if ($cobj->file != '/') {
-        if (($conf['view_toolbar'] || acl::ok(AC_RENAME)) && $cobj->type != TYPE_ARCHIVED)
+        
+        if (($conf['view_toolbar'] || acl_get(AC_RENAME)) && $cobj->type != TYPE_ARCHIVED) {
             $tpl->parse('Hdlaction_rename', 'action_rename', true);
-        if (($conf['view_toolbar'] || acl::ok(AC_MOVE)) && $cobj->type != TYPE_ARCHIVED)
+        }
+
+        if (($conf['view_toolbar'] || acl_get(AC_MOVE)) && $cobj->type != TYPE_ARCHIVED) {
             $tpl->parse('Hdlaction_move', 'action_move', true);
-        if ($conf['view_toolbar'] || acl::ok(AC_COPY))
+        }
+
+        if ($conf['view_toolbar'] || acl_get(AC_COPY)) {
             $tpl->parse('Hdlaction_copy', 'action_copy', true);
-        if (($conf['view_toolbar'] || acl::ok(($cobj->type == TYPE_DIR) ? AC_DEL_DIR : AC_DEL_FILE)) && $cobj->type != TYPE_ARCHIVED)
+        }
+
+        if ($conf['view_toolbar'] || acl_get(AC_DEL_FILE) && $cobj->type != TYPE_ARCHIVED) {
             $tpl->parse('Hdlaction_del', 'action_del', true);
+        }
     }
 
     // Diaporama
@@ -792,6 +815,14 @@ if ($url->getParam('aff', 0) == 'obj') {
             case SORT_SIZE_R | SORT_FOLDER_FIRST:
                 $tpl->set_var('SELECT_SORT_8', 'selected="selected"');
                 break;
+            case SORT_DATE:
+            case SORT_DATE| SORT_FOLDER_FIRST:
+                $tpl->set_var('SELECT_SORT_9', 'selected="selected"');
+                break;
+            case SORT_DATE_R:
+            case SORT_DATE_R | SORT_FOLDER_FIRST:
+                $tpl->set_var('SELECT_SORT_10', 'selected="selected"');
+                break;
             case SORT_DEFAULT:
             case SORT_DEFAULT | SORT_FOLDER_FIRST:
                 $tpl->set_var('SELECT_SORT_0', 'selected="selected"');
@@ -826,15 +857,12 @@ if ($url->getParam('aff', 0) == 'obj') {
             $var_tpl .= $var_tpl_pagination;
         }
 
-        // Ajout du ou des commentaires
-        if (isset($var_tpl_comment)) {
-            $var_tpl .= $var_tpl_comment;
-        }
-
         // Si le plugin n'a rien retourné
         $var_tpl = (!isset($var_tpl_plugin) && $cobj->type == TYPE_DIR && $plugin_run) ? __('There are no file !').$var_tpl : $var_tpl;
 
-        $tpl->set_var('CONTENT', $var_tpl);
+        // Ajout du ou des commentaires
+        $tpl->set_var('COMMENTS',   $var_tpl_comment);
+        $tpl->set_var('CONTENT',    $var_tpl);
 
         // Affichage ou non de l'arborescence
         if ($conf['view_tree'] >= 1) {
@@ -852,11 +880,8 @@ if ($url->getParam('aff', 0) == 'obj') {
         }
 
         // Ajout du ou des commentaires
-        if (isset($var_tpl_comment)) {
-            $var_tpl .= $var_tpl_comment;
-        }
-
-        $tpl->set_var('CONTENT', $var_tpl);
+        $tpl->set_var('COMMENTS',   $var_tpl_comment);
+        $tpl->set_var('CONTENT',    $var_tpl);
 
         if ($conf['view_tree'] == 2) {
             $tpl->set_var('TREE_ELEM', get_tree());

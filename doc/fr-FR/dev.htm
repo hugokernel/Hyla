@@ -55,7 +55,7 @@
 	<p>
 		Hyla étant un logiciel libre, vous avez bien sûr accès au code source, il vous est ainsi possible de
 		modifier Hyla librement et ensuite de redistribuer vos modifications, et cela, dans le cadre
-		défini par la license fourni avec Hyla (fichier COPYING à la racine de Hyla).
+		défini par la licence fourni avec Hyla (fichier COPYING à la racine de Hyla).
 	</p>
 
 	<h2 id="arbo">L'arborescence</h2>
@@ -91,7 +91,7 @@
 		</tr>
 		<tr>
 			<td><span class="path">/src</span></td>
-			<td>La racine de ce dossier contient les fichiers sources divers, notamment, ceux qui génère les pages grâce aux modèles (template).</td>
+			<td>La racine de ce dossier contient les fichiers sources divers, notamment, ceux qui génèrent les pages grâce aux modèles (template).</td>
 		</tr>
 		<tr>
 			<td><span class="path">/src/db</span></td>
@@ -99,7 +99,7 @@
 		</tr>
 		<tr>
 			<td><span class="path">/src/inc</span></td>
-			<td>Dans ce dossier sont logés les classes et fonctions.</td>
+			<td>Dans ce dossier sont logées les classes et fonctions.</td>
 		</tr>
 		<tr>
 			<td><span class="path">/src/lib</span></td>
@@ -143,7 +143,7 @@
 	<h2 id="tpl">Les modèles</h2>
 
 	<p>
-		Un modèle est un ensemble de fichiers, de gabarits qui servent pour la réprésentation visuelle de Hyla,
+		Un modèle est un ensemble de fichiers, de gabarits qui servent pour la représentation visuelle de Hyla,
 		un fichier modèle (.tpl) ne comporte pas de code source, ainsi, il est très simple à éditer
 		pour quelqu'un chargé uniquement de l'apparence d'un site.
 	</p>
@@ -330,8 +330,8 @@
 	</ol>
 
 	<p>
-		Dans cette exemple, nous n'avons copié que le fichier index.tpl et aucun autre dans notre nouveau dossier de modèle
-		(tpl/test/), Hyla va aller chercher les autres fichiers modèles dans le dossier default si ils ne sont pas présent
+		Dans cet exemple, nous n'avons copié que le fichier index.tpl et aucun autre dans notre nouveau dossier de modèle
+		(tpl/test/), Hyla va aller chercher les autres fichiers modèles dans le dossier default si ils ne sont pas présents
 		dans le modèle courant...
 	</p>
 
@@ -346,7 +346,7 @@
 
 	<ul>
 		<li><a href="#plugins-obj">Les plugins d'objets</a> qui permettent de lire les dossiers, de créer des galeries photos...etc...</li>
-		<li><a href="#plugins-auth">Les plugins d'authentification</a> qui permettent d'authentifier un utilisateur qui saisi sont mot de passe.</li>
+		<li><a href="#plugins-auth">Les plugins d'authentification</a> qui permettent d'authentifier un utilisateur qui saisit sont mot de passe.</li>
 		<li><a href="#plugins-url">Les plugins d'url</a> qui permettent de générer et de scanner les urls</li>
 	</ul>
 
@@ -354,7 +354,7 @@
 
 	<p>
 		Pour Hyla, un objet est un fichier, un dossier ou encore un fichier au sein d'une archive (zip, tar.gz...), un plugin d'objet est
-		donc suceptible de lire des dossiers ou encore des fichiers...
+		donc susceptible de lire des dossiers ou encore des fichiers...
 	</p>
 
 	<p>
@@ -432,7 +432,7 @@ class plugin_obj_text extends plugin_obj {
 ?&gt;</pre>
 
 	<p>
-		Comme mentionné plus haut, un plugin est bel et bien une classe qui est nommée d'une manière défini, en l'occurence : "plugin_obj_" + le nom du plugin.
+		Comme mentionné plus haut, un plugin est bel et bien une classe qui est nommée d'une manière défini, en l'occurrence : "plugin_obj_" + le nom du plugin.
 	</p>
 
 	<p>
@@ -480,7 +480,7 @@ class plugin_obj_text extends plugin_obj {
 
 	<p>
 		Ce fichier créé, il nous reste à créer le plugin proprement dit, pour cela, créons un fichier index.php dans le dossier
-		que nous avons créé plus haut et éditons le afin qu'il ressemble à cela :
+		que nous avons créé plus haut et éditons-le afin qu'il ressemble à cela :
 	</p>
 
 <pre>
@@ -553,7 +553,7 @@ class plugin_auth_default {
 ?&gt;</pre>
 
 	<p>
-		Comme vous le voyez, un plugin d'authentification est en fait une classe qui est nommé d'une manière défini ( "plugin_auth_" + le nom du plugin )
+		Comme vous le voyez, un plugin d'authentification est en fait une classe qui est nommée d'une manière défini ( "plugin_auth_" + le nom du plugin )
 	</p>
 
 	<p>
@@ -573,7 +573,7 @@ class tUser {
 
 	<p>
 		Ces derniers permettent de gérer les url, ainsi, il vous est possible de faire en sorte qu'Hyla
-		génère des urls identique à celle que vous utilisez sur votre site.
+		génère des urls identiques à celle que vous utilisez sur votre site.
 		<br />
 		Le choix du type d'url se fait, comme pour le plugin d'authentification, par le biais du fichier de configuration <span class="path">/conf/hyla.ini</span> :
 	</p>
@@ -590,7 +590,7 @@ plugin_default_url = pathinfo
 	</pre>
 
 	<p>
-		Les plugins d'url se situe dans l'arborescence suivante : <span class="path">/src/plugin/url</span>
+		Les plugins d'url se situent dans l'arborescence suivante : <span class="path">/src/plugin/url</span>
 	</p>
 	
 	<p>
@@ -640,9 +640,9 @@ class plugin_url_default extends plugin_url {
 ?&gt;</pre>
 
     <p>
-        Le constructeur doit appelé le constructeur parent afin d'initialiser des variables.
+        Le constructeur doit appeler le constructeur parent afin d'initialiser des variables.
         <br />
-        Vous aurez remarquez la présence de 2 méthodes obligatoires scan et get, la première permet
+        Vous aurez remarqué la présence de 2 méthodes obligatoires scan et get, la première permet
         de scanner l'url courante et elle doit renvoyer une structure (classe) de type tUrl (voir ci-dessous)
         et la seconde permet de générer des urls.
     </p>

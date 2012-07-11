@@ -1,7 +1,7 @@
 <?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2006 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -78,7 +78,7 @@ if (defined('PREFIX_TABLE')) {
 
 
 if (!defined('HYLA_VERSION')) {
-    define('HYLA_VERSION', '0.8.2');
+    define('HYLA_VERSION', '0.8.4');
 }
 
 /*  Renvoie le contenu du fichier de configuration à générer
@@ -91,7 +91,7 @@ function get_config_content($folder_root, $sql_host, $sql_base, $sql_user, $sql_
 "<?php
 /*
     This file is part of Hyla
-    Copyright (c) 2004-2006 Charles Rincheval.
+    Copyright (c) 2004-2012 Charles Rincheval.
     All rights reserved
 
     Hyla is free software; you can redistribute it and/or modify it
@@ -140,7 +140,7 @@ define('ROOT_URL', '$root_url');
 
 
 /*  +---------------------------------+
-    | Connection à la base de données |
+    | Connexion à la base de données |
     +---------------------------------+
     Dans SQL_HOST, il est possible de spécifier un port différent
     de la manière suivante : 'server:3300'
@@ -149,6 +149,16 @@ define('SQL_HOST',  '$sql_host');
 define('SQL_BASE',  '$sql_base');
 define('SQL_USER',  '$sql_user');
 define('SQL_PASS',  '$sql_pass');
+
+
+/*	+--------------------------------------------------------------+
+	| Chemin d'accès aux dossiers de cache et de fichiers anonymes |
+	+--------------------------------------------------------------+
+    Absolu ou relatif
+    Laissez commenté pour utiliser les valeurs par défaut
+ */
+//define('DIR_CACHE',         'sys/cache/');
+//define('DIR_ANON',          'sys/anon/');
 
 ?>";
 
@@ -285,10 +295,10 @@ function test_config() {
     $ret = true;
     if (!extension_loaded('mysql')
         || !extension_loaded('session')
-        || !is_writable(DIR_ROOT.DIR_CONF)
-        || !is_writable(DIR_ROOT.FILE_INI)
-        || !is_writable(DIR_ROOT.DIR_CACHE)
-        || !is_writable(DIR_ROOT.DIR_ANON))
+        || !is_writable(DIR_CONF)
+        || !is_writable(FILE_INI)
+        || !is_writable(get_cache_path())
+        || !is_writable(get_anon_path()))
         $ret = false;
     return $ret;
 }
@@ -299,7 +309,7 @@ define('VERSION_PHP_FULL',  '4.2.0');
 $step = @$_REQUEST['step'];
 switch ($step) {
 
-    #   Test de la connection Sql
+    #   Test de la connexion Sql
     case 'sqltest':
 
         $sql_host = $_REQUEST['sql_host'];
@@ -311,10 +321,10 @@ switch ($step) {
         $sql_host = ($sql_port) ? $sql_host.':'.$sql_port : $sql_host;
 
 ?>
-    <h3>Test de connection au serveur Sql &laquo; <?php echo htmlentities($sql_host); ?> &raquo;  </h3>
+    <h3>Test de connexion au serveur Sql &laquo; <?php echo htmlentities($sql_host); ?> &raquo;  </h3>
 
     <p>
-        Tentative de connection au serveur <b><?php echo $sql_host; ?></b> avec l'utilisateur <b><?php echo $sql_user; ?></b>
+        Tentative de connexion au serveur <b><?php echo $sql_host; ?></b> avec l'utilisateur <b><?php echo $sql_user; ?></b>
         sur la base de données <b><?php echo $sql_base; ?></b>.
     </p>
 
@@ -322,12 +332,12 @@ switch ($step) {
 <?php
         $error = 0;
 
-        $bdd =& new db();
-        echo 'Création de l\'objet pour la connection : ';
+        $bdd = new db();
+        echo 'Création de l\'objet pour la connexion : ';
         echo get_html_result($bdd, true).'<br />';
         if ($bdd) {
             $cnt = $bdd->connect($sql_host, $sql_user, $sql_pass);
-            echo 'Connection au serveur Sql : ';
+            echo 'Connexion au serveur Sql : ';
             echo get_html_result($cnt, true).'<br />';
 
             if ($cnt) {
@@ -443,10 +453,10 @@ if ($host_server == 'free')
     </p>
 
     <ul>
-        <li>Dossier de configuration ( &laquo; <?php echo DIR_CONF; ?> &raquo; ) : <strong><?php get_html_result(is_writable(DIR_ROOT.DIR_CONF), true); ?></strong></li>
-        <li>Fichier conf ( &laquo; <?php echo FILE_INI; ?> &raquo; ) : <strong><?php get_html_result(is_writable(DIR_ROOT.FILE_INI), true); ?></strong></li>
-        <li>Cache ( &laquo; <?php echo DIR_CACHE; ?> &raquo; ) : <strong><?php get_html_result(is_writable(DIR_ROOT.DIR_CACHE), true); ?></strong></li>
-        <li>Fichiers anonymes ( &laquo; <?php echo DIR_ANON; ?> &raquo; ) : <strong><?php get_html_result(is_writable(DIR_ROOT.DIR_ANON), true); ?></strong></li>
+        <li>Dossier de configuration ( &laquo; <?php echo DIR_CONF; ?> &raquo; ) : <strong><?php get_html_result(is_writable(DIR_CONF), true); ?></strong></li>
+        <li>Fichier conf ( &laquo; <?php echo FILE_INI; ?> &raquo; ) : <strong><?php get_html_result(is_writable(FILE_INI), true); ?></strong></li>
+        <li>Cache ( &laquo; <?php echo DIR_CACHE; ?> &raquo; ) : <strong><?php get_html_result(is_writable(get_cache_path()), true); ?></strong></li>
+        <li>Fichiers anonymes ( &laquo; <?php echo DIR_ANON; ?> &raquo; ) : <strong><?php get_html_result(is_writable(get_anon_path()), true); ?></strong></li>
     </ul>
 
 <?php
@@ -515,11 +525,7 @@ else
     <h2>Type d'installation</h2>
 
     <p>
-        Deux types d'installation vous sont proposées :
-    </p>
-
-    <p>
-        <a href="?step=4">Une installation standard</a> : Hyla va s'installer normalement après avoir spécifié les informations nécessaires.
+        <a href="?step=4">Installation standard</a> : Hyla va s'installer normalement après avoir spécifié les informations nécessaires.
     </p>
 
     <p>
@@ -565,7 +571,7 @@ else
         </p>
 
 
-        <h3>Connection à la base de données :</h3>
+        <h3>Connexion à la base de données :</h3>
         <p>
             <label for="sql_host">Serveur :</label>
             <input name="sql_host" id="sql_host" size="20" maxlength="255" value="<?php echo $sql_server; ?>" type="text" />
@@ -574,12 +580,12 @@ else
             <input name="sql_port" id="sql_port" size="5" maxlength="8" value="<?php echo $sql_port; ?>" type="text" />
         </p>
         <p>
-            <label for="sql_user">Utilisateur :</label>
-            <input name="sql_user" id="sql_user" size="20" maxlength="255" value="<?php echo $sql_user; ?>" type="text" />
-        </p>
-        <p>
             <label for="sql_base">Base de données :</label>
             <input name="sql_base" id="sql_base" size="20" maxlength="255" value="<?php echo $sql_base; ?>" type="text" />
+        </p>
+        <p>
+            <label for="sql_user">Utilisateur :</label>
+            <input name="sql_user" id="sql_user" size="20" maxlength="255" value="<?php echo $sql_user; ?>" type="text" />
         </p>
         <p>
             <label for="sql_pass">Mot de passe :</label>
@@ -591,7 +597,7 @@ else
         </p>
 
         <p>
-            <a href="#" onclick="this.href=test_sql(); popup(this.href); return false;" title="Vous permet de tester la connection avec le serveur Sql">Tester la connection au serveur Sql</a>
+            <a href="#" onclick="this.href=test_sql(); popup(this.href); return false;" title="Vous permet de tester la connexion avec le serveur Sql">Tester la connexion au serveur Sql</a>
         </p>
 
 
@@ -630,10 +636,10 @@ else
             $var_file = get_config_content($folder_root, $sql_host, $sql_base, $sql_user, $sql_pass, null, $sql_port);
 
 ?>
-    <h2>Test de connection au serveur Sql &laquo; <?php echo htmlentities($sql_host); ?> &raquo;  </h2>
+    <h2>Test de connexion au serveur Sql &laquo; <?php echo htmlentities($sql_host); ?> &raquo;  </h2>
 
     <p>
-        Tentative de connection au serveur <b><?php echo $sql_host; ?></b> avec l'utilisateur <b><?php echo $sql_user; ?></b>
+        Tentative de connexion au serveur <b><?php echo $sql_host; ?></b> avec l'utilisateur <b><?php echo $sql_user; ?></b>
         sur la base de données <b><?php echo $sql_base; ?></b>.
     </p>
 
@@ -644,12 +650,12 @@ else
                 echo view_error(__('Passwords are different'));
                 $error = 1;
             } else {
-                $bdd =& new db();
-                echo 'Création de l\'objet pour la connection : ';
+                $bdd = new db();
+                echo 'Création de l\'objet pour la connexion : ';
                 echo get_html_result($bdd, true).'<br />';
                 if ($bdd) {
                     $cnt = $bdd->connect($sql_host, $sql_user, $sql_pass);
-                    echo 'Connection au serveur Sql : ';
+                    echo 'Connexion au serveur Sql : ';
                     echo get_html_result($cnt, true).'<br />';
 
                     if ($cnt) {
@@ -736,7 +742,7 @@ highlight_string($var_file);
 <?php
 
         include CONF_FILE;
-        $bdd =& new db();
+        $bdd = new db();
         if ($bdd->connect(SQL_HOST, SQL_USER, SQL_PASS) && $bdd->select(SQL_BASE)) {
 
 $var_query[0]['desc'] = 'Création de la table &laquo; '.$prefix.'acontrol &raquo; ';
@@ -838,7 +844,7 @@ $var_query[9]['query'] = "INSERT INTO `".$prefix."acontrol` (`ac_obj_id`, `ac_us
         } else {
 ?>
     <blockquote class="error">
-        Erreur durant la connection au serveur sql !
+        Erreur durant la connexion au serveur sql !
     </blockquote>
 <?php
         }
@@ -866,7 +872,7 @@ $var_query[9]['query'] = "INSERT INTO `".$prefix."acontrol` (`ac_obj_id`, `ac_us
 
             include CONF_FILE;
 
-            $bdd =& new db();
+            $bdd = new db();
             if ($bdd->connect(SQL_HOST, SQL_USER, SQL_PASS) && $bdd->select(SQL_BASE)) {
                 $username = trim($_POST['usr_login']);
                 $password = trim($_POST['usr_password']);

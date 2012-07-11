@@ -1,7 +1,7 @@
 <?php
 /*
 	This file is part of Hyla
-	Copyright (c) 2004-2007 Charles Rincheval.
+	Copyright (c) 2004-2012 Charles Rincheval.
 	All rights reserved
 
 	Hyla is free software; you can redistribute it and/or modify it
@@ -29,6 +29,6 @@ $l10n['Search results for &laquo; %s &raquo; :']	= 'Voici le(s) résultat(s) de 
 $l10n['Examples of use :']							= 'Quelques exemples d\'utilisation :';
 
 $l10n['For searching all jpg, enter *.jpg']									= 'Pour effectuer une recherche de tous les fichiers jpg, vous pouvez taper ceci : *.jpg';
-$l10n['For searching all file with gray or grey in name, enter *gr[ae]y']	= 'Pour lancer une recherche de tous les fichiers nommé tata ou toto, vous pouvez taper ceci : t[ao]t[ao]*';
+$l10n['For searching all file with gray or grey in name, enter *gr[ae]y']	= 'Pour lancer une recherche de tous les fichiers nommés tata ou toto, vous pouvez taper ceci : t[ao]t[ao]*';
 
 ?>
