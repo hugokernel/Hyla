@@ -17,7 +17,7 @@ Pour l'installation : http://www.hyla-project.org/doc/fr/install.htm
 
 Problème d'affichage des commentaires
 
-Avant Hyla 0.8.4bêta4, le contenu des commentaires étaient inclu dans le contenu
+Avant Hyla 0.8.4, le contenu des commentaires étaient inclu dans le contenu
 de la variable de template CONTENT, depuis la version 0.8.4, il est dorénavant
 dans une variable spécifique (COMMENTS) permettant ainsi plus de modularité dans
 la vue.

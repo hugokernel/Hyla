@@ -22,7 +22,7 @@
 
 /*  La version
  */
-define('HYLA_VERSION',      '0.8.4.1');
+define('HYLA_VERSION',      '0.8.4.2');
 
 
 /*  Le décalage pour l'heure
