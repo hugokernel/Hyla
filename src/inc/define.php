@@ -22,7 +22,7 @@
 
 /*  La version
  */
-define('HYLA_VERSION',      '0.8.4');
+define('HYLA_VERSION',      '0.8.4.1');
 
 
 /*  Le décalage pour l'heure
@@ -111,7 +111,7 @@ define('SORT_DATE_R',           512);   // Date + -
 define('SORT_FOLDER_FIRST',     256);   // Répertoire en premier
 
 
-/*  Les Id réservés
+/*  Les Id réservé
     L'id 0 est interdit, il est utilisé en interne
  */
 define('ANY_ID',                1);

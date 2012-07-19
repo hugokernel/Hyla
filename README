@@ -1,3 +1,6 @@
+
+Merci d'utiliser Hyla !
+
 Hyla, un gestionnaire de fichiers sous license GPL utilisant PHP et MySql qui se
 veut simple et léger.
 
@@ -7,4 +10,24 @@ il vous permettra aussi de créer des galeries photos en un clic !
 Plus d'informations sur le site officiel : http://www.hyla-project.org/
 
 Pour l'installation : http://www.hyla-project.org/doc/fr/install.htm
+
+
+
+-- Passage à la version 0.8.4 --
+
+Problème d'affichage des commentaires
+
+Avant Hyla 0.8.4bêta4, le contenu des commentaires étaient inclu dans le contenu
+de la variable de template CONTENT, depuis la version 0.8.4, il est dorénavant
+dans une variable spécifique (COMMENTS) permettant ainsi plus de modularité dans
+la vue.
+
+Si vous avez créé votre propre thème dans Hyla avant la version 0.8.4 et que
+les commentaires ne s'affichent plus, ouvrez le fichier obj.tpl de votre thème
+et ajoutez {COMMENTS} après les 2 {CONTENT}, exemple :
+
+{CONTENT}
+{COMMENTS}
+
+Voilà, les commentaires devraient réapparaitre.
 

@@ -137,7 +137,7 @@ if ($cobj->type == TYPE_DIR) {
 			case 'add':
 
 				$tab = $usr->getUsers(true);
-dbug($tab);
+
 				$tab_exist = $obj->getObjRights($cobj->file);
 
 				$size = sizeof($tab);

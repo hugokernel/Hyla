@@ -2,7 +2,7 @@ Merci d'utiliser Hyla !
 
 La mise à jour est très simple :
 
-1. Faites une sauvegarde de toutes votre ancienne installation
+1. Faites une sauvegarde de toute votre ancienne installation
 2. Remplacez les dossiers /doc, /img, /l10n, /src, /tpl
 3. Videz le dossier de cache /sys/cache ou celui que vous avez spécifié
 4. Et voilà
