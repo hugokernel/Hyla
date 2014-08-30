@@ -21,8 +21,8 @@
 
 class plugin_obj_slideshow extends plugin_obj {
 
-    function plugin_obj_slideshow($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
 
         $this->tpl->set_root($this->plugin_dir.'slideshow');
         $this->tpl->set_file('slideshow', 'slideshow.tpl');
@@ -43,7 +43,7 @@ class plugin_obj_slideshow extends plugin_obj {
                 ));
     }
 
-    function fullscreen($paff) {
+    public function fullscreen($paff) {
 
         global $obj, $conf;
 
@@ -58,10 +58,11 @@ class plugin_obj_slideshow extends plugin_obj {
         }
 
         $start = $this->url->getParam('aff', 2);
-        if (!$start)
-            $start = 0;
+        if (!$start) {
+			$start = 0;
+		}
 
-        $tab = $this->obj->getDirContent($this->cobj->file, $_SESSION['sess_sort'], $start, 3, -1, $filter);
+		$tab = $this->obj->getDirContent($this->cobj->file, $_SESSION['sess_sort'], $start, 3, -1, $filter);
 
         if ($tab) {
             // Listage de répertoire
@@ -74,19 +75,22 @@ class plugin_obj_slideshow extends plugin_obj {
             }
 
             if ($paff) {
-                list($act, $val) = explode(':', $paff);
-                if ($act == 'mode')
-                    $mode = $val;
-                $this->saveVar('mode', $val);
-            } else
-                $mode = $this->getVar('mode');
+				list($act, $val) = explode(':', $paff);
+				if ($act == 'mode') {
+					$mode = $val;
+				}
+				$this->saveVar('mode', $val);
+			} else {
+				$mode = $this->getVar('mode');
+			}
 
-            if ($mode == 'auto')
-                $this->tpl->parse('Hdlmode_auto', 'mode_auto', true);
-            else
-                $this->tpl->parse('Hdlmode_manual', 'mode_manual', true);
+			if ($mode == 'auto') {
+				$this->tpl->parse('Hdlmode_auto', 'mode_auto', true);
+			} else {
+				$this->tpl->parse('Hdlmode_manual', 'mode_manual', true);
+			}
 
-            if ($tab[0]->extension == 'jpg' || $tab[0]->extension == 'jpeg' || $tab[0]->extension == 'gif' || $tab[0]->extension == 'png') {
+			if ($tab[0]->extension == 'jpg' || $tab[0]->extension == 'jpeg' || $tab[0]->extension == 'gif' || $tab[0]->extension == 'png') {
                 $this->tpl->set_var('IMAGE', $this->url->linkToObj($tab[0]->file, array('mini', 800), array('force', 'slideshow')));
                 $this->tpl->parse('Hdlimage_thumb', 'image_thumb', true);
             }
@@ -120,10 +124,11 @@ class plugin_obj_slideshow extends plugin_obj {
 
             $nbr_obj = $obj->getNbrObject();
 
-            if ($start > 0)
-                $this->tpl->parse('Hdlprevious_slide', 'previous_slide', true);
+            if ($start > 0) {
+				$this->tpl->parse('Hdlprevious_slide', 'previous_slide', true);
+			}
 
-            if ($start + 1 < $nbr_obj) {
+			if ($start + 1 < $nbr_obj) {
                 $this->tpl->parse('Hdlnext_slide', 'next_slide', true);
                 if ($mode == 'auto') {
                     $this->tpl->set_var('TIMEOUT', $timeout);
@@ -141,5 +146,3 @@ class plugin_obj_slideshow extends plugin_obj {
         return true;
     }
 }
-
-?>

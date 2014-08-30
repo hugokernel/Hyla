@@ -24,8 +24,8 @@ require 'Contact_Vcard_Parse.php';
 
 class plugin_obj_vcard extends plugin_obj {
 
-    function plugin_obj_vcard($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
 
         $this->tpl->set_root($this->plugin_dir.'vcard');
         $this->tpl->set_file('vcard', 'vcard.tpl');
@@ -42,7 +42,7 @@ class plugin_obj_vcard extends plugin_obj {
         ));
     }
 
-    function aff($paff) {
+    public function aff($paff) {
 
         $this->addStyleSheet('default.css');
 
@@ -229,5 +229,3 @@ class plugin_obj_vcard extends plugin_obj {
         return $this->tpl->parse('OutPut', 'vcard');
     }
 }
-
-?>

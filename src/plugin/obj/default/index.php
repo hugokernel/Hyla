@@ -21,15 +21,15 @@
 
 class plugin_obj_default extends plugin_obj {   // implements _plugin { plugin implements _plugin {
 
-    function plugin_obj_default($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
         $this->tpl->set_root($this->plugin_dir.'default');
         $this->tpl->set_file(array(
                 'default'       =>  'default.tpl'));
         $this->tpl->set_block('default', 'plugin_choice', 'Hdlplugin_choice');
     }
 
-    function aff() {
+    public function aff() {
         $tab = parent::getFilePlugins();
         $size = sizeof($tab);
         for($i = 0, $last = null, $last_type = null; $i < $size; $i++) {
@@ -48,5 +48,3 @@ class plugin_obj_default extends plugin_obj {   // implements _plugin { plugin i
         return $this->tpl->parse('OutPut', 'default');
     }
 }
-
-?>

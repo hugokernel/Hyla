@@ -21,8 +21,8 @@
 
 class plugin_obj_dir extends plugin_obj {
 
-    function plugin_obj_dir($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
         $this->tpl->set_root($this->plugin_dir.'dir');
         $this->tpl->set_file(array(
                 'dir'   =>  'dir.tpl'));
@@ -34,7 +34,7 @@ class plugin_obj_dir extends plugin_obj {
                 ));
     }
 
-    function aff($aff) {
+    public function aff($aff) {
 
         global $sort, $start, $conf;
 
@@ -120,5 +120,3 @@ class plugin_obj_dir extends plugin_obj {
         }
     }
 }
-
-?>

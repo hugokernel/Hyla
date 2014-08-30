@@ -24,8 +24,8 @@ class plugin_auth_external_database extends plugin_auth {
 	/**
      *  Initialisation
 	 */
-	function plugin_auth_external_database() {
-		parent::plugin_auth();
+	public function __construct() {
+		parent::__construct();
 	}
 
 
@@ -40,7 +40,7 @@ class plugin_auth_external_database extends plugin_auth {
      * @param $dbCharset the database charset
      * @return the database resource or throw an exception
      */
-    function sqlConnect($dbEngine, $dbServer, $dbLogin, $dbPassword, $dbName, $dbCharset)
+    public function sqlConnect($dbEngine, $dbServer, $dbLogin, $dbPassword, $dbName, $dbCharset)
     {
         switch ($dbEngine) {
             case 'mysql':
@@ -64,7 +64,7 @@ class plugin_auth_external_database extends plugin_auth {
      *  @param	string	$password	user password
      *  @return	null if an error occurs, or a tUser object
 	 */
-	function auth($login, $password) {
+	public function auth($login, $password) {
 		/* at first, returnedUser is set to null */
 		$returnedUser = null;
 		
@@ -127,5 +127,3 @@ class plugin_auth_external_database extends plugin_auth {
 		return $returnedUser;
 	}
 }
-
-?>

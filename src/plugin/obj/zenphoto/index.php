@@ -21,8 +21,8 @@
 
 class plugin_obj_zenphoto extends plugin_obj { // implements _plugin {
 
-    function plugin_obj_zenphoto($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
 
         $this->tpl->set_root($this->plugin_dir.'zenphoto');
         $this->tpl->set_file('zenphoto', 'zenphoto.tpl');
@@ -36,7 +36,7 @@ class plugin_obj_zenphoto extends plugin_obj { // implements _plugin {
                 ));
     }
 
-    function aff($paff) {
+    public function aff($paff) {
 
         global $sort, $start, $conf;
 
@@ -84,10 +84,11 @@ class plugin_obj_zenphoto extends plugin_obj { // implements _plugin {
             $size = sizeof($tab);
             for ($i = 0, $last = null, $last_type = null; $i < $size; $i++) {
 
-                if ($tab[$i]->name == '..')
-                    continue;
+                if ($tab[$i]->name == '..') {
+					continue;
+				}
 
-                $this->tpl->set_var('Hdlzen_line');
+				$this->tpl->set_var('Hdlzen_line');
                 $this->tpl->set_var('Hdlzen_line_cat');
 
                 $this->tpl->set_var('Hdlzen_line_img');
@@ -108,25 +109,27 @@ class plugin_obj_zenphoto extends plugin_obj { // implements _plugin {
                         'NBR_COMMENT'       =>  $tab[$i]->info->nbr_comment,
                         'FILE_DESCRIPTION'  =>  ($tab[$i]->info->description) ? string::cut(string::unformat($tab[$i]->info->description), 90) : __('No description !')));
 
-                if ($tab[$i]->info->nbr_comment)
-                    $this->tpl->parse('Hdlzen_comment', 'zen_comment', true);
+					if ($tab[$i]->info->nbr_comment) {
+					$this->tpl->parse('Hdlzen_comment', 'zen_comment', true);
+				}
 
-                if ($tab[$i]->extension == 'jpg' || $tab[$i]->extension == 'jpeg' || $tab[$i]->extension == 'gif' || $tab[$i]->extension == 'png')
-                    $this->tpl->parse('Hdlzen_line_img', 'zen_line_img', true);
-                else
-                    $this->tpl->parse('Hdlzen_line_other', 'zen_line_other', true);
+				if ($tab[$i]->extension == 'jpg' || $tab[$i]->extension == 'jpeg' || $tab[$i]->extension == 'gif' || $tab[$i]->extension == 'png') {
+					$this->tpl->parse('Hdlzen_line_img', 'zen_line_img', true);
+				} else {
+					$this->tpl->parse('Hdlzen_line_other', 'zen_line_other', true);
+				}
 
-                // Utilisé pour le groupage par catégorie
+				// Utilisé pour le groupage par catégorie
                 if ($grp == 1) {
                     $rupt = eval($header_value);
-                    if ($sort & SORT_CAT_ALPHA || $sort & SORT_CAT_ALPHA_R)
-                        $this->tpl->set_var('HEADER_INFO_VALUE', (($tab[$i]->type == TYPE_FILE) ? $rupt : __('Dir(s) ')));
-                    else {
-                        $this->tpl->set_var(array(
-                                'HEADER_VALUE'      =>  (($tab[$i]->type == TYPE_DIR) ? __('Dir(s) ') : __('File(s) ')),
-                                'HEADER_INFO_VALUE' =>  (($tab[$i]->type == TYPE_FILE) ? $rupt : null)));
-                    }
-                    $bool = (($tab[$i]->type == 1) && ((SORT_FOLDER_FIRST | $sort) && $last_type == $tab[$i]->type));
+                    if ($sort & SORT_CAT_ALPHA || $sort & SORT_CAT_ALPHA_R) {
+						$this->tpl->set_var('HEADER_INFO_VALUE', (($tab[$i]->type == TYPE_FILE) ? $rupt : __('Dir(s) ')));
+					} else {
+						$this->tpl->set_var(array(
+							'HEADER_VALUE' => (($tab[$i]->type == TYPE_DIR) ? __('Dir(s) ') : __('File(s) ')),
+							'HEADER_INFO_VALUE' => (($tab[$i]->type == TYPE_FILE) ? $rupt : null)));
+					}
+					$bool = (($tab[$i]->type == 1) && ((SORT_FOLDER_FIRST | $sort) && $last_type == $tab[$i]->type));
                     if (!$bool && ($last_type != $tab[$i]->type || strtolower($last) != strtolower($rupt))) {
                         $this->tpl->parse('Hdlzen_line_cat', 'zen_line_cat', true);
                         $last = $rupt;
@@ -142,5 +145,3 @@ class plugin_obj_zenphoto extends plugin_obj { // implements _plugin {
         }
     }
 }
-
-?>

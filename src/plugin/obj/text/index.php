@@ -21,14 +21,14 @@
 
 class plugin_obj_text extends plugin_obj {
 
-    function plugin_obj_text($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
 
         $this->tpl->set_root($this->plugin_dir.'text');
         $this->tpl->set_file('text', 'text.tpl');
     }
 
-    function aff() {
+    public function aff() {
 
         $content = file::getContent($this->real_file);
         $content = htmlspecialchars($content, ENT_QUOTES);
@@ -40,5 +40,3 @@ class plugin_obj_text extends plugin_obj {
         return $this->tpl->parse('OutPut', 'text');
     }
 }
-
-?>

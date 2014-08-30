@@ -21,14 +21,14 @@
 
     class plugin_obj_archive extends plugin_obj {
 
-        var $zip;
+        public $zip;
 
-        var $_act;
-        var $_act_result_ok;
-        var $_act_result_error;
+        private $_act;
+        private $_act_result_ok;
+        private $_act_result_error;
 
-        function plugin_obj_archive($cobj) {
-            parent::plugin_obj($cobj);
+        public function __construct( $cobj) {
+            parent::__construct($cobj);
 
             $this->_act = null;
             $this->_act_result_ok = null;
@@ -42,7 +42,7 @@
                     ));
         }
 
-        function act($act = null) {
+        public function act($act = null) {
 
             global $conf;
 
@@ -68,7 +68,7 @@
             }
         }
 
-        function aff($paff) {
+        public function aff($paff) {
 
             global $cuser;
 
@@ -108,5 +108,3 @@
         return $this->tpl->parse('OutPut', 'archive');
     }
 }
-
-?>

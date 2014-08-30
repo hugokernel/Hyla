@@ -21,7 +21,11 @@
 
 class grp {
 
-    /*  Ajoute un groupe
+	public function __construct() {
+	}
+
+
+	/*  Ajoute un groupe
         @param  string  $name       Le nom
         @return Renvoie l'id du nouveau groupe
      */

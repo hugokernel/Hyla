@@ -21,8 +21,8 @@
 
 class plugin_obj_gallery extends plugin_obj { // implements _plugin {
 
-    function plugin_obj_gallery($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
 
         $this->tpl->set_root($this->plugin_dir.'gallery');
         $this->tpl->set_file('gallery', 'gallery.tpl');
@@ -37,7 +37,7 @@ class plugin_obj_gallery extends plugin_obj { // implements _plugin {
                 ));
     }
 
-    function aff($paff) {
+    public function aff($paff) {
 
         global $sort, $start;
 
@@ -104,5 +104,3 @@ class plugin_obj_gallery extends plugin_obj { // implements _plugin {
         }
     }
 }
-
-?>

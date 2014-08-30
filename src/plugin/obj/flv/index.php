@@ -21,13 +21,13 @@
 
 class plugin_obj_flv extends plugin_obj {
 
-    function plugin_obj_flv($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
         $this->tpl->set_root($this->plugin_dir.'flv');
         $this->tpl->set_file('flv', 'flv.tpl');
     }
 
-    function aff() {
+    public function aff() {
         global $cobj;
 
         $this->tpl->set_var(array(
@@ -39,5 +39,3 @@ class plugin_obj_flv extends plugin_obj {
         return $this->tpl->parse('OutPut', 'flv');
     }
 }
-
-?>
