@@ -20,28 +20,28 @@
  */
 
 class tUrl {
-    var $obj;       // Current object
+    public $obj;       // Current object
 
-    var $act;       // Current action
-    var $aff;       // Current view
+    public $act;       // Current action
+    public $aff;       // Current view
 
-    var $pact;      // Plugin action
-    var $paff;      // Plugin view
+    public $pact;      // Plugin action
+    public $paff;      // Plugin view
 }
 
 
 class plugin_url extends plugin
 {
-    var $absolute;
+    public $absolute;
 
-    var $context_saving;
+    public $context_saving;
 
-    var $current;
+    public $current;
     
-    var $root_url;
+    public $root_url;
 
-    function plugin_url() {
-        parent::plugin();
+    public function __construct() {
+        parent::__construct();
 
         $this->absolute = true;
 
@@ -55,21 +55,21 @@ class plugin_url extends plugin
     /*  Set root path after server name
         @param  string  $url    Path after servername
      */
-    function setRootUrl($url) {
+    public function setRootUrl($url) {
         $this->root_url = $url;
     }
 
     /*  Set is absolute or not
         @param  bool    $absolute   Make absolute url
      */
-    function makeAbsolute($absolute) {
+    public function makeAbsolute($absolute) {
         $this->absolute = $absolute;
     }
 
     /*  Context
         @param  bool    $context_saving Force save context
      */
-    function setContextSaving($context_saving) {
+    public function setContextSaving($context_saving) {
         $ret = $this->context_saving;
         $this->context_saving = $context_saving;
         return $ret;
@@ -77,13 +77,13 @@ class plugin_url extends plugin
 
     /*  Call scan plugin method
      */
-    function load() {
+    public function load() {
         $this->current = $this->scan($_REQUEST);
     }
 
     /*  Get url for page
      */
-    function linkToPage($aff, $object = null, $act = null, $pact = null, $paff = null) {
+    public function linkToPage($aff, $object = null, $act = null, $pact = null, $paff = null) {
         $aff = is_array($aff) ? $aff : array($aff);
         $aff = array_merge(array('page'), $aff);
         return $this->_get($object, $aff, $act, $pact, $paff, false);
@@ -91,14 +91,14 @@ class plugin_url extends plugin
 
     /*  Get url for page
      */
-    function linkToObj($object, $aff = null, $act = null, $pact = null, $paff = null) {
+    public function linkToObj($object, $aff = null, $act = null, $pact = null, $paff = null) {
         return $this->_get($object, $aff, $act, $pact, $paff, true);
     }
 
     /*  Renvoie l'url correspondante pour la visualisation de l'objet courant
         @access static
      */
-    function linkToCurrentObj($aff = null, $act = null, $pact = null, $paff = null) {
+    public static function linkToCurrentObj($aff = null, $act = null, $pact = null, $paff = null) {
         global $cobj;
         
         if (isset($cobj->target)) {
@@ -112,7 +112,7 @@ class plugin_url extends plugin
     
     /*  Wrapper for get
      */
-    function _get($object, $aff = null, $act = null, $pact = null, $paff = null, $b = true) {
+    private function _get($object, $aff = null, $act = null, $pact = null, $paff = null, $b = true) {
         
         if ($act && !is_array($act)) {
             $act = array($act);
@@ -145,7 +145,7 @@ class plugin_url extends plugin
     /*  Set obj
         @param string   $value  Value
      */
-    function setParamObj($value) {
+    public function setParamObj($value) {
         $this->current->obj = $value;
     }
 
@@ -153,7 +153,7 @@ class plugin_url extends plugin
         @param string   $element    Element
         @param string   $index      Index
      */
-    function getParam($element, $index = 0) {
+    public function getParam($element, $index = 0) {
         $ret = null;
         if (is_array($this->current->$element)) {
             if (array_key_exists($index, $this->current->$element)) {
@@ -171,7 +171,7 @@ class plugin_url extends plugin
         @param int      $index      Index
         @param string   $type       Value
      */
-    function setParam($element, $index, $value) {
+    public function setParam($element, $index, $value) {
         $tab = &$this->current->$element;
         $tab[$index] = $value;
         return $value;
@@ -180,7 +180,7 @@ class plugin_url extends plugin
     /*  Encode opbject
         @param  string  $obj    Object
      */
-    function encode($obj) {
+    public function encode($obj) {
         global $conf;
         $ret = null;
 
@@ -200,7 +200,7 @@ class plugin_url extends plugin
     /*  Context saving
         @todo   Rewrite this ugly code !!
      */
-    function getContextSaving($aff) {
+    public function getContextSaving($aff) {
         $ret = null;
         if ($this->context_saving) {
             if (array_key_exists(1, $this->current->aff) && $this->current->aff[1] == 'export') {
@@ -237,5 +237,3 @@ class plugin_url extends plugin
         return $ret;
     }
 }
-
-?>

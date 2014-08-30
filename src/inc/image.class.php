@@ -26,7 +26,7 @@ class image {
         @param string $img L'image
         @access static
      */
-    function getInfo($img) {
+    public static function getInfo($img) {
 
         $tab = getimagesize($img);
 
@@ -54,7 +54,7 @@ class image {
         @param int $size_y Longeur de l'image voulu
         @access static
      */
-    function resize($img, $size_x, $size_y = 0, $destdir = null, $send = true) {
+    public static function resize($img, $size_x, $size_y = 0, $destdir = null, $send = true) {
         $ret = false;
 
 		$tab = array();

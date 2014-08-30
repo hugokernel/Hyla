@@ -27,7 +27,7 @@ class string
         @param  int     $size       Taille de la coupe
         @param  string  $end        Tronquer avec cette chaine
      */
-    function cut($str, $size = 25, $end = '...') {
+    public static function cut($str, $size = 25, $end = '...') {
 
         if (strlen($str) > $size) {
 			$str = substr($str, 0, $size - strlen($end)) . $end;
@@ -41,7 +41,7 @@ class string
         @param  string  $list   Liste de caractère
         @return Retourne true si la chaine contient un des caractère passé en second paramètre
      */
-    function test($str, $list) {
+    public static function test($str, $list) {
         $ret = false;
         $size = strlen($list);
         for ($i = 0; $i < $size; $i++) {
@@ -58,7 +58,7 @@ class string
         @param  bool    $n      Accepter les retour chariot ou non
         @param  bool    $url    "Déformater" les urls ou non
      */
-    function format($string, $n = true, $url = false) {
+    public static function format($string, $n = true, $url = false) {
 
         $string = strip_tags( $string);
 
@@ -79,7 +79,7 @@ class string
         @param  bool    $n      Convertir les <br> en saut
         @param  bool    $url    "Déformater" les urls ou non
      */
-    function unFormat($string) {
+    public static function unFormat($string) {
         $string = preg_replace('/<br />|<br>/i', "\n", $string);
         // ToDo: passer le code ci-dessous dans une seule exp. reg.
         $string = preg_replace('/<.*href="mailto:?(.*:\/\/)?([^ \/]*)([^ >"]*)"?[^>]*>(.*)(<\/a>)/', '$4', $string);

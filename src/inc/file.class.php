@@ -27,7 +27,7 @@ class file
         @param  octal   $dir_chmod      Le mode de création des répertoires
         @return Renvoie le nombre de fichiers et répertoires créés
      */
-    function copyDir($folder_origin, $folder_dest, $dir_chmod = 0765) {
+    public static function copyDir($folder_origin, $folder_dest, $dir_chmod = 0765) {
 
         static $var = true;
         $ret = 0;
@@ -56,7 +56,7 @@ class file
         @param  string  $dir    Le chemin complet contenant les répertoires à créer
         @param  octal   $mode   Les droits
      */
-    function mkDirs($dir, $mode = 0755) {
+    public static function mkDirs($dir, $mode = 0755) {
         if (is_null($dir) || $dir == '')
             return false;
         if (is_dir($dir) || $dir == '/')
@@ -69,7 +69,7 @@ class file
     /*  Supprime un répertoire et tout son contenu
         @param string $dir
      */
-    function rmDirs($dir) {
+    public static function rmDirs($dir) {
         $hdl = dir($dir);
         if ($hdl) {
             while (false !== ($_occ = $hdl->read())) {
@@ -89,7 +89,7 @@ class file
         @param  string  $name   Le nom du fichier
         @param  string  $root   La racine
      */
-    function getUniqueName($name, $root) {
+    public static function getUniqueName($name, $root) {
         $prefix = '0';
         if (file_exists($root.'/'.$name)) {
             while (1) {
@@ -109,7 +109,7 @@ class file
         @param  string  $_folder        Sous répertoire
         @param  bool    $hidden         Renvoie ou non les objets cachés
      */
-    function scanDir($_folder_root, $hidden = true, $_folder = null) {
+    public static function scanDir($_folder_root, $hidden = true, $_folder = null) {
         static $tab_dir, $tab = null;
         static $cmpt = 0;
         $cmpt++;
@@ -143,7 +143,7 @@ class file
         @param  boolean $scandir    Scanner aussi le nom des répertoire
         @param  bool    $hidden     Renvoie ou non les objets cachés
      */
-    function searchFile($folder, $exp, $recurs = true, $base = null, $scandir = false, $hidden = false) {
+    public static function searchFile($folder, $exp, $recurs = true, $base = null, $scandir = false, $hidden = false) {
         static $tab_file = null;
         static $cmpt = 0;
         $cmpt++;
@@ -189,7 +189,7 @@ class file
         @param  bool    $recurs Récursivement ?
         @return array('size', 'nbr')
      */
-    function getDirSize($path, $recurs = true) {
+    public static function getDirSize($path, $recurs = true) {
         $ret = array('size' => 0, 'nbr' => 0);
         $dir = opendir($path);
         while ($file = readdir($dir)) {
@@ -208,7 +208,7 @@ class file
     /*  Renvoie le nom du dernier dossier
         @param  string  $path   Le chemin à scanner
      */
-    function getLastDir($path) {
+    public static function getLastDir($path) {
         $size = strlen($path);
         if ($path{$size - 1} == '/') {
             $path{$size - 1} = null;
@@ -223,7 +223,7 @@ class file
     /*  Retourne l'extension d'un fichier
         @param string $file Le nom du fichier concerné
      */
-    function getExtension($file) {
+    public static function getExtension($file) {
         $ext = null;
         $pos = strrpos($file, '.');
 
@@ -242,7 +242,7 @@ class file
         @param  string  $base La racine qui comporte $folder
         @return Le chemin réel
      */
-    function getRealDir($folder, $base = null) {
+    public static function getRealDir($folder, $base = null) {
         $ret = null;
 
         if (is_file($base.$folder)) {
@@ -273,7 +273,7 @@ class file
        multipart/x-byteranges voulu par certains clients ou le standard
        multipart/byteranges. Inspiré du filtre interne "byterange" d'apache.
     */
-    function use_range_x() {
+    public static function use_range_x() {
         return (isset($_SERVER['HTTP_REQUEST_RANGE'])
                 || strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 3') !== false);
     }
@@ -283,7 +283,7 @@ class file
         @param  string  $file Le nom du fichier
         @param  string  $base La racine comportant le fichier
      */
-    function getRealFile($file, $base = null) {
+    public static function getRealFile($file, $base = null) {
         $ret = null;
         if (is_file($base.$file)) {
             if (file::_isLegalPath($base, $file, $_)) {
@@ -296,7 +296,7 @@ class file
     /*  Envoie un fichier avec le bon type mime
         @param string $file Le fichier
      */
-    function sendFile($file) {
+    public static function sendFile($file) {
         $ext = null;        // Extension
         $ctype = null;      // Content type
 
@@ -441,7 +441,7 @@ class file
     /*  Renvoie le contenu d'un fichier
         @param string $file Le fichier
      */
-    function getContent($file) {
+    public static function getContent($file) {
         $ret = null;
         if (function_exists('file_get_contents')) {
             $ret = file_get_contents($file);
@@ -461,7 +461,7 @@ class file
         @param string $file Le nom du fichier
         @param string $str Le contenu
      */
-    function putContent($file, $str) {
+    public static function putContent($file, $str) {
         $ret = false;
         if (function_exists('file_put_contents')) {
             $ret = file_put_contents($file, $str);
@@ -482,7 +482,7 @@ class file
             * /home/toto/doc.htm -> /home/toto
         @param string $path Le chemin
      */
-    function downPath($path) {
+    public static function downPath($path) {
         if ($path{strlen($path) - 1} == '/')
             $path{strlen($path) - 1} = null;
 
@@ -504,7 +504,7 @@ class file
         @param  string  $path   Le chemin à tester
         @param  bool    $exist  Test si le fichier ou répertoire existe vraiment (avec ce paramètre à true, cette fonction simule parfaitement realpath)
      */
-    function realpath($path, $exist = false) {
+    public static function realpath($path, $exist = false) {
 
         $ret = null;
         $path = file::formatPath($path);
@@ -567,7 +567,7 @@ class file
     /*  Fonction de remplacement de dirname car l'original pose des problèmes sous windows
         @param  string  $path   Le chemin
      */
-    function dirName($path) {
+    public static function dirName($path) {
         $path = dirname($path);
         $path = file::formatPath($path);
         return $path;
@@ -576,7 +576,7 @@ class file
     /*  Get the file name (original basename function is bugged in php with name started with éà...)
         @param  string  $dir    Get the file name
      */
-    function baseName($dir) {
+    public static function baseName($dir) {
 
         $sep = '/';
         $pos = strrpos($dir, '/');
@@ -610,7 +610,7 @@ class file
         $path:  /var/www/pouf
         return: false
     */
-    function isInPath($base, $path, $oflow = false) {
+    public static function isInPath($base, $path, $oflow = false) {
         $ret = true;
 
         $tbase = explode('/', $base);
@@ -637,7 +637,7 @@ class file
         @param  string  $path0  First path
         @param  string  $path1  Second path
      */
-    function countInPath($path0, $path1) {
+    public static function countInPath($path0, $path1) {
         
         $dir0 = explode('/', $path0);
         $dir1 = explode('/', $path1);
@@ -658,7 +658,7 @@ class file
 
     /*  Renvoie une chaine propre pour windows
      */
-    function formatPath($path) {
+    public static function formatPath($path) {
         if (system::osIsWin()) {
             $path = str_replace('\\', '/', $path);
         }
@@ -667,7 +667,7 @@ class file
 
     /*  Renvoie une chaine propre pour windows
      */
-    function unFormatPath($path) {
+    public static function unFormatPath($path) {
         if (system::osIsWin()) {
             $path = str_replace('/', '\\', $path);
         }
@@ -681,7 +681,7 @@ class file
         @return boolean
         @access private
      */
-    function _isLegalPath($base, $path, &$realpath) {
+    public static function _isLegalPath($base, $path, &$realpath) {
         $ret = false;
 
         $rpath = file::realpath($path);
@@ -695,5 +695,3 @@ class file
         return $ret;
     }
 }
-
-?>

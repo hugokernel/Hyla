@@ -23,31 +23,31 @@ require 'src/inc/acl.class.php';
 require 'src/inc/archive.class.php';
 
 class tComment {
-    var $id;
-    var $author;
-    var $mail;
-    var $url;
-    var $content;
-    var $date;
+    public $id;
+    public $author;
+    public $mail;
+    public $url;
+    public $content;
+    public $date;
 }
 
 /*  Information venant de la base de données
  */
 class tFileInfo {
-    var $id;                // L'id de la BDD
-    var $date_last_update;  // Dernière modification
-    var $description;       // Description de l'objet
-    var $nbr_comment;       // Nombre de commentaires
-    var $comment;           // Objet commentaire
-    var $plugin;            // Le plugin par défaut (pour les répertoires)
-    var $dcount;            // Nombre de téléchargement
-    var $rights;            // Les droits
+    public $id;                // L'id de la BDD
+    public $date_last_update;  // Dernière modification
+    public $description;       // Description de l'objet
+    public $nbr_comment;       // Nombre de commentaires
+    public $comment;           // Objet commentaire
+    public $plugin;            // Le plugin par défaut (pour les répertoires)
+    public $dcount;            // Nombre de téléchargement
+    public $rights;            // Les droits
 
     /*  La seule info venant de la BDD ne se trouvant pas dans cette structure est
         icon car elle vient à la base du système de fichiers.
      */
 
-    function tFileInfo() {
+    public function __construct() {
         $thid->date_last_update = 0;
         $this->description = null;
         $this->nbr_comment = 0;
@@ -61,25 +61,25 @@ class tFileInfo {
 /*  Informations sur le nom, l'adresse et le type du fichier
  */
 class tFile {
-    var $type;          // Fichier, Répertoire, Archive
-    var $path;          // Le chemin depuis la racine FOLDER_ROOT
-    var $name;          // Le nom du fichier, Vide si répertoire
-    var $file;          // path + name  (Très utile pour éviter d'avoir à faire des $path.$name par la suite)
-    var $target;        // La cible lorsque l'on pointe à l'intérieur d'un fichier (fichier contenu dans une archive)
-    var $extension;     // L'extension du fichier
-    var $realpath;      // Le chemin depuis la racine du système /!\ ATTENTION /!\ Pour des raisons de sécurité, ce chemin ne doit jamais être montré au connecté
+    public $type;          // Fichier, Répertoire, Archive
+    public $path;          // Le chemin depuis la racine FOLDER_ROOT
+    public $name;          // Le nom du fichier, Vide si répertoire
+    public $file;          // path + name  (Très utile pour éviter d'avoir à faire des $path.$name par la suite)
+    public $target;        // La cible lorsque l'on pointe à l'intérieur d'un fichier (fichier contenu dans une archive)
+    public $extension;     // L'extension du fichier
+    public $realpath;      // Le chemin depuis la racine du système /!\ ATTENTION /!\ Pour des raisons de sécurité, ce chemin ne doit jamais être montré au connecté
 
-    var $cat;           // La catégorie du fichier (image, document...)
+    public $cat;           // La catégorie du fichier (image, document...)
 
-    var $size;          // La taille du fichier !
-    var $icon;          // L'icone correspondante au type du fichier
+    public $size;          // La taille du fichier !
+    public $icon;          // L'icone correspondante au type du fichier
 
-    var $info;
+    public $info;
 
-    var $prev;          // Nom du fichier précédent
-    var $next;          // Nom du fichier suivant
+    public $prev;          // Nom du fichier précédent
+    public $next;          // Nom du fichier suivant
 
-    function tFile() {
+    public function __construct() {
 
         $this->type = TYPE_UNKNOW;
         $this->path = '/';
@@ -97,38 +97,40 @@ class tFile {
         $this->prev = null;
         $this->next = null;
 
-        $this->info = new tFileInfo;
+        $this->info = new tFileInfo();
     }
 }
 
 
 class obj extends acl {
 
-    var     $_bdd;              // L'objet base de données
+    private $_bdd;              // L'objet base de données
 
-    var     $_folder_root;      // La racines
+    private $_folder_root;      // La racines
 
-    var     $_object_table;     // La table des objets
-    var     $_comment_table;    // La table des commentaires
+    private $_object_table;     // La table des objets
+    private $_comment_table;    // La table des commentaires
 
-    var     $_current_obj;      // L'objet courant...
+    private $_current_obj;      // L'objet courant...
 
-    var     $_tri;              // Le tri à appliquer
+    private $_tri;              // Le tri à appliquer
 
-    var     $view_hidden_file;  // Voir les fichiers cachés ?
+    private $view_hidden_file;  // Voir les fichiers cachés ?
 
-    var     $_nbr_object;       // Le nombre d'éléments total dans le répertoire courant (utile pour la pagination)
+    private $_nbr_object;       // Le nombre d'éléments total dans le répertoire courant (utile pour la pagination)
 
-    var     $_cache_rights;     // Tableau contenant des infos de droits en cache
-    var     $_all_rights;       // Tableau contenant tous les droits
-    var     $_error_rights;     // Tableau contenant des erreurs dans les droits
+    private $_cache_rights;     // Tableau contenant des infos de droits en cache
+    private $_all_rights;       // Tableau contenant tous les droits
+    private $_error_rights;     // Tableau contenant des erreurs dans les droits
 
     /*  Le constructeur
      */
-    function obj($_folder_root) {
+    public function __construct($_folder_root) {
 
         global  $bdd, $conf;
-
+		
+		parent::__construct();
+		
         $this->_bdd = &$bdd;
 
         // Delete final /
@@ -163,7 +165,7 @@ class obj extends acl {
         @param  bool    $data   Récupérer les infos en base de données (true)
         @param  bool    $pnext  Récupère ou non les objet précédent et suivant
      */
-    function getInfo($name, $data = true, $pnext = true) {
+    public function getInfo($name, $data = true, $pnext = true) {
 
         global $conf;
 
@@ -313,7 +315,7 @@ class obj extends acl {
         @param  string  $obj        L'objet
         @param  string  $archive    Spécifie si l'objet est dans une archive
      */
-    function getPrevNext($obj) {
+    public function getPrevNext($obj) {
 
         global $conf;
 
@@ -346,7 +348,7 @@ class obj extends acl {
         @param  array   $tab        Tableau de données
         @param  array   $filter     Filtrage dans la structure tFile
      */
-    function getDirContent($name, $tri = null, $start = 0, $nbr = 0, $tab = -1, $filter = null) {
+    public function getDirContent($name, $tri = null, $start = 0, $nbr = 0, $tab = -1, $filter = null) {
 
         global  $bdd, $conf;
 
@@ -473,7 +475,7 @@ class obj extends acl {
                     * value     : Valeur quelconque
         @access static
      */
-    function filter($obj, $filter) {
+    public static function filter($obj, $filter) {
         $ok = false;
         if (is_array($filter[0])) {
             foreach ($filter as $f) {
@@ -488,7 +490,7 @@ class obj extends acl {
 
     /*  Renvoie le nombre d'objet dans le répertoire courant (faire après getDirContent)
      */
-    function getNbrObject() {
+    public function getNbrObject() {
         return $this->_nbr_object;
     }
 
@@ -498,7 +500,7 @@ class obj extends acl {
         @param  string  $url    Son site
         @param  string  $content Le contenu
      */
-    function addComment($author, $mail, $url, $content) {
+    public function addComment($author, $mail, $url, $content) {
         $id = $this->getId($this->_current_obj->file);
         $sql = "INSERT INTO {$this->_comment_table}
                 (comment_obj_id, comment_author, comment_mail, comment_url, comment_date, comment_content)
@@ -512,7 +514,7 @@ class obj extends acl {
     /*  Suppression d'un ou de plusieurs commentaires par leur ID
         @param  int $id L'id du commentaire
      */
-    function delComment($id) {
+    public function delComment($id) {
         if (is_array($id)) {
             $id = implode(',', $id);
             $id = "comment_id IN ($id)";
@@ -528,7 +530,7 @@ class obj extends acl {
 
     /*  Renvoie les derniers commentaires...
      */
-    function getLastComment() {
+    public function getLastComment() {
         global $conf;
         $tab = array();
         $sql = "SELECT  obj_file, obj_icon, obj_plugin, comment_id, comment_author, comment_mail, comment_url, comment_date, comment_content
@@ -575,7 +577,7 @@ class obj extends acl {
         @param  string  $file   Le dossier en question
         @param  int     $nbr    Nombre de commentaires à retourner (si 0, retourne tout)
      */
-    function getCommentDir($file, $nbr = 0) {
+    public function getCommentDir($file, $nbr = 0) {
         global $conf;
         $tab = array();
         $nbr = ($nbr) ? ' LIMIT 0, '.intval($nbr) : null;
@@ -607,7 +609,7 @@ class obj extends acl {
     /*  Ajout d'un fichier anonyme
         @param string   $file   Le chemin + le nom du fichier
      */
-    function addAnonFile($file, $description) {
+    public function addAnonFile($file, $description) {
         $id_file = $this->getId(file::dirName($file));
         $name = obj::format(file::baseName($file));
         $sql = "INSERT INTO {$this->_object_table} (obj_file, obj_description, obj_date_last_update, obj_flag, obj_id_ref) VALUES ('/$name', '$description', '".system::time()."', '".FLAG_ANON."', '$id_file');";
@@ -618,7 +620,7 @@ class obj extends acl {
     /*  Retourne un tableau contenant les correspondances pour l'emplacement des fichiers anonymes
         Note: Cette manière de faire est temporaire et sera supprimé dans les prochaines versions...
      */
-    function getAnonFile() {
+    public function getAnonFile() {
         $tab = array();
         $sql = "SELECT  obj0.obj_file obj0, obj1.obj_file obj1
                 FROM    {$this->_object_table} obj0
@@ -636,7 +638,7 @@ class obj extends acl {
         @param  string  $file   Le fichier
         @param  string  $root   La racine du dépot
      */
-    function acceptAnonFile($file, $root) {
+    public function acceptAnonFile($file, $root) {
         $ret = null;
         // Le fichier existe-t-il en base de données ?
         $sql = "SELECT  obj0.obj_file as destination, obj1.obj_file as name
@@ -668,7 +670,7 @@ class obj extends acl {
         @param  string  $content    La description formatée comme il faut
         @param  string  $file       L'objet
      */
-    function setDescription($content, $file = null) {
+    public function setDescription($content, $file = null) {
         $file = $file ? $file : $this->_current_obj->file;
         $id = $this->getId($file);
         $sql = "UPDATE {$this->_object_table} SET obj_description = '$content', obj_date_last_update = '".system::time()."' WHERE obj_id = '$id'";
@@ -680,7 +682,7 @@ class obj extends acl {
     /*  Modification du plugin du répertoire courant
         @param  string  $plugin Le plugin voulu
      */
-    function setPlugin($plugin) {
+    public function setPlugin($plugin) {
         $var = null;
 
         // On change uniquement si le plugin est différent et existant !
@@ -697,7 +699,7 @@ class obj extends acl {
     /*  Modification de l'icone du répertoire courant
         @param  string  $icon   L'image voulu
      */
-    function setIcon($icon) {
+    public function setIcon($icon) {
         global $conf;
         // On change uniquement si l'icone est différent et existant !
         if ($icon != $this->_current_obj->icon) {
@@ -716,7 +718,7 @@ class obj extends acl {
 
     /*  Ajouter un téléchargement à l'objet courant
      */
-    function addDownload() {
+    public function addDownload() {
         global $cobj;
         $id = $this->getId($cobj->file);
         $sql = "UPDATE {$this->_object_table} SET obj_dcount = obj_dcount + 1 WHERE obj_id = '{$id}'";
@@ -728,7 +730,7 @@ class obj extends acl {
         @param  string  $file   Le chemin + le nom (ex: /test/toto.txt)
         @param  bool    $create Créer l'objet si il n'existe pas ?
      */
-    function getId($file, $create = true) {
+    public function getId($file, $create = true) {
         $id = 0;
         $file = stripslashes($file);
         if ($file) {
@@ -765,7 +767,7 @@ class obj extends acl {
     /*  Retourne le chemin (file) d'un objet à partir de son id
         @param  int $id L'id !
      */
-    function getFile($id) {
+    public function getFile($id) {
         $file = null;
         if ($id == $this->_current_obj->info->id) {
             $file = $this->_current_obj->info->file;
@@ -782,7 +784,7 @@ class obj extends acl {
     /*  Supprime l'objet
         @param  object  $obj    L'objet concerné !
      */
-    function delete($obj) {
+    public function delete($obj) {
 
         global $conf;
         $ret = false;
@@ -824,7 +826,7 @@ class obj extends acl {
         @param  string  $destination    La destination de l'objet
         @param  string  $base           La base
      */
-    function copy($copy, $destination, $base = null) {
+    public function copy($copy, $destination, $base = null) {
         global $conf;
         $ret = null;
 
@@ -847,7 +849,7 @@ class obj extends acl {
         @param  string  $destination    La destination de l'objet
         @param  string  $base           La base si elle est autre que $this->_folder_root
      */
-    function move($copy, $destination, $base = null) {
+    public function move($copy, $destination, $base = null) {
 
         global $conf;
         $ret = null;
@@ -885,7 +887,7 @@ class obj extends acl {
         @param  string  $name       L'objet
         @param  string  $newname    Son nouveau nom
      */
-    function rename($name, $newname) {
+    public function rename($name, $newname) {
         $ret = null;
         $newname = (file::dirName($name) == '/' ? null : file::dirName($name)).'/'.$newname;
         if (is_file($this->_folder_root.$name)) {
@@ -909,7 +911,7 @@ class obj extends acl {
 
     /*  Effectue une synchronisation de la base de données
      */
-    function syncBdd() {
+    public function syncBdd() {
 
         $tab = array();
 
@@ -959,7 +961,7 @@ class obj extends acl {
 
     /*  Scan un dossier de manière récursive
      */
-    function scanDir($_folder_root, $hidden = true, $_folder = null) {
+    public function scanDir($_folder_root, $hidden = true, $_folder = null) {
         static $tab_dir, $tab = null;
         static $cmpt = 0;
         $cmpt++;
@@ -997,7 +999,7 @@ class obj extends acl {
     /*  Renvoie le contenu d'un répertoire trié comme on veut
         @access  private
      */
-    function _getDirContent($folder, $base) {
+    private function _getDirContent($folder, $base) {
 
         global $conf;
         $tab = array();
@@ -1027,14 +1029,14 @@ class obj extends acl {
     /*  Formate le chemin, le nom d'un objet pour passer dans une requête sql
         @access static
      */
-    function format($file) {
+    public static function format($file) {
         return addslashes($file);
     }
 
     /*  Tri les répertoires en premier
         @access private
      */
-    function _sort_folder_first($a, $b) {
+    private function _sort_folder_first($a, $b) {
         $ret = 0;
 
         $bas_a = file::baseName($a->name);
@@ -1064,7 +1066,7 @@ class obj extends acl {
     /*  Tri sur les noms
         @access private
      */
-    function _sort_name($a, $b) {
+    private function _sort_name($a, $b) {
         $ret = $this->_sort_folder_first($a, $b);
         if (!$ret) {
             if ($this->_tri & SORT_NAME_ALPHA_R) {
@@ -1080,7 +1082,7 @@ class obj extends acl {
     /*  Tri sur les extensions
         @access private
      */
-    function _sort_ext($a, $b) {
+    private function _sort_ext($a, $b) {
         $ret = $this->_sort_folder_first($a, $b);
         if (!$ret) {
             if ($this->_tri & SORT_EXT_ALPHA_R) {
@@ -1102,7 +1104,7 @@ class obj extends acl {
     /*  Tri sur les catégories
         @access private
      */
-    function _sort_cat($a, $b) {
+    private function _sort_cat($a, $b) {
         $ret = $this->_sort_folder_first($a, $b);
         if (!$ret) {
             if ($this->_tri & SORT_CAT_ALPHA_R) {
@@ -1122,7 +1124,7 @@ class obj extends acl {
     /*  Tri sur les tailles
         @access private
      */
-    function _sort_size($a, $b) {
+    private function _sort_size($a, $b) {
         $ret = $this->_sort_folder_first($a, $b);
         if (!$ret) {
             if ($this->_tri & SORT_SIZE_R) {
@@ -1142,7 +1144,7 @@ class obj extends acl {
     /*  Tri sur les dates
         @access private
      */
-    function _sort_date($a, $b) {
+    private function _sort_date($a, $b) {
         $ret = $this->_sort_folder_first($a, $b);
         if (!$ret) {
             if ($this->_tri & SORT_DATE_R) {
@@ -1162,7 +1164,7 @@ class obj extends acl {
     /*  Filtrage (voir filter() pour plus d'infos...)
         @access private
      */
-    function _filter($obj, $filter) {
+    private function _filter($obj, $filter) {
         $ok = true;
         switch ($filter[0]) {
             case '=':
@@ -1181,5 +1183,3 @@ class obj extends acl {
         return $ok;
     }
 }
-
-?>

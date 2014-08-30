@@ -45,18 +45,18 @@ class tUrl {
 
 class url {
 
-    var $absolute;
+    public $absolute;
 
-    var $context_saving;
+    public $context_saving;
 
-    var $current;
+    public $current;
 
 //  var $plugin;
 
     /*  Initialisation
         @param  bool    $type   Create absolute url or not ?
      */
-    function url($type = false) {
+    public function __construct($type = false) {
         global $conf;
 
         $this->absolute = $type;
@@ -71,7 +71,7 @@ class url {
     /*  Context
         @param  bool    $context_saving Force save context
      */
-    function setContextSaving($context_saving) {
+    public function setContextSaving($context_saving) {
         $ret = $this->context_saving;
         $this->context_saving = $context_saving;
         return $ret;
@@ -93,7 +93,7 @@ class url {
         @param  string  $type   Type (comment or object) !
         @access static
      */
-    function getRss($obj, $type = null) {
+    public static function getRss($obj, $type = null) {
         $s = REAL_ROOT_URL;
         $s .= '/rss.php';
         $s .='?p=obj,'.url::_encode($obj);
@@ -104,7 +104,7 @@ class url {
     /*  Renvoie l'url correspondante pour la visualisation d'une page (admin...)
         @access static
      */
-    function getPage($aff, $object = null, $act = null, $pact = null, $paff = null) {
+    public static function getPage($aff, $object = null, $act = null, $pact = null, $paff = null) {
         $tab = array('page');
         if (is_array($aff))
             $tab = array_merge($tab, $aff);
@@ -116,14 +116,14 @@ class url {
     /*  Renvoie l'url correspondante pour la visualisation d'un objet
         @access static
      */
-    function getObj($object, $aff = null, $act = null, $pact = null, $paff = null) {
+    public static function getObj($object, $aff = null, $act = null, $pact = null, $paff = null) {
         return url::_get($object, $aff, $act, $pact, $paff, true);
     }
 
     /*  Renvoie l'url correspondante pour la visualisation de l'objet courant
         @access static
      */
-    function getCurrentObj($aff = null, $act = null, $pact = null, $paff = null) {
+    public static function getCurrentObj($aff = null, $act = null, $pact = null, $paff = null) {
         global $cobj;
         $s = (isset($cobj->target) ? $cobj->file.'!'.$cobj->target : $cobj->file);
         $s = $s ? $s : '/';
@@ -140,7 +140,7 @@ class url {
         @param  bool    $b      Permet de forcer la génération d'un 'obj'
         @access static
      */
-    function _get() {
+    private static function _get() {
 
         global $conf, $url;
 
@@ -203,7 +203,7 @@ exit;
 
     /*  Encode l'objet
      */
-    function _encode($obj) {
+    private static function _encode($obj) {
         global $conf;
         $ret = null;
 
@@ -229,7 +229,7 @@ exit;
 
     /*  Scan l'url et affecte les variables $aff, $act et renvoie le tableau d'infos de l'objet
      */
-    function scan() {
+    public function scan() {
 
         global $conf;
 
@@ -268,7 +268,7 @@ exit;
     /*  Renvoie l'élément demandé
         @access static
      */
-    function getQueryAct($num) {
+    public static function getQueryAct($num) {
         global $url;
         return isset($url->current->act[$num]) ? $url->current->act[$num] : null;
     }
@@ -276,7 +276,7 @@ exit;
     /*  Renvoie l'élément demandé
         @access static
      */
-    function getQueryAff($num) {
+    public  static function getQueryAff($num) {
         global $url;
         return isset($url->current->aff[$num]) ? $url->current->aff[$num] : null;
     }
@@ -284,7 +284,7 @@ exit;
     /*  Renvoie l'élément demandé
         @access static
      */
-    function getQueryPact() {
+    public static function getQueryPact() {
         global $url;
         return isset($url->current->pact) ? $url->current->pact : null;
     }
@@ -292,7 +292,7 @@ exit;
     /*  Renvoie l'élément demandé
         @access static
      */
-    function getQueryPaff() {
+    public static function getQueryPaff() {
         global $url;
         return isset($url->current->paff) ? $url->current->paff : null;
     }
@@ -300,7 +300,7 @@ exit;
     /*  Renvoie l'élément demandé
         @access static
      */
-    function getQueryObj() {
+    public static function getQueryObj() {
         global $url;
         return isset($url->current->obj) ? $url->current->obj : null;
     }
@@ -308,7 +308,7 @@ exit;
     /*  Set l'élément demandé
         @access static
      */
-    function setQueryObj($obj) {
+    public static function setQueryObj($obj) {
         global $url;
         $url->current->obj = $obj;
         return $url->current->obj;
@@ -317,11 +317,9 @@ exit;
     /*  Set l'élément demandé
         @access static
      */
-    function setQueryAff($num, $val) {
+    public static function setQueryAff($num, $val) {
         global $url;
         $url->current->aff[$num] = $val;
         return $url->current->aff[$num];
     }
 }
-
-?>
