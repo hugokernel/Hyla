@@ -26,12 +26,8 @@ require 'src/init.php';
 /*  Connection à la base
  */
 $bdd = new db();
-if (!$bdd->connect(SQL_HOST, SQL_USER, SQL_PASS)) {
+if (!$bdd->connect(SQL_HOST, SQL_USER, SQL_PASS, SQL_BASE)) {
     system::end(__('Couldn\'t connect to sql server !'));
-}
-
-if (!$bdd->select(SQL_BASE)) {
-    system::end(__('Unable to use database &laquo; %s &raquo;', SQL_BASE));
 }
 
 /*  Chargement des infos de l'utilisateur courant

@@ -336,15 +336,9 @@ switch ($step) {
         echo 'Création de l\'objet pour la connexion : ';
         echo get_html_result($bdd, true).'<br />';
         if ($bdd) {
-            $cnt = $bdd->connect($sql_host, $sql_user, $sql_pass);
+            $cnt = $bdd->connect($sql_host, $sql_user, $sql_pass, $sql_base);
             echo 'Connexion au serveur Sql : ';
             echo get_html_result($cnt, true).'<br />';
-
-            if ($cnt) {
-                $slt = $bdd->select($sql_base);
-                echo 'Sélection de la base de données Sql : ';
-                echo get_html_result($slt, true).'<br />';
-            }
         }
 
         if ($error) {
@@ -654,15 +648,9 @@ else
                 echo 'Création de l\'objet pour la connexion : ';
                 echo get_html_result($bdd, true).'<br />';
                 if ($bdd) {
-                    $cnt = $bdd->connect($sql_host, $sql_user, $sql_pass);
+                    $cnt = $bdd->connect($sql_host, $sql_user, $sql_pass, $sql_base);
                     echo 'Connexion au serveur Sql : ';
                     echo get_html_result($cnt, true).'<br />';
-
-                    if ($cnt) {
-                        $slt = $bdd->select($sql_base);
-                        echo 'Sélection de la base de données Sql : ';
-                        echo get_html_result($slt, true).'<br />';
-                    }
                 }
             }
 
@@ -743,7 +731,7 @@ highlight_string($var_file);
 
         include CONF_FILE;
         $bdd = new db();
-        if ($bdd->connect(SQL_HOST, SQL_USER, SQL_PASS) && $bdd->select(SQL_BASE)) {
+        if ($bdd->connect(SQL_HOST, SQL_USER, SQL_PASS, SQL_BASE)) {
 
 $var_query[0]['desc'] = 'Création de la table &laquo; '.$prefix.'acontrol &raquo; ';
 $var_query[0]['query'] = "
@@ -873,7 +861,7 @@ $var_query[9]['query'] = "INSERT INTO `".$prefix."acontrol` (`ac_obj_id`, `ac_us
             include CONF_FILE;
 
             $bdd = new db();
-            if ($bdd->connect(SQL_HOST, SQL_USER, SQL_PASS) && $bdd->select(SQL_BASE)) {
+            if ($bdd->connect(SQL_HOST, SQL_USER, SQL_PASS, SQL_BASE)) {
                 $username = trim($_POST['usr_login']);
                 $password = trim($_POST['usr_password']);
                 $password_bis = trim($_POST['usr_password_bis']);
