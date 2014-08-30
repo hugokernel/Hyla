@@ -48,7 +48,7 @@ if (isset($_POST['word']) && !empty($_POST['word'])) {
                     'FILE_SIZE'         =>  ($tab[$i]->type == TYPE_FILE) ? get_human_size_reading($tab[$i]->size) : '&nbsp;',
                     'PATH'              =>  $tab[$i]->path,
                     'PATH_FORMAT'       =>  format($tab[$i]->file, false),
-                    'FILE_DESCRIPTION'  =>  string::cut(eregi_replace("<br />", " ", $tab[$i]->info->description), 90)));
+                    'FILE_DESCRIPTION'  =>  string::cut( preg_replace('/<br />/i', ' ', $tab[$i]->info->description), 90)));
             $tpl->parse('Hdlline', 'line', true);
         }
 

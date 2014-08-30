@@ -50,13 +50,15 @@ function format_date($date, $type = 0, $date2 = null)
             $ret = substr($date, 10, strlen($date));
             break;
         case 3:
-            if ($date2 == null)
-                $date2 = system::date('Y-m-d H:i:s');
-            if (substr($date2, 0, 10) > substr($date, 0, 10))
-                $ret .= substr($date, 10, strlen($date));
-            else
-                $ret = substr($date, 10, strlen($date));
-            break;
+            if ($date2 == null) {
+				$date2 = system::date('Y-m-d H:i:s');
+			}
+			if (substr($date2, 0, 10) > substr($date, 0, 10)) {
+				$ret .= substr($date, 10, strlen($date));
+			} else {
+				$ret = substr($date, 10, strlen($date));
+			}
+			break;
         case 4:
             $ret = system::date('w j m');
             list ($day, $num, $month) = explode(' ', $ret);
@@ -173,10 +175,11 @@ function redirect($title, $page, $msg, $attente = 0, $rnow = true) {
             'SUGGESTION'    =>  get_suggest($suggest['redirect']),
             ));
 
-    if ($rnow)
-        $tpl->parse('HdlAffichRedirectNow', 'AffichRedirectNow', true);
+			if ($rnow) {
+		$tpl->parse('HdlAffichRedirectNow', 'AffichRedirectNow', true);
+	}
 
-    $tpl->parse('HandleAffichRedirect', 'AffichRedirect', true);
+	$tpl->parse('HandleAffichRedirect', 'AffichRedirect', true);
     $tpl->pparse('OutPut', 'redirect');
     unset($tpl);
 }
@@ -305,10 +308,11 @@ function load_config() {
             );
     $conf['sort_config'] = $sort_tab[$tab['sort']];
 
-    if ($tab['folder_first'])
-        $conf['sort_config'] |= SORT_FOLDER_FIRST;
+    if ($tab['folder_first']) {
+		$conf['sort_config'] |= SORT_FOLDER_FIRST;
+	}
 
-    unset($tab, $sort_tab);
+	unset($tab, $sort_tab);
 }
 
 /*  Ouvre le fichier de liaison extensions / icones et charge en mémoire les relations
@@ -356,14 +360,10 @@ function get_human_size_reading($size, $rnd = 2){
 
 function get_suggest($tab) {
 
-    $str = null;
-
     $tab[] = null;
     shuffle($tab);
-//  $val = rand(0, sizeof($tab[$context]) - 1);
-    $str = $tab[0];
 
-    return view_suggestion($str);
+    return view_suggestion( $tab[0]);
 }
 
 /*  Renvoie l'élément encodé en UTF8, les éléments venant du système de fichiers doivent
@@ -423,27 +423,26 @@ function acl_test() {
 
     $r = call_user_func_array(array('acl', 'ok'), $args);
     if (!$r) {
-        if ($cuser->id == ANONYMOUS_ID) {
-            $_SESSION['sess_url'] = $_SERVER['REQUEST_URI'];
-            redirect(__('Error'), $url->linkToPage('login'), __('Thank you for authenticate you'));
-            system::end();
-            break;
-        } else {
-            redirect(__('Error'), $url->linkToCurrentObj(), __('You cannot use this functionality !'));
-            system::end();
-            break;
-        }
-    } else
-        $ret = true;
+		if ($cuser->id == ANONYMOUS_ID) {
+			$_SESSION['sess_url'] = $_SERVER['REQUEST_URI'];
+			redirect(__('Error'), $url->linkToPage('login'), __('Thank you for authenticate you'));
+			system::end();
+		} else {
+			redirect(__('Error'), $url->linkToCurrentObj(), __('You cannot use this functionality !'));
+			system::end();
+		}
+	} else {
+		$ret = true;
+	}
 
-    return $ret;
+	return $ret;
 }
 
 /*  Renvoie 1 ou 0 selon le droit d'accès
     @param  ... ACL_xxx, ACL_xxx...
  */
 function acl_get() {
-    global $cobj, $cuser, $url;
+    global $cobj;
     $ret = false;
 
     $args = func_get_args();
@@ -478,6 +477,7 @@ function get_real_directory() {
     global $cobj;
     $ret = null;
     if ($cobj->type == TYPE_ARCHIVED) {
+		$file = '';
         cache::getFilePath($cobj->file, $file);
         $ret = $file.'/'.$cobj->target;
     } else {
@@ -509,13 +509,15 @@ if (!function_exists('array_map')) {
 //if (!function_exists('array_walk_recursive')) {
     function _array_walk_recursive(&$input, $funcname, $userdata = null) {
 
-        if (!is_callable($funcname))
-            return false;
+        if (!is_callable($funcname)) {
+		return false;
+	}
 
-        if (!is_array($input))
-            return false;
+	if (!is_array($input)) {
+		return false;
+	}
 
-        foreach ($input as $key => $value) {
+	foreach ($input as $key => $value) {
             if (is_array($input[$key])) {
                 _array_walk_recursive($input[$key], $funcname, $userdata);
             } else {
@@ -528,6 +530,3 @@ if (!function_exists('array_map')) {
         }
         return true;
     }
-//}
-
-?>

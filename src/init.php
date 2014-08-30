@@ -19,8 +19,9 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-if (!defined('PAGE_HOME'))
-    header('location: ../index.php');
+if (!defined('PAGE_HOME')) {
+	header('location: ../index.php');
+}
 
 /*  Modifiez ici l'affichage des erreurs
  */
@@ -49,36 +50,29 @@ define('CONFIG_FILE',   DIR_CONF.'config.inc.php');
  */
 //register_shutdown_function(array('system', 'timeOut'));
 
-// Pour faire taire les notices, on test avant
-if (ini_get('magic_quotes_runtime')) {
-    set_magic_quotes_runtime(0);
-    ini_set('magic_quotes_runtime', 0);
-    ini_set('magic_quotes_sybase', 0);
-}
-
 
 // En attendant de trouver mieux...
-if (!get_magic_quotes_gpc()) {
-    _array_walk_recursive($_COOKIE, 'addslashes');
-    _array_walk_recursive($_POST, 'addslashes');
-    _array_walk_recursive($_GET, 'addslashes');
-}
+_array_walk_recursive($_COOKIE, 'addslashes');
+_array_walk_recursive($_POST, 'addslashes');
+_array_walk_recursive($_GET, 'addslashes');
 
 
 /*  Vérification de sécurité
  */
 if (basename($_SERVER['PHP_SELF']) != 'install.php') {
     if (!file_exists('conf/lock')) {
-        if (file_exists('install.php'))
-            header('location: install.php');
-        else
-            system::end('Install Hyla before : <a href="install.php">install.php</a>');
-    }
+        if (file_exists('install.php')) {
+			header('location: install.php');
+		} else {
+			system::end('Install Hyla before : <a href="install.php">install.php</a>');
+		}
+	}
 
     if (!file_exists(CONFIG_FILE)) {
-        system::end('The configuration file doesn\'t exist !');
-    } else
-        require CONFIG_FILE;
+		system::end('The configuration file doesn\'t exist !');
+	} else {
+		require CONFIG_FILE;
+	}
 }
 
 define('DIR_ROOT', file::dirName($_SERVER['SCRIPT_FILENAME']).'/');
@@ -186,4 +180,3 @@ require 'src/inc/plugins.class.php';
 require 'src/inc/plugin_auth.class.php';
 require 'src/inc/plugin_url.class.php';
 
-?>
