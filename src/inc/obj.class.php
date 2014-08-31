@@ -48,7 +48,7 @@ class tFileInfo {
      */
 
     public function __construct() {
-        $thid->date_last_update = 0;
+        $this->date_last_update = 0;
         $this->description = null;
         $this->nbr_comment = 0;
         $this->comment = array();
@@ -104,24 +104,17 @@ class tFile {
 
 class obj extends acl {
 
-    private $_bdd;              // L'objet base de données
 
     private $_folder_root;      // La racines
 
-    private $_object_table;     // La table des objets
     private $_comment_table;    // La table des commentaires
-
-    private $_current_obj;      // L'objet courant...
 
     private $_tri;              // Le tri à appliquer
 
-    private $view_hidden_file;  // Voir les fichiers cachés ?
+    public $view_hidden_file;  // Voir les fichiers cachés ?
 
     private $_nbr_object;       // Le nombre d'éléments total dans le répertoire courant (utile pour la pagination)
 
-    private $_cache_rights;     // Tableau contenant des infos de droits en cache
-    private $_all_rights;       // Tableau contenant tous les droits
-    private $_error_rights;     // Tableau contenant des erreurs dans les droits
 
     /*  Le constructeur
      */
@@ -154,8 +147,6 @@ class obj extends acl {
         $this->_cache_rights = array();
         $this->_all_rights = array();
         $this->_error_rights = array();
-
-        $this->acl();
 
         $this->view_hidden_file = $conf['view_hidden_file'];
     }

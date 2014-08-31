@@ -63,7 +63,7 @@ class string
         $string = strip_tags( $string);
 
         // Le nl2br rajoute un retour chariot après le <br /> donc :
-        $string = ($n) ? preg_replace( "/\r\n|\n/i", '<br/>', $string) : epreg_replace( "/\r\n|\n/i", ' ', $string);
+        $string = ($n) ? preg_replace( "/\r\n|\n/i", '<br/>', $string) : preg_replace( "/\r\n|\n/i", ' ', $string);
 
         if ($url) {
             $_format = create_function( '$tab', 'return \'<a href="\'.$tab[0].\'">\'.string::cut($tab[0], 60).\'</a>\';');

@@ -96,9 +96,9 @@ class plugin_url extends plugin
     }
 
     /*  Renvoie l'url correspondante pour la visualisation de l'objet courant
-        @access static
-     */
-    public static function linkToCurrentObj($aff = null, $act = null, $pact = null, $paff = null) {
+
+	 *      */
+    public function linkToCurrentObj($aff = null, $act = null, $pact = null, $paff = null) {
         global $cobj;
         
         if (isset($cobj->target)) {

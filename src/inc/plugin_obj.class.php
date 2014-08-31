@@ -101,7 +101,7 @@ class plugin_obj extends plugin
     /*  Get the plugin for the object
         @param  object  $cobj   Current object
      */
-    public function searchFilePlugin($cobj) {
+    private static function searchFilePlugin($cobj) {
         $ret = null;
         $hdl = dir(DIR_PLUGINS_OBJ);
         if ($hdl) {

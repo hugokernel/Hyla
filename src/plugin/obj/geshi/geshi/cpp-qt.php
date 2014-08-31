@@ -4,10 +4,10 @@
  * -------
  * Author: Iulian M
  * Copyright: (c) 2006 Iulian M
- * Release Version: 1.0.8.10
+ * Release Version: 1.0.8.11
  * Date Started: 2004/09/27
  *
- * C++ (with QT extensions) language file for GeSHi.
+ * C++ (with Qt extensions) language file for GeSHi.
  *
  * CHANGES
  * -------
@@ -41,14 +41,18 @@
  ************************************************************************************/
 
 $language_data = array (
-    'LANG_NAME' => 'C++ (QT)',
+    'LANG_NAME' => 'C++ (Qt)',
     'COMMENT_SINGLE' => array(1 => '//', 2 => '#'),
     'COMMENT_MULTI' => array('/*' => '*/'),
     'COMMENT_REGEXP' => array(
         //Multiline-continued single-line comments
         1 => '/\/\/(?:\\\\\\\\|\\\\\\n|.)*$/m',
         //Multiline-continued preprocessor define
-        2 => '/#(?:\\\\\\\\|\\\\\\n|.)*$/m'
+        2 => '/#(?:\\\\\\\\|\\\\\\n|.)*$/m',
+        //C++ 11 string literal extensions
+        3 => '/(?:L|u8?|U)(?=")/',
+        //C++ 11 string literal extensions (raw)
+        4 => '/R"([^()\s\\\\]*)\((?:(?!\)\\1").)*\)\\1"/ms'
         ),
     'CASE_KEYWORDS' => GESHI_CAPS_NO_CHANGE,
     'QUOTEMARKS' => array("'", '"'),
@@ -489,6 +493,8 @@ $language_data = array (
         'COMMENTS' => array(
             1 => 'color: #888888;',
             2 => 'color: #006E28;',
+            3 => 'color: #BF0303;',
+            4 => 'color: #BF0303;',
             'MULTI' => 'color: #888888; font-style: italic;'
             ),
         'ESCAPE_CHAR' => array(
@@ -560,5 +566,3 @@ $language_data = array (
         )
     )
 );
-
-?>

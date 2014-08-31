@@ -240,7 +240,7 @@ class Template
   * @return    boolean
   */
   function set_root($root) {
-    if( preg_match('/$', $root)) {
+    if( preg_match('\/$', $root)) {
       $root = substr($root, 0, -1);
     }
     if ($this->debug & 4) {
@@ -935,7 +935,7 @@ class Template
 
 	/*	Récupère le chemin du fichier (hugo, le 21/03/2007)
 	 */
-	function get_file($filename) {
+	public static function get_file($filename) {
 
 		if (!file_exists($filename)) {
 			// Si le fichier n'existe pas dans le tpl, on prend celui de default

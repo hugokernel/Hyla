@@ -23,6 +23,14 @@ class acl {
 
     public $acl_rights;
 
+    protected $_bdd;              // L'objet base de données
+    protected $_current_obj;      // L'objet courant...
+    protected $_object_table;     // La table des objets
+    protected $_cache_rights;     // Tableau contenant des infos de droits en cache
+    protected $_all_rights;       // Tableau contenant tous les droits
+    protected $_error_rights;     // Tableau contenant des erreurs dans les droits
+
+	
     private $_origin;       // L'origine, pour les problèmes de droits
 
     public function __construct() {
@@ -70,9 +78,10 @@ class acl {
                                                     LEFT JOIN {$this->_users_table} ON ac_usr_id = usr_id
                                                     LEFT JOIN {$this->_object_table} ON obj_id = ac_obj_id
                 ORDER   BY obj_file ASC, usr_type ASC, ac_usr_id ASC";      // Ne pas changer l'ordre du tri, c'est déterminant pour les priorités !
-        if (!$var = $this->_bdd->execQuery($sql))
-            trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
-        for ($i = 0; $res = $this->_bdd->nextTuple($var); $i++) {
+        if (!$var = $this->_bdd->execQuery($sql)) {
+			trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
+		}
+		for ($i = 0; $res = $this->_bdd->nextTuple($var); $i++) {
             if ($group) {
                 if ($res['grpu_usr_id']) {
                     $this->_all_rights[$res['obj_file']][$res['grpu_grp_id']] = $res['ac_rights'];

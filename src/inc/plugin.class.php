@@ -75,7 +75,7 @@ class plugin
     /*  Charge les infos d'un plugin
         @param  string  $file   L'adresse du plugin
      */
-    public function loadInfo($file) {
+    public static function loadInfo($file) {
 
         $ret = false;
 

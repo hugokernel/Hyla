@@ -26,6 +26,7 @@ if (!defined('PAGE_HOME')) {
 /*  Modifiez ici l'affichage des erreurs
  */
 error_reporting(E_ERROR);     // E_ALL
+//error_reporting(E_ALL);     // E_ALL
 
 require 'src/inc/l10n.class.php';
 require 'src/db/mysql.class.php';

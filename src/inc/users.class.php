@@ -29,9 +29,9 @@ class tUser {
 
 class users extends grp {
 
-    private $_bdd;
+    protected $_bdd;
 
-    private $_users_table;
+    protected $_users_table;
 
     public function __construct() {
         global  $bdd;
@@ -187,6 +187,7 @@ class users extends grp {
         @param  string  $login  Le login à tester
      */
     public function testLex($login) {
+		global $conf;
         // Récupère le plugin auth pour accéder au testLex
         $auth = plugins::get(PLUGIN_TYPE_AUTH, $conf['plugin_default_auth']);
         return $auth->testLex($login);
