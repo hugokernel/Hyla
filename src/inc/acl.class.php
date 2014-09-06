@@ -21,11 +21,19 @@
 
 class acl {
 
-    var $acl_rights;
+    public $acl_rights;
 
-    var $_origin;       // L'origine, pour les problèmes de droits
+    protected $_bdd;              // L'objet base de données
+    protected $_current_obj;      // L'objet courant...
+    protected $_object_table;     // La table des objets
+    protected $_cache_rights;     // Tableau contenant des infos de droits en cache
+    protected $_all_rights;       // Tableau contenant tous les droits
+    protected $_error_rights;     // Tableau contenant des erreurs dans les droits
 
-    function acl() {
+	
+    private $_origin;       // L'origine, pour les problèmes de droits
+
+    public function __construct() {
 
         // Tableau des droits
         $this->acl_rights = array(
@@ -50,7 +58,7 @@ class acl {
 
     /*  Get all ACL
      */
-    function getAcl() {
+    public function getAcl() {
         $out = array();
         foreach ($this->acl_rights as $name => $txt) {
             if (constant($name)) {
@@ -63,16 +71,17 @@ class acl {
     /*  Charge tous les droits
         @param  bool    $group  Si true, retourne les droits avec les id des groupes, sinon des utilisateurs
      */
-    function loadRights($group = false) {
+    public function loadRights($group = false) {
         $this->_all_rights = null;
         $sql = "SELECT  obj_file, usr_type, usr_id, usr_name, usr_type, ac_obj_id, ac_usr_id, ac_rights, grpu_usr_id, grpu_grp_id
                 FROM    {$this->_acontrol_table}    LEFT JOIN {$this->_grp_usr_table} ON ac_usr_id = grpu_grp_id
                                                     LEFT JOIN {$this->_users_table} ON ac_usr_id = usr_id
                                                     LEFT JOIN {$this->_object_table} ON obj_id = ac_obj_id
                 ORDER   BY obj_file ASC, usr_type ASC, ac_usr_id ASC";      // Ne pas changer l'ordre du tri, c'est déterminant pour les priorités !
-        if (!$var = $this->_bdd->execQuery($sql))
-            trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
-        for ($i = 0; $res = $this->_bdd->nextTuple($var); $i++) {
+        if (!$var = $this->_bdd->execQuery($sql)) {
+			trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
+		}
+		for ($i = 0; $res = $this->_bdd->nextTuple($var); $i++) {
             if ($group) {
                 if ($res['grpu_usr_id']) {
                     $this->_all_rights[$res['obj_file']][$res['grpu_grp_id']] = $res['ac_rights'];
@@ -89,7 +98,7 @@ class acl {
     /*  Renvoie les droits pour le chemin spécifié
         @param  string  $path   Le chemin
      */
-    function _getRight4Path($path) {
+    public function _getRight4Path($path) {
         $rights = array();
         if (array_key_exists($path, $this->_all_rights)) {
             $rights = $this->_all_rights[$path];
@@ -99,7 +108,7 @@ class acl {
 
     /*  Remet les droits en ordre
      */
-    function findError($repair = false) {
+    public function findError($repair = false) {
 
         $final_errors = null;
 
@@ -194,7 +203,7 @@ class acl {
     /*  Renvoie les droits de l'utilisateur courant du dossier spécifié
         @param  string  $path   Le chemin
      */
-    function getCUserRights4Path($path) {
+    public function getCUserRights4Path($path) {
         global $cuser;
 
         if (!array_key_exists($path, $this->_cache_rights)) {
@@ -216,7 +225,7 @@ class acl {
         @param  string  $path       Le chemin
         @param  int     $cuserid    L'id de l'utilisateur
      */
-    function getUserRights4Path($path, $cuserid) {
+    public function getUserRights4Path($path, $cuserid) {
 
         $right = 0;
 
@@ -279,7 +288,7 @@ class acl {
         @param  int     $usr_id L'id de l'utilisateur
         @param  string  $path   Le chemin
      */
-    function getRightsFromUserAndPath($usr_id, $path) {
+    public function getRightsFromUserAndPath($usr_id, $path) {
         $right = 0;
         $dir = null;
         $tab = array();
@@ -303,7 +312,7 @@ class acl {
         @param  string  $path       Le chemin enfant
         @param  int     $userid     Concernant cet utilisateur
      */
-    function getParentHaveRights($path, $userid = 0) {
+    public function getParentHaveRights($path, $userid = 0) {
         $parent = null;
         $found = false;
 
@@ -353,7 +362,7 @@ class acl {
         @param  int     $user_id    L'id de l'utilisateur
         @param  int     $perm       Le droit
      */
-    function addRight($file, $user_id, $perm) {
+    public function addRight($file, $user_id, $perm) {
         $id = $this->getId($file);
         if ($id) {
             $sql = "INSERT INTO {$this->_acontrol_table}
@@ -370,7 +379,7 @@ class acl {
         @param  int     $user_id    L'id de l'utilisateur
         @param  int     $perm       Le droit
      */
-    function setRight($file, $user_id, $perm) {
+    public function setRight($file, $user_id, $perm) {
         $id = (is_numeric($file)) ? $file : $this->getId($file);
         if ($id) {
             $sql = "UPDATE {$this->_acontrol_table} SET ac_rights = '$perm' WHERE ac_obj_id = '$id' AND ac_usr_id = '$user_id'";
@@ -383,7 +392,7 @@ class acl {
         @param  mixed   $file       Le dossier (int ou string)
         @param  int     $user_id    L'id de l'utilisateur
      */
-    function delRight($file, $user_id) {
+    public function delRight($file, $user_id) {
         $id = (is_numeric($file)) ? $file : $this->getId($file);
         $sql = "DELETE
                 FROM    {$this->_acontrol_table}
@@ -394,7 +403,7 @@ class acl {
 
     /*  Supprime tous les droits de l'objet courant
      */
-    function delRights() {
+    public function delRights() {
         $sql = "DELETE
                 FROM    {$this->_acontrol_table}
                 WHERE   ac_obj_id = '{$this->_current_obj->info->id}'";
@@ -405,7 +414,7 @@ class acl {
     /*  Supprimer à un utilisateur ou à un groupe des droits
         @param  int $user_id    Id
      */
-    function delUserRights($user_id) {
+    public function delUserRights($user_id) {
         $sql = "DELETE
                 FROM    {$this->_acontrol_table}
                 WHERE   ac_usr_id = '$user_id'";
@@ -416,7 +425,7 @@ class acl {
     /*  Renvoie tous les utilisateurs et groupes de l'objet
         @param  string  $file   Le chemin
      */
-    function getObjRights($file) {
+    public function getObjRights($file) {
         global $cuser;
         $tab = array();
         $sql = "SELECT  obj_file, usr_id, usr_name, usr_type, ac_obj_id, ac_usr_id, ac_rights, grpu_usr_id, grpu_grp_id
@@ -437,7 +446,7 @@ class acl {
 
     /*  Renvoie tous les droits
      */
-    function getAllRights() {
+    public function getAllRights() {
         global $cuser;
         $tab = array();
         $sql = "SELECT  obj_id, obj_file, usr_id, usr_name, usr_type, ac_obj_id, ac_usr_id, ac_rights, grpu_usr_id, grpu_grp_id
@@ -463,7 +472,7 @@ class acl {
     /*  Renvoie la liste des droits de manière textuel
         @param  int $right  Les droits
      */
-    function getTextRights($right) {
+    public function getTextRights($right) {
         global $conf;
 
         $str = null;
@@ -484,7 +493,7 @@ class acl {
     /*  Calcul les bons droits
         @param  array   $tab_rights Tableau des droits
      */
-    function calculateRights($tab_rights) {
+    public function calculateRights($tab_rights) {
         $right = AC_NONE;
 
         if (isset($tab_rights)) {
@@ -503,7 +512,7 @@ class acl {
     /*  Test les droits (sans paramètre, renvoie true si on est admin, sinon false)
         @access static
      */
-    function ok() {
+    public static function ok() {
         global $obj, $cobj, $cuser;
         $ret = false;
 
@@ -540,7 +549,7 @@ class acl {
     /*  Ajoute une erreur
         @access private
      */
-    function _addError($path, $userid) {
+    private function _addError($path, $userid) {
         if (!($this->_all_rights[$path][$userid] & AC_VIEW)) {
             /*  Simplification 1
                 - Authenticated + Anonymous = All
@@ -580,4 +589,3 @@ class acl {
     }
 }
 
-?>

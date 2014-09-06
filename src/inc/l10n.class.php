@@ -38,27 +38,27 @@ function __($str) {
 
 class l10n {
 
-    var $_lng;
-    var $_arr;
+    private $_lng;
+    private $_arr;
 
     /*  Traduction
         @param string   $lng    La langue
      */
-    function l10n($lng = DEFAULT_LNG) {
+    public function __construct($lng = DEFAULT_LNG) {
         $this->_lng = $lng;
         $this->_arr = array();
     }
 
     /*  Envoie l'entête
      */
-    function sendHeader() {
+    public function sendHeader() {
         header('Content-Language: '.$this->_lng);
     }
 
     /*  Inclu un fichier
         @param  string  $file   Le nom du fichier
      */
-    function setFile($file) {
+    public function setFile($file) {
         $f = 'l10n/'.$this->_lng.'/'.$file;
         if (file_exists($f)) {
             require $f;
@@ -72,7 +72,7 @@ class l10n {
         @param  string  $plugin Le chemin (ex: src/plugin/obj/toto/)
         @param  string  $file   Le nom du fichier (ex: messages.php)
      */
-    function setSpecialFile($path, $file) {
+    public function setSpecialFile($path, $file) {
         $f = $path.'l10n/'.$this->_lng.'/'.$file;
         if (file_exists($f)) {
             require $f;
@@ -86,7 +86,7 @@ class l10n {
         @param  string  $var        Valeur à retourner
         @param  string  $context    Le fichier concerné
      */
-    function getVal($val, $context = null) {
+    public function getVal($val, $context = null) {
 
         $val = stripslashes($val);
 
@@ -108,7 +108,7 @@ class l10n {
         @param  string  $var        Valeur à parser
         @param  string  $context    Le fichier concerné
      */
-    function parse($var) {
+    public function parse($var) {
         $var = preg_replace('/\{LANG:([^}]+)\}/e', "\$this->getVal('$1')", $var);
         return $var;
     }
@@ -118,7 +118,7 @@ class l10n {
         @param  string  $var        Clef
         @param  ... Arguement à passer à fprint
      */
-    function setStr($context, $str) {
+    public function setStr($context, $str) {
         $ret = null;
         if (func_num_args() >= 2) {
             if (is_array($str)) {
@@ -145,5 +145,3 @@ class l10n {
         return $ret;
     }
 }
-
-?>

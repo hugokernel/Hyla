@@ -21,8 +21,8 @@
 
 class plugin_obj_gallery extends plugin_obj { // implements _plugin {
 
-    function plugin_obj_gallery($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
 
         $this->tpl->set_root($this->plugin_dir.'gallery');
         $this->tpl->set_file('gallery', 'gallery.tpl');
@@ -37,7 +37,7 @@ class plugin_obj_gallery extends plugin_obj { // implements _plugin {
                 ));
     }
 
-    function aff($paff) {
+    public function aff($paff) {
 
         global $sort, $start;
 
@@ -78,7 +78,7 @@ class plugin_obj_gallery extends plugin_obj { // implements _plugin {
                         'PATH'              =>  $this->url->linkToObj($tab[$i]->file),
                         'OBJECT_MINI'       =>  $this->url->linkToObj($tab[$i]->file, array('mini', $img_width, $img_height)),
                         'NBR_COMMENT'       =>  $tab[$i]->info->nbr_comment,
-                        'FILE_DESCRIPTION'  =>  ($tab[$i]->info->description) ? string::cut(eregi_replace("<br />", " ", $tab[$i]->info->description), 90) : __('No description !')
+                        'FILE_DESCRIPTION'  =>  ($tab[$i]->info->description) ? string::cut( preg_replace('/<br />/i', ' ', $tab[$i]->info->description), 90) : __('No description !')
                         ));
 
                 if ($tab[$i]->info->nbr_comment)
@@ -104,5 +104,3 @@ class plugin_obj_gallery extends plugin_obj { // implements _plugin {
         }
     }
 }
-
-?>

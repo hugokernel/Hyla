@@ -21,11 +21,15 @@
 
 class grp {
 
-    /*  Ajoute un groupe
+	public function __construct() {
+	}
+
+
+	/*  Ajoute un groupe
         @param  string  $name       Le nom
         @return Renvoie l'id du nouveau groupe
      */
-    function addGroup($name) {
+    public function addGroup($name) {
         $ret = null;
         $name = strtolower($name);
         $sql = "INSERT INTO {$this->_users_table}
@@ -40,7 +44,7 @@ class grp {
 
     /*  Retourne la structure tUser contenant les infos des groupes
      */
-    function getGroups() {
+    public function getGroups() {
         $tab = array();
         $sql = "SELECT  usr_id, usr_name, usr_type
                 FROM    {$this->_users_table}
@@ -60,7 +64,7 @@ class grp {
     /*  Retourne les utilisateurs appartenant à un groupe
         @param  int $id Id du groupe
      */
-    function getUsersGroup($id) {
+    public function getUsersGroup($id) {
         $tab = array();
         $sql = "SELECT  usr_id, usr_name, usr_type
                 FROM    {$this->_users_table}
@@ -81,7 +85,7 @@ class grp {
     /*  Retourne les utilisateurs n'appartenant pas à un groupe
         @param  int $id Id du groupe
      */
-    function getUsersNotInGroup($id) {
+    public function getUsersNotInGroup($id) {
         $tab = array();
         $sql = "SELECT usr_id, usr_name, usr_type
                 FROM {$this->_users_table}
@@ -102,7 +106,7 @@ class grp {
         @param  int     $id     L'id du groupe
         @param  string  $name   L'id de l'utilisateur
      */
-    function addUserInGroup($grp_id, $usr_id) {
+    public function addUserInGroup($grp_id, $usr_id) {
         $sql = "INSERT INTO {$this->_grp_usr_table}
                 (grpu_usr_id, grpu_grp_id)
                 VALUES
@@ -116,7 +120,7 @@ class grp {
         @param  int     $id     L'id du groupe
         @param  string  $name   L'id de l'utilisateur
      */
-    function delUserInGroup($grp_id, $usr_id) {
+    public function delUserInGroup($grp_id, $usr_id) {
         $sql = "DELETE
                 FROM    {$this->_grp_usr_table}
                 WHERE   grpu_grp_id = '$grp_id' AND grpu_usr_id = '$usr_id'";
@@ -125,5 +129,3 @@ class grp {
         return $var;
     }
 }
-
-?>

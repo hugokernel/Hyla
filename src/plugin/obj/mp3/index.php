@@ -21,13 +21,13 @@
 
 class plugin_obj_mp3 extends plugin_obj {
 
-    function plugin_obj_mp3($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
         $this->tpl->set_root($this->plugin_dir.'mp3');
         $this->tpl->set_file('mp3', 'mp3.tpl');
     }
 
-    function aff() {
+    public function aff() {
         global $cobj;
 
         $auto_play = $this->getConfVar('auto_play');
@@ -47,5 +47,3 @@ class plugin_obj_mp3 extends plugin_obj {
         return $this->tpl->parse('OutPut', 'mp3');
     }
 }
-
-?>

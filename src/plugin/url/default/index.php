@@ -23,15 +23,15 @@ class plugin_url_default extends plugin_url {
 
     /*  Constructor
      */
-    function plugin_url_default() {
-        parent::plugin_url();
+    public function __construct() {
+        parent::__construct();
     }
 
     /*  Scan url
         @param  array   $url    Array ($_REQUEST or other)
         @return tUrl object
      */
-    function scan($url) {
+    public function scan($url) {
 
         $ret = new tUrl;
 
@@ -58,7 +58,7 @@ class plugin_url_default extends plugin_url {
         @param  string  @paff   Plugin aff
         @return Url
      */
-    function get($object, $aff = null, $act = null, $pact = null, $paff = null) {
+    public function get($object, $aff = null, $act = null, $pact = null, $paff = null) {
                 
         $url = null;
         
@@ -95,5 +95,3 @@ class plugin_url_default extends plugin_url {
         return $url;
     }
 }
-
-?>

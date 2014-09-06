@@ -29,12 +29,15 @@ class tUser {
 
 class users extends grp {
 
-    var     $_bdd;
+    protected $_bdd;
 
-    var     $_users_table;
+    protected $_users_table;
 
-    function users() {
+    public function __construct() {
         global  $bdd;
+		
+		parent::__construct();
+		
         $this->_bdd = &$bdd;
         $this->_users_table = TABLE_USERS;
         $this->_grp_usr_table = TABLE_GRP_USR;
@@ -45,7 +48,7 @@ class users extends grp {
         @param  string  $password   Le mot de passe
         @return Null en cas d'erreur sinon, renvoie un objet tUser
      */
-    function auth($login, $password) {
+    public function auth($login, $password) {
         $ret = null;
 
         if (users::testLex($login)) {
@@ -73,7 +76,7 @@ class users extends grp {
         @param  string  $password   Le mot de passe en clair
         @return Renvoie l'id du nouvel utilisateur
      */
-    function addUser($name, $password) {
+    public function addUser($name, $password) {
         $ret = null;
         $name = strtolower($name);
         $password = crypt($password, CRYPT_SALT);
@@ -90,7 +93,7 @@ class users extends grp {
     /*  Retourne la structure tUser contenant les infos des utilisateurs
         @param  bool    $grp    Retourner également les groupes
      */
-    function getUsers($grp = false) {
+    public function getUsers($grp = false) {
         $tab = array();
         $str = !$grp ? '    WHERE usr_type != '.USR_TYPE_GRP : null;
         $sql = "SELECT  usr_id, usr_name, usr_type
@@ -111,7 +114,7 @@ class users extends grp {
     /*  Retourne un tableau contenant la liste des utilisateurs
         @param  int $id L'id de l'utilisateur voulu ou son nom
      */
-    function getUser($id) {
+    public function getUser($id) {
         $ret = null;
         $rsql = (is_numeric($id)) ? "usr_id = '$id'" : "usr_name = '$id'";
         $sql = "SELECT  usr_id, usr_name, usr_type
@@ -136,7 +139,7 @@ class users extends grp {
         @param  int     $id     L'utilisateur
         @param  string  $type   Le niveau
      */
-    function setType($id, $type) {
+    public function setType($id, $type) {
         $sql = "UPDATE {$this->_users_table} SET usr_type = '".intval($type)."' WHERE usr_id = '".intval($id)."'";
         if (!$var = $this->_bdd->execQuery($sql))
             trigger_error($this->_bdd->getErrorMsg(), E_USER_ERROR);
@@ -146,7 +149,7 @@ class users extends grp {
         @param  int     $id         L'utilisateur
         @param  string  $password   Le mot de passe
      */
-    function setPassword($id, $password) {
+    public function setPassword($id, $password) {
         $password = crypt($password, CRYPT_SALT);
         $sql = "UPDATE {$this->_users_table} SET usr_password_hash = '$password' WHERE usr_id = '".intval($id)."'";
         if (!$var = $this->_bdd->execQuery($sql))
@@ -157,7 +160,7 @@ class users extends grp {
     /*  Supprime un utilisateur
         @param  int $id L'id de l'utilisateur
      */
-    function delUser($id) {
+    public function delUser($id) {
         global $obj;
         $sql = "DELETE  usr, grp_usr
                 FROM    {$this->_users_table} usr
@@ -172,7 +175,7 @@ class users extends grp {
         @param  string  $login  Login à valider
         return -1 si le login n'est pas valide, 0 si l'utilisateur existe déjà, 1 si tout est ok
      */
-    function testLogin($login) {
+    public function testLogin($login) {
         $ret = -1;
         if (!empty($login) && users::testLex($login)) {
             $ret = (!$s = $this->getUser($login)) ? 1 : 0;
@@ -183,11 +186,10 @@ class users extends grp {
     /*  Test lexical du login
         @param  string  $login  Le login à tester
      */
-    function testLex($login) {
+    public function testLex($login) {
+		global $conf;
         // Récupère le plugin auth pour accéder au testLex
         $auth = plugins::get(PLUGIN_TYPE_AUTH, $conf['plugin_default_auth']);
         return $auth->testLex($login);
     }
 }
-
-?>

@@ -21,8 +21,8 @@
 
 class plugin_obj_image extends plugin_obj {
 
-    function plugin_obj_image($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
 
         $this->tpl->set_root($this->plugin_dir.'image');
         $this->tpl->set_file('image', 'image.tpl');
@@ -32,10 +32,7 @@ class plugin_obj_image extends plugin_obj {
                 ));
     }
 
-    function act($pact = null) {
-    }
-
-    function aff($paff) {
+    public function aff($paff) {
 
         $this->addStyleSheet('default.css');
 
@@ -130,5 +127,3 @@ class plugin_obj_image extends plugin_obj {
         return $this->tpl->parse('OutPut', 'image');
     }
 }
-
-?>

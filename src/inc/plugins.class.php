@@ -31,7 +31,7 @@ class plugins {
         @param  int $param  Param
         @return Object
      */
-    function get($type, $param = null) {
+    public static function get($type, $param = null) {
         $plugin = null;
 
         switch ($type) {
@@ -61,7 +61,7 @@ class plugins {
         @param  string  $name   Name
         @param  int     $type   Type
      */
-    function search($name, $type) {
+    public static function search($name, $type) {
         
         $file_mask = DIR_PLUGINS.'%s/%s/index.php';
         $file = sprintf($file_mask, plugins::getNameFromType($type), $name);
@@ -82,7 +82,7 @@ class plugins {
         @param  string  $name   Plugin name
         @param  string  $type   Type
      */
-    function isValid($name, $type = PLUGIN_TYPE_OBJ) {
+    public static function isValid($name, $type = PLUGIN_TYPE_OBJ) {
         $ret = false;        
         $file_mask = DIR_PLUGINS.'%s/%s/index.php';
         $file = sprintf($file_mask, plugins::getNameFromType($type), $name);
@@ -96,7 +96,7 @@ class plugins {
     /*  Get plugin name from type
         @param  string  $type   Type
      */
-    function getNameFromType($type) {
+    public static function getNameFromType($type) {
         $type2name = array( PLUGIN_TYPE_OBJ     =>  'obj',
                             PLUGIN_TYPE_AUTH    =>  'auth',
                             PLUGIN_TYPE_URL     =>  'url',
@@ -104,5 +104,3 @@ class plugins {
         return $type2name[$type];
     }
 }
-
-?>

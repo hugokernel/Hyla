@@ -28,14 +28,14 @@ class archive {
 
     /*  Test if specified type is valid
      */
-    function isValidType($type) {
+    public static function isValidType($type) {
         $types = archive::getAllType();
         return ($type && in_array($type, $types));
     }
 
     /*  Get all type
      */
-    function getAllType() {
+    public static function getAllType() {
         // Uggly but necessary in php4...
         return array('zip', 'tar', 'gz', 'tgz');
     }
@@ -43,7 +43,7 @@ class archive {
     /*  Retourne le type d'une archive
         @param  string  $file   Le nom de l'archive
      */
-    function getType($file) {
+    public static function getType($file) {
         $size = strlen($file);      // ToDo: Remplacer par unpack pour lire l'entête des fichiers
         $type = (substr($file, $size - 6, $size) == 'tar.gz') ? 'tar.gz' : file::getExtension($file);
         return $type;
@@ -52,7 +52,7 @@ class archive {
     /*  Liste les fichiers contenus dans une archive
         @param  string  $file   L'archive
      */
-    function listContent($file) {
+    public static function listContent($file) {
         $ret = null;
 
         $type = archive::getType($file);
@@ -77,7 +77,7 @@ class archive {
         @param  string  $file   L'archive
         @param  string  $dest   Le répertoire de destination
      */
-    function extract($file, $dest) {
+    public static function extract($file, $dest) {
         $ret = false;
 
         $type = archive::getType($file);
@@ -103,7 +103,7 @@ class archive {
         @param  string  $file       File
         @param  string  $type       Type (tar, zip...)
      */
-    function createFromFile($archive, $file, $type = 'tar') {
+    public static function createFromFile($archive, $file, $type = 'tar') {
         return archive::_createArchive($archive, array($file), $type, dirname($file));
     }
 
@@ -112,7 +112,7 @@ class archive {
         @param  string  $path       Le répertoire en question
         @param  string  $type       Type (tar, zip)
      */
-    function createFromDir($archive, $path, $type = 'tar') {
+    public static function createFromDir($archive, $path, $type = 'tar') {
         $out = null;
         
         $hdl = dir($path);
@@ -144,7 +144,7 @@ class archive {
         @param  string  $path       Path to remove
         @access private
      */
-    function _createArchive($archive, $tab, $type, $path = null) {
+    public static function _createArchive($archive, $tab, $type, $path = null) {
          switch ($type) {
             case 'zip':
                 $zip = new PclZip($archive);
@@ -165,7 +165,7 @@ class archive {
     /*  Renvoie un tableau contenant les nom des fichiers précédent et suivant en tenant compte du tri
         @param  string  $archive    L'archive
      */
-    function getPrevNext($archive, $target) {
+    public static function getPrevNext($archive, $target) {
 
         $ret = array('prev' => null, 'next' => null);
 
@@ -194,5 +194,3 @@ class archive {
     }
 
 }
-
-?>

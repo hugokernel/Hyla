@@ -20,17 +20,17 @@
  */
 
 class tPluginInfo {
-    var $name;
+    public $name;
 
-    var $extension;
+    public $extension;
 
-    var $description;
-    var $author;
-    var $version;
+    public $description;
+    public $author;
+    public $version;
 
-    var $minversion;
+    public $minversion;
 
-    function tPluginInfo() {
+    public function __construct() {
         $this->name = null;
         $this->extension = array();
         $this->description = null;
@@ -42,15 +42,15 @@ class tPluginInfo {
 
 class plugin
 {
-    var $plugin_name;
+    public $plugin_name;
 
-    var $plugin_dir;
+    public $plugin_dir;
 
-    var $_conf;
+    private $_conf;
 
-    var $_url_2_plugin;     // L'url pour accéder au dossier du plugin courant
+    private $_url_2_plugin;     // L'url pour accéder au dossier du plugin courant
 
-    function plugin() {
+    public function __construct() {
 
         $name_obj = get_class($this);
 
@@ -75,7 +75,7 @@ class plugin
     /*  Charge les infos d'un plugin
         @param  string  $file   L'adresse du plugin
      */
-    function loadInfo($file) {
+    public static function loadInfo($file) {
 
         $ret = false;
 
@@ -117,7 +117,7 @@ class plugin
 
     /*  Lit le fichier de conf des plugins
      */
-    function readConf() {
+    public function readConf() {
         $fileconf = $this->plugin_dir.$this->plugin_name.'/'.FILE_CONF_PLUGIN;
         if (file_exists($fileconf)) {
             $this->_conf = (function_exists('parse_ini_file')) ? parse_ini_file($fileconf, true) : iniFile::read($fileconf, true);
@@ -129,7 +129,7 @@ class plugin
         @param  string  $group  Groupe ([param])
         @param  string  $def    Valeur par défaut si la variable n'existe pas
      */
-    function getConfVar($name, $group = null, $def = null) {
+    public function getConfVar($name, $group = null, $def = null) {
         $ret = null;
         if (!$this->_conf) {
             $this->readConf();
@@ -154,5 +154,3 @@ class plugin
         return $ret;
     }
 }
-
-?>

@@ -23,7 +23,7 @@ class system
 {
     /*  Abstraction timestamp
      */
-    function time() {
+    public static function time() {
         $time = time() + (TIME_OFFSET * 60);
         return $time;
     }
@@ -32,7 +32,7 @@ class system
         @param  string  $format Format de l'heure
         @param  int     $time   Le timestamp
      */
-    function date($format, $time = 0) {
+    public static function date($format, $time = 0) {
         if ($time == 0)
             $time = system::time();
         $date = date($format, $time);
@@ -41,7 +41,7 @@ class system
 
     /*  Pour le chronométrage...
      */
-    function chrono() {
+    public static function chrono() {
         $mtime = microtime();
         $mtime = explode(' ',$mtime);
         $mtime = $mtime[1] + $mtime[0];
@@ -54,7 +54,7 @@ class system
         @param  string  $text       Le texte du mail
         @param  string  $from       L'expéditeur
      */
-    function mail($to, $subject, $text, $from) {
+    public static function mail($to, $subject, $text, $from) {
         $header = "From: $from\r\n".
                   "X-Mailer: Hyla\r\n".
                   "MIME-Version: 1.0\r\n".
@@ -67,7 +67,7 @@ class system
     /*  Génération d'identifiant unique
         @param  int $size   Nombre de caractère de l'ID
      */
-    function getUniqueID($size = 8) {
+    public static function getUniqueID($size = 8) {
         $ret = null;
         $tab = array(
                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -83,7 +83,7 @@ class system
     /*  Renvoie l'adresse complète (basé sur le code de DotClear d'Olivier Meunier)
         @access static
      */
-    function getHost() {
+    public static function getHost() {
         $server_name = $_SERVER['SERVER_NAME'];
         if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
             $scheme = 'https';
@@ -97,13 +97,13 @@ class system
 
     /*  Retourne une chaine indiquant le système
      */
-    function getOS() {
+    public static function getOS() {
         return strtolower(PHP_OS);
     }
 
     /*  Renvoie si on est sur Windows...
      */
-    function osIsWin() {
+    public static function osIsWin() {
         $ret = false;
         if (substr(system::getOS(), 0, 3) == 'win')
             $ret = true;
@@ -112,16 +112,14 @@ class system
 
     /*  Fonction affichant une erreur en cas de time out
      */
-    function timeOut() {
+    public static function timeOut() {
         if (!defined('EXIT')) {
             exit('Fatal error : Time out !');
         }
     }
 
-    function end($msg = null) {
+    public static function end($msg = null) {
         define('EXIT', 'ok');
         exit($msg);
     }
 }
-
-?>

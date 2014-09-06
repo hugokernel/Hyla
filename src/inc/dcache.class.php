@@ -21,9 +21,9 @@
 
 class dcache {
 
-    var $data;
+    private $data;
 
-    function dcache() {
+    public function __construct() {
         $this->data = array();
     }
 
@@ -32,7 +32,7 @@ class dcache {
         @param  mixed   $key    The key
         @param  mixed   $value  Value
      */
-    function add($context, $key, $value) {
+    public function add($context, $key, $value) {
         $this->data[$context][$key] = $value;
         return $this->data[$context][$key];
     }
@@ -41,7 +41,7 @@ class dcache {
         @param  mixed   $string Context
         @param  mixed   $key    The key
      */
-    function get($context, $key) {
+    public function get($context, $key) {
         $ret = null;
         if (array_key_exists($context, $this->data)) {
             if (array_key_exists($key, $this->data[$context])) {
@@ -51,15 +51,3 @@ class dcache {
         return $ret;
     }
 }
-
-/*
-$toto = new dcache();
-$toto->add('essai', 'toto', 'pouf');
-
-echo '->'.$toto->get('essai', 'toto');
-
-echo '<pre>';
-print_r($toto);
-*/
-
-?>

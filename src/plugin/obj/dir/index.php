@@ -21,8 +21,8 @@
 
 class plugin_obj_dir extends plugin_obj {
 
-    function plugin_obj_dir($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
         $this->tpl->set_root($this->plugin_dir.'dir');
         $this->tpl->set_file(array(
                 'dir'   =>  'dir.tpl'));
@@ -34,7 +34,7 @@ class plugin_obj_dir extends plugin_obj {
                 ));
     }
 
-    function aff($aff) {
+    public function aff($aff) {
 
         global $sort, $start, $conf;
 
@@ -87,7 +87,7 @@ class plugin_obj_dir extends plugin_obj {
                         'FILE_SIZE'         =>  ($tab[$i]->type == TYPE_FILE) ? get_human_size_reading($tab[$i]->size) : ' ',
                         'PATH_DOWNLOAD'     =>  $this->url->linkToObj($tab[$i]->file, 'download'),
                         'PATH_INFO'         =>  $this->url->linkToObj($tab[$i]->file),
-                        'FILE_DESCRIPTION'  =>  ($tab[$i]->info->description ? string::cut(eregi_replace("<br />", " ", string::unFormat($tab[$i]->info->description)), 90) : null),
+                        'FILE_DESCRIPTION'  =>  ($tab[$i]->info->description ? string::cut( preg_replace('/<br/>/i', ' ', string::unFormat( $tab[$i]->info->description)), 90) : null),
                         'NBR_COMMENT'       =>  $tab[$i]->info->nbr_comment,
                         ));
 
@@ -98,14 +98,14 @@ class plugin_obj_dir extends plugin_obj {
                 // Utilisé pour le groupage par catégorie
                 if ($grp == 1) {
                     $rupt = eval($header_value);
-                    if ($sort & SORT_CAT_ALPHA || $sort & SORT_CAT_ALPHA_R)
-                        $this->tpl->set_var('HEADER_INFO_VALUE', (($tab[$i]->type == TYPE_FILE) ? $rupt : __('Dir(s) ')));
-                    else {
-                        $this->tpl->set_var(array(
-                                'HEADER_VALUE'      =>  (($tab[$i]->type == TYPE_DIR) ? __('Dir(s) ') : __('File(s) ')),
-                                'HEADER_INFO_VALUE' =>  (($tab[$i]->type == TYPE_FILE) ? $rupt : null)));
-                    }
-                    $bool = (($tab[$i]->type == 1) && ((SORT_FOLDER_FIRST | $sort) && $last_type == $tab[$i]->type));
+                    if ($sort & SORT_CAT_ALPHA || $sort & SORT_CAT_ALPHA_R) {
+						$this->tpl->set_var('HEADER_INFO_VALUE', (($tab[$i]->type == TYPE_FILE) ? $rupt : __('Dir(s) ')));
+					} else {
+						$this->tpl->set_var(array(
+							'HEADER_VALUE' => (($tab[$i]->type == TYPE_DIR) ? __('Dir(s) ') : __('File(s) ')),
+							'HEADER_INFO_VALUE' => (($tab[$i]->type == TYPE_FILE) ? $rupt : null)));
+					}
+					$bool = (($tab[$i]->type == 1) && ((SORT_FOLDER_FIRST | $sort) && $last_type == $tab[$i]->type));
                     if (!$bool && ($last_type != $tab[$i]->type || strtolower($last) != strtolower($rupt))) {
                         $this->tpl->parse('Hdlline_header', 'line_header', true);
                         $last = $rupt;
@@ -120,5 +120,3 @@ class plugin_obj_dir extends plugin_obj {
         }
     }
 }
-
-?>

@@ -23,8 +23,8 @@ require 'geo.class.php';
 
 class plugin_obj_geo extends plugin_obj {
 
-    function plugin_obj_geo($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
 
         $this->tpl->set_root($this->plugin_dir.'geo');
         $this->tpl->set_file('geo', 'geo.tpl');
@@ -35,7 +35,7 @@ class plugin_obj_geo extends plugin_obj {
                 ));
     }
 
-    function aff() {
+    public function aff() {
 
         $google_key = $this->getConfVar('google_key', $_SERVER['HTTP_HOST']);
         $max_poi = $this->getConfVar('max_poi');
@@ -89,5 +89,3 @@ class plugin_obj_geo extends plugin_obj {
         return $this->tpl->parse('OutPut', 'geo');
     }
 }
-
-?>

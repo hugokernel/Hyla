@@ -21,13 +21,13 @@
 
 class plugin_obj_video extends plugin_obj {
 
-    function plugin_obj_video($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
         $this->tpl->set_root($this->plugin_dir.'video');
         $this->tpl->set_file('video', 'video.tpl');
     }
 
-    function aff() {
+    public function aff() {
         global $cobj;
 
         $this->tpl->set_var(array(
@@ -38,5 +38,3 @@ class plugin_obj_video extends plugin_obj {
         return $this->tpl->parse('OutPut', 'video');
     }
 }
-
-?>

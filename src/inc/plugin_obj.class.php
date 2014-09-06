@@ -21,18 +21,18 @@
 
 class plugin_obj extends plugin
 {
-    var $tpl;
-    var $obj;
-    var $url;
-    var $cobj;
+    public $tpl;
+    public $obj;
+    public $url;
+    public $cobj;
 
-    var $real_file;        // Le chemin d'accès à l'objet courant, très utile car, il va chercher dans le cache (ex: fichier contenus dans zip, tar...)
+    public $real_file;        // Le chemin d'accès à l'objet courant, très utile car, il va chercher dans le cache (ex: fichier contenus dans zip, tar...)
 
-    function plugin_obj() {
+    public function __construct() {
 
         global $tpl, $obj, $cobj, $url, $cuser;
 
-        parent::plugin();
+        parent::__construct();
 
         $this->tpl = $tpl;
 
@@ -50,18 +50,18 @@ class plugin_obj extends plugin
         @access static
         /!\ Factoriser le code ci dessous avec le reste du code, c'est pas très propre... /!\
      */
-    function getDirPlugins() {
+    public static function getDirPlugins() {
         return plugin_obj::_getPlugins(true);
     }
 
     /*  Renvoie un tableau contenant les plugins disponibles pour un fichier
         @access static
      */
-    function getFilePlugins() {
+    public static function getFilePlugins() {
         return plugin_obj::_getPlugins(false);
     }
 
-    function _getPlugins($type = true) {
+    private static function _getPlugins($type = true) {
 
         $tab = array();
 
@@ -101,7 +101,7 @@ class plugin_obj extends plugin
     /*  Get the plugin for the object
         @param  object  $cobj   Current object
      */
-    function searchFilePlugin($cobj) {
+    private static function searchFilePlugin($cobj) {
         $ret = null;
         $hdl = dir(DIR_PLUGINS_OBJ);
         if ($hdl) {
@@ -130,7 +130,7 @@ class plugin_obj extends plugin
     /*  Search plugin and return it !
         @access static
      */
-    function search() {
+    public static function search() {
 
         global $conf, $cobj, $dcache;
 
@@ -191,7 +191,7 @@ class plugin_obj extends plugin
         @return On renvoie le contenu généré par le plugin
         @access static
      */
-    function load($plugin = null) {
+    public static function load($plugin = null) {
 
         global $conf, $l10n, $cobj, $url;
         
@@ -252,13 +252,13 @@ class plugin_obj extends plugin
 
     /*  Sauve une variable dans la session courante
      */
-    function saveVar($name, $value) {
+    public function saveVar($name, $value) {
         return $_SESSION['sess_'.$this->plugin_name.'_'.$name] = $value;
     }
 
     /*  Récupère une variable de la session courante
      */
-    function getVar($name) {
+    public function getVar($name) {
         $key = 'sess_'.$this->plugin_name.'_'.$name;
         if (isset($_SESSION) && array_key_exists($key, $_SESSION)) {
             return $_SESSION[$key];
@@ -268,7 +268,7 @@ class plugin_obj extends plugin
     /*  Ajoute la css d'un plugin
         @param  string  $name   La css, à partir du chemin du plugin
      */
-    function addStyleSheet($name) {
+    public function addStyleSheet($name) {
         add_stylesheet_plugin($this->plugin_dir.$this->plugin_name.'/'.$name, $this->plugin_name);
     }
 
@@ -277,9 +277,7 @@ class plugin_obj extends plugin
         @param  array   $attr       Attribut
         @param  string  $content    Content
      */
-    function addHeader($markup, $attr, $content = null) {
+    public function addHeader($markup, $attr, $content = null) {
         add_page_header($markup, $attr, $content);
     }
 }
-
-?>

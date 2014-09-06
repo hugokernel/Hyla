@@ -21,14 +21,14 @@
 
 class plugin_obj_pdf extends plugin_obj {
 
-    function plugin_obj_pdf($cobj) {
-        parent::plugin_obj($cobj);
+    public function __construct($cobj) {
+        parent::__construct($cobj);
 
         $this->tpl->set_root($this->plugin_dir.'pdf');
         $this->tpl->set_file('pdf', 'pdf.tpl');
     }
 
-    function aff() {
+    public function aff() {
         $this->addStyleSheet('pdf.css');
 
         $content = file::getContent($this->real_file);
@@ -39,5 +39,3 @@ class plugin_obj_pdf extends plugin_obj {
         return $this->tpl->parse('OutPut', 'pdf');
     }
 }
-
-?>

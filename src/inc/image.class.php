@@ -26,7 +26,7 @@ class image {
         @param string $img L'image
         @access static
      */
-    function getInfo($img) {
+    public static function getInfo($img) {
 
         $tab = getimagesize($img);
 
@@ -34,7 +34,7 @@ class image {
         $ret['sizey'] = $tab[1];
         $ret['exif'] = null;
 
-        eregi('(png$)|(jp[e]?g$)|(gif$)', $img, $tab);
+        preg_match('/(png$)|(jp[e]?g$)|(gif$)/i', $img, $tab);
         $ret['extension'] = $tab[0];
 
         // Si l'extension Exif est présente
@@ -54,10 +54,11 @@ class image {
         @param int $size_y Longeur de l'image voulu
         @access static
      */
-    function resize($img, $size_x, $size_y = 0, $destdir = null, $send = true) {
+    public static function resize($img, $size_x, $size_y = 0, $destdir = null, $send = true) {
         $ret = false;
 
-        eregi('(png$)|(jp[e]?g$)|(gif$)', $img, $tab);
+		$tab = array();
+        preg_match('/(png$)|(jp[e]?g$)|(gif$)/i', $img, $tab);
         if (strtolower($tab[0]) == 'jpg') {
             $tab[0] = 'jpeg';
         }
@@ -102,5 +103,3 @@ class image {
         return $ret;
     }
 }
-
-?>

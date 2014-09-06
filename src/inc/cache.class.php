@@ -21,13 +21,13 @@
 
 class cache {
 
-    function getCachePath() {
+    public static function getCachePath() {
         return get_cache_path();
     }
 
     /*  Vide le cache
      */
-    function free() {
+    public static function free() {
         $i = 0;
         $hdl = dir(cache::getCachePath());
         if ($hdl) {
@@ -44,7 +44,7 @@ class cache {
     /*  Supprime les infos en cache d'un fichier
         @param  string  $file   Le fichier concerné
      */
-    function del($file) {
+    public static function del($file) {
 
         $types = archive::getAllType();
         foreach ($types as $type) {
@@ -115,7 +115,7 @@ class cache {
         @param  int     $sizey  La taille y
         @return Le chemin absolu vers l'image cachée
      */
-    function getImagePath($file, $sizex, $sizey, &$out) {
+    public static function getImagePath($file, $sizex, $sizey, &$out) {
 
         $fmd5 = md5(file::dirName($file));
 
@@ -136,7 +136,7 @@ class cache {
         @param  &string $out    Le buffer oû écrire le résultat
         @return Renvoie true si le fichier existe déjà dans le cache
      */
-    function getFilePath($file, &$out) {
+    public static function getFilePath($file, &$out) {
 
         $fmd5 = md5(file::dirName($file));
 
@@ -158,7 +158,7 @@ class cache {
         @param  &string $out    Le buffer oû écrire le résultat
         @return Renvoie true si le fichier existe déjà dans le cache
      */
-    function getArchivePath($file, &$out, $type) {
+    public static function getArchivePath($file, &$out, $type) {
 
         $fmd5 = md5(file::dirName($file));
 
@@ -179,5 +179,3 @@ class cache {
         return (bool)file_exists($out);
     }
 }
-
-?>

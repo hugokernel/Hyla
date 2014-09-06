@@ -23,18 +23,16 @@ class plugin_auth_default extends plugin_auth {
 
     /*  Initialisations
      */
-    function plugin_auth_default() {
-        parent::plugin_auth();
+    public function __construct() {
+        parent::__construct();
     }
 
     /*  Phase d'authentification
         @param  $name       Le nom de l'utilisateur
         @param  $password   Le mot de passe associé
      */
-    function auth($name, $password) {
+    public function auth($name, $password) {
         $usr = new users();
         return $usr->auth($name, $password);
     }
 }
-
-?>

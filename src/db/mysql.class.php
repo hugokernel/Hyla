@@ -23,22 +23,22 @@ class db
 {
     /*  Connection serveur
      */
-    var $_db_host;      // Serveur MySQL
-    var $_db_user;      // Login de la base
-    var $_db_pass;      // Mot de Passe de la base
-    var $_db_base;      // Base de données
+    private $_db_host;      // Serveur MySQL
+    private $_db_user;      // Login de la base
+    private $_db_pass;      // Mot de Passe de la base
+    private $_db_base;      // Base de données
 
     /*  Attribut divers
      */
-    var $_id_bdd;       // ID de la connexion à la base
-    var $_id_query;     // ID de la dernière requête
-    var $_nbr_query;    // Comptage des requêtes
-    var $_last_query;   // La dernière requête
+    private $_id_bdd;       // ID de la connexion à la base
+    private $_id_query;     // ID de la dernière requête
+    private $_nbr_query;    // Comptage des requêtes
+    private $_last_query;   // La dernière requête
 
 
     /*  Le constructeur...
      */
-    function db() {
+    public function __construct() {
         $this->_db_host = null;
         $this->_db_user = null;
         $this->_db_pass = null;
@@ -56,130 +56,110 @@ class db
         @param  string  $_db_user   User
         @param  string  $_db_pass   Password
      */
-    function connect($_db_host, $_db_user, $_db_pass) {
+    public function connect($_db_host, $_db_user, $_db_pass, $_db_base) {
 
         $this->_db_host = $_db_host;
         $this->_db_user = $_db_user;
         $this->_db_pass = $_db_pass;
-
-        //extension_loaded('mysql');
-
-        // Connexion à la base de données
-        if (!$this->_id_bdd = mysql_connect($this->_db_host, $this->_db_user, $this->_db_pass))
-            trigger_error(__('Couldn\'t connect to sql server !'));
-
-        // Pour l'UTF8
-        mysql_query("SET NAMES 'utf8'");
-        mysql_query("SET character_set_server = utf8");
-
-        return $this->_id_bdd;
-    }
-
-    /*  Sélection de la base de données
-        @param  string  $_db_base   Base de données
-     */
-    function select($_db_base) {
         $this->_db_base = $_db_base;
 
-        $db = mysql_select_db($this->_db_base, $this->_id_bdd);
-        if (!$db)
-            trigger_error(__('Unable to use database &laquo; %s &raquo;', $this->_db_base));
-        return $db;
+        // Connexion à la base de données
+        $this->_id_bdd = new mysqli( $this->_db_host, $this->_db_user, $this->_db_pass, $this->_db_base);
+		$err = mysqli_connect_error();
+		if ( $err !== null) {
+			trigger_error( __( 'Couldn\'t connect to sql server ! '.$err ));
+		}
+
+		// Pour l'UTF8
+		$this->_id_bdd->set_charset( 'utf8'); 
+		$this->_id_bdd->query( 'SET character_set_server = utf8');
+		
+        return $this->_id_bdd;
     }
 
     /*  Fermeture de la base de données
      */
-    function close($_id_bdd = null) {
-        if ($_id_bdd == null)
-            $_id_bdd = $this->_id_bdd;
-        if (!$ret = mysql_close($this->_id_bdd))
-            trigger_error(__('Couldn\'t close connection to sql server !'), E_USER_ERROR);
-        return $ret;
+    public function close() {
+		if (!$ret = $this->_id_bdd->close()) {
+			trigger_error(__('Couldn\'t close connection to sql server !'), E_USER_ERROR);
+		}
+		return $ret;
     }
 
     /*  Exécution d'une requête
      */
-    function execQuery($qry, $_id_bdd = null) {
+    public function execQuery( $qry) {
         $this->_nbr_query++;
 
-        if (!$_id_bdd)
-            $_id_bdd = $this->_id_bdd;
-        $this->_last_query = $qry;
-        $this->_id_query = mysql_query($qry, $_id_bdd);
-
-        //echo '<hr>'.$qry.'<hr>';
+		$this->_last_query = $qry;
+        $this->_id_query = $this->_id_bdd->query( $qry);
 
         return $this->_id_query;
     }
 
     /*  Renvoie le nombre de requêtes exécuté en tout !
      */
-    function getNbrQuery() {
+    public function getNbrQuery() {
         return $this->_nbr_query;
     }
 
     /*  Retourne le tuple suivant !
      */
-    function nextTuple($_id_query = null) {
+    public function nextTuple( $_id_query = null) {
         $_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-        return $this->fetchAssoc($_id_query);
+        return $this->fetchAssoc( $_id_query);
     }
 
     /* Reset tuple
      */
-    function reset() {
+    public function reset() {
+        return $this->_id_query->seek( 0);
+    }
+
+    /*  Retourne une ligne de résultat sous la forme d'un tableau indice
+     */
+    public function fetchArray( $_id_query = null) {
         $_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-        return mysql_data_seek($_id_query, 0);
+        return $_id_query->fetch_array();
     }
 
     /*  Retourne une ligne de résultat sous la forme d'un tableau associatif
      */
-    function fetchArray($_id_query = null) {
+    public function fetchAssoc($_id_query = null) {
         $_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-        return mysql_fetch_array($_id_query);
-    }
-
-    /*  Retourne une ligne de résultat sous la forme d'un tableau associatif
-     */
-    function fetchAssoc($_id_query = null) {
-        $_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-        return mysql_fetch_assoc($_id_query);
+        return $_id_query->fetch_assoc();
     }
 
     /*  Retourne le nombre de ligne d'un résultat
      */
-    function getNumRows($_id_query = null) {
+    public function getNumRows($_id_query = null) {
         $_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-        return mysql_num_rows($_id_query);
+        return $_id_query->num_rows();
     }
 
     /*  Efface le résultat de la mémoire
      */
-    function freeResult($_id_query = null) {
+    public function freeResult($_id_query = null) {
         $_id_query = ($_id_query == null) ? $this->_id_query : $_id_query;
-        return mysql_free_result($_id_query);
+        return $_id_query->free_result();
     }
 
     /*  Retourne l'identifiant généré par la dernière requête INSERT
      */
-    function getInsertID($_id_bdd = null) {
-        if (!$_id_bdd)
-            $_id_bdd = $this->_id_bdd;
-        return mysql_insert_id($_id_bdd);
+    public function getInsertID() {
+		return $this->_id_bdd->insert_id;
     }
 
     /*  Retourne le numéro d'erreur et l'erreur
      */
-    function getError() {
-        $error['message'] = mysql_error($this->_id_bdd);
-        $error['code'] = mysql_errno($this->_id_bdd);
+    public function getError() {
+        $error['message'] = $this->_id_bdd->error;
+        $error['code'] = $this->_id_bdd->errno;
         $error['query'] = $this->_last_query;
         return $error;
     }
 
-    function getErrorMsg() {
-        return mysql_error($this->_id_bdd);
+    public function getErrorMsg() {
+        return $this->_id_bdd->error;
     }
 }
-
-?>

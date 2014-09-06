@@ -21,18 +21,18 @@
 
 class plugin_auth extends plugin {
 
-    var $_bdd;
+    private $_bdd;
 
-    function plugin_auth() {
+    public function __construct() {
         global $bdd;
-        parent::plugin();
+        parent::__construct();
 
         $this->_bdd = &$bdd;
     }
 
     /*  Charge le plugin et l'instancie
      */
-    function load() {
+    public function load() {
         global $conf;
 
         session_name('Hyla');
@@ -41,7 +41,7 @@ class plugin_auth extends plugin {
 
     /*  Renvoie les infos de l'utilisateur courant
      */
-    function getUser() {
+    public function getUser() {
 
         global $conf;
 
@@ -62,16 +62,14 @@ class plugin_auth extends plugin {
 
     /*  "Déloggue" l'utilisateur courant
      */
-    function logout() {
+    public function logout() {
         session_destroy();
     }
 
     /*  Test lexical du login
         @param  string  $login  Le login à tester
      */
-    function testLex($login) {
+    public function testLex($login) {
         return preg_match('/^[A-Zéèçà]{1}[A-Zéèçà0-9._-]{1,31}$/i', $login);
     }
 }
-
-?>
